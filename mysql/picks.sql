@@ -29,6 +29,7 @@ VALUES
 SELECT * FROM `picks`;
 
 -- upsert a pick (update or create)
+-- upsertPick
 INSERT INTO `pickem_app`.`picks` 
 SET 
     `user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc',
@@ -38,12 +39,15 @@ SET
 ON DUPLICATE KEY UPDATE `pick` = 1, `last_change_at` = UNIX_TIMESTAMP() * 1000;
 
 -- get available picks for a given group, user and season week
--- seelctMyPicksForTheWeek
+-- selesctMyPicksForTheWeek
 SELECT 
 	  `game_at`,
       `away_team`,
       `home_team`,
-      `pick`
+	  `games`.`id` AS `game_id`,
+	  '3fd8d78c-8151-4145-b276-aea3559deb76' AS `group_id`, -- returns the given group id so this will end up as a prop and it knows what group the component is for
+      `pick`,
+      `winner`
    FROM
       (SELECT 
          *

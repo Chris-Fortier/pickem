@@ -94,3 +94,23 @@ legend {
 // .navbar {
 //    color: $white;
 // }
+
+.pick-team {
+   width: 50%;
+   padding-left: 4px;
+   padding-right: 4px;
+   border: 3px solid hsla(0, 0, 0, 0);
+   margin-bottom: 4px;
+}
+
+.pick-team-selected {
+   border: 3px solid $white;
+}
+
+.pick-team-winner {
+   background-color: $green;
+}
+
+.right {
+   text-align: right;
+}

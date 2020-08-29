@@ -1,3 +1,5 @@
+USE `pickem_app`;
+
 CREATE TABLE `games`(
 	`id` CHAR(36) PRIMARY KEY DEFAULT (UUID()), /* fixed length of string uuid */
     `game_at` BIGINT SIGNED NOT NULL, -- time of the game
@@ -44,3 +46,7 @@ FROM
     `games`
 WHERE
     `winner` IS NULL and (`game_at` + 3600000) < (UNIX_TIMESTAMP() * 1000);
+
+-- selectGame
+-- get the details of a single game form the game id
+SELECT * from `games` where `id` = '0781b6ed-e97f-11ea-b134-06a4a2a4eb91';

@@ -80,8 +80,9 @@ class MyPicks extends React.Component {
                               rollingDate = pick.game_at;
                               return (
                                  <>
+                                    {renderTime && <br />}
                                     {renderDate && (
-                                       <h5>
+                                       <h5 align="center">
                                           {toDisplayDate(
                                              pick.game_at,
                                              "EEE MMM dd"
@@ -89,7 +90,7 @@ class MyPicks extends React.Component {
                                        </h5>
                                     )}
                                     {renderTime && (
-                                       <h6>
+                                       <h6 align="center">
                                           {toDisplayDate(pick.game_at, "p")}
                                        </h6>
                                     )}

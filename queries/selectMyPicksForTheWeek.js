@@ -4,7 +4,10 @@ SELECT
       \`game_at\`,
       \`away_team\`,
       \`home_team\`,
-      \`pick\`
+      \`games\`.\`id\` AS \`game_id\`,
+      ? AS \`group_id\`, -- returns the given group id so this will end up as a prop and it knows what group the component is for
+      \`pick\`,
+      \`winner\`
    FROM
       (SELECT 
          *

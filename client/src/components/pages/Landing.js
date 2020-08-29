@@ -54,7 +54,7 @@ class Landing extends React.Component {
             axios.defaults.headers.common["x-auth-token"] = authToken;
 
             // go to home page
-            this.props.history.push("/account-settings");
+            this.props.history.push("/my-picks");
             window.scrollTo(0, 0); // sets focus to the top of the page
          })
          .catch((err) => {
@@ -110,7 +110,7 @@ class Landing extends React.Component {
             axios.defaults.headers.common["x-auth-token"] = authToken;
 
             // go to home page
-            this.props.history.push("/account-settings");
+            this.props.history.push("/my-picks");
             window.scrollTo(0, 0); // sets focus to the top of the page
          })
          .catch((err) => {
