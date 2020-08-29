@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === "production") {
 
 // need one of these for every API url route
 app.use("/api/v1/users", require("./api/v1/users"));
+app.use("/api/v1/picks", require("./api/v1/picks"));
 
 // if none of the routes are hit ("*"), use what's in the build folder
 app.use(express.static("client/build"));

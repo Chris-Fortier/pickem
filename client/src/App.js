@@ -10,6 +10,7 @@ import axios from "axios";
 
 import Landing from "./components/pages/Landing";
 import AccountSettings from "./components/pages/AccountSettings";
+import MyPicks from "./components/pages/MyPicks";
 import NotFound from "./components/pages/NotFound";
 
 const authToken = localStorage.authToken; // get the auth token from local storage
@@ -60,6 +61,7 @@ function App() {
          <Switch>
             <Route exact path="/" component={Landing} />
             <Route exact path="/account-settings" component={AccountSettings} />
+            <Route exact path="/my-picks" component={MyPicks} />
             <Route component={NotFound} />
          </Switch>
       </Router>

@@ -256,8 +256,9 @@ class AccountSettings extends React.Component {
                      <div className="card mt-5 mb-5">
                         <div className="card-header">
                            <h2>
-                              Account Settings for&nbsp;
-                              {this.props.currentUser.user_name}
+                              Account Settings
+                              {/* &nbsp;for&nbsp;
+                              {this.props.currentUser.user_name} */}
                            </h2>
                         </div>
                         <div className="card-body">

@@ -33,10 +33,8 @@ class NavBar extends React.Component {
                {/* <Navbar.Toggle aria-controls="responsive-navbar-nav" /> */}
                <Navbar.Collapse id="responsive-navbar-nav">
                   <Nav className="mr-auto">
-                     {/* <Nav.Link href="/streamer-opportunities">
-                        My Picks
-                     </Nav.Link>
-                     <Nav.Link href="/streamer-sponsorships">
+                     <Nav.Link href="/my-picks">My Picks</Nav.Link>
+                     {/* <Nav.Link href="/streamer-sponsorships">
                         Leader Board
                      </Nav.Link> */}
                   </Nav>

@@ -38,7 +38,9 @@ SET
 ON DUPLICATE KEY UPDATE `pick` = 1, `last_change_at` = UNIX_TIMESTAMP() * 1000;
 
 -- get available picks for a given group, user and season week
+-- seelctMyPicksForTheWeek
 SELECT 
+	  `game_at`,
       `away_team`,
       `home_team`,
       `pick`
@@ -49,9 +51,9 @@ SELECT
          `picks`) as `picks`
 	  RIGHT JOIN `games` ON `picks`.`game_id` = `games`.`id`
    WHERE
-      `week` = 1 AND
+      (`user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc' OR `user_id` is NULL) AND -- show null user_id ones so that the user can see the ones they need to pick
+	  (`group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76' OR `group_id` is NULL) AND -- show null user_id ones so that the user can see the ones they need to pick
 	  `season` = 2020 AND
-	  (`group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76' OR `user_id` is NULL) AND -- show null user_id ones so that the user can see the ones they need to pick
-      (`user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc' OR `user_id` is NULL) -- show null user_id ones so that the user can see the ones they need to pick
+      `week` = 1
    ORDER BY
 	   `game_at` ASC; -- order by game time

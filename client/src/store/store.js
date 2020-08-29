@@ -4,6 +4,7 @@ import combineReducers from "./combineReducers";
 
 const initialState = {
    currentUser: {},
+   myPicks: [],
 };
 
 const store = createStore(combineReducers, initialState, composeWithDevTools());
