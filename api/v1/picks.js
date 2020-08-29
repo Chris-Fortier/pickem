@@ -15,13 +15,7 @@ router.get("/", validateJwt, (req, res) => {
    const user_id = req.user.id; // get the user id from the JWT
    const { group_id, season, week } = req.query; // grabbing variables from req.query
 
-   db.query(selectMyPicksForTheWeek, [
-      group_id,
-      user_id,
-      group_id,
-      season,
-      week,
-   ]) // this syntax style prevents hackers
+   db.query(selectMyPicksForTheWeek, [group_id, user_id, season, week]) // this syntax style prevents hackers
       .then((picks) => {
          // successful response
          return res.status(200).json(picks);

@@ -7,13 +7,19 @@ CREATE TABLE `picks`(
     PRIMARY KEY (`user_id`, `game_id`, `group_id`),
     CONSTRAINT `fk_picks_user_id`
 		FOREIGN KEY (`user_id`)
-        REFERENCES `users`(`id`),
+        REFERENCES `users`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT `fk_picks_game_id`
 		FOREIGN KEY (`game_id`)
-        REFERENCES `games`(`id`),
+        REFERENCES `games`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT `fk_picks_group_id`
 		FOREIGN KEY (`group_id`)
         REFERENCES `groups`(`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 DROP TABLE `picks`;
 
@@ -41,23 +47,17 @@ ON DUPLICATE KEY UPDATE `pick` = 1, `last_change_at` = UNIX_TIMESTAMP() * 1000;
 -- get available picks for a given group, user and season week
 -- selesctMyPicksForTheWeek
 SELECT 
-	  `game_at`,
-      `away_team`,
-      `home_team`,
-	  `games`.`id` AS `game_id`,
-	  '3fd8d78c-8151-4145-b276-aea3559deb76' AS `group_id`, -- returns the given group id so this will end up as a prop and it knows what group the component is for
-      `pick`,
-      `winner`
-   FROM
-      (SELECT 
-         *
-      FROM
-         `picks`) as `picks`
-	  RIGHT JOIN `games` ON `picks`.`game_id` = `games`.`id`
-   WHERE
-      (`user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc' OR `user_id` is NULL) AND -- show null user_id ones so that the user can see the ones they need to pick
-	  (`group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76' OR `group_id` is NULL) AND -- show null user_id ones so that the user can see the ones they need to pick
-	  `season` = 2020 AND
-      `week` = 1
-   ORDER BY
-	   `game_at` ASC; -- order by game time
+    `game_at`,
+    `away_team`,
+    `home_team`,
+    `games`.`id` AS `game_id`,
+    '3fd8d78c-8151-4145-b276-aea3559deb76' AS `group_id`,
+    `pick`,
+    `winner`
+FROM
+    `games`
+        LEFT JOIN
+    `picks` ON `games`.`id` = `picks`.`game_id`
+        AND `user_id` = '11539be6-2118-4ec5-8fe3-580ef2950ca8'
+        AND `season` = 2020
+        AND `week` = 1;
