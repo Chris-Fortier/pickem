@@ -23,8 +23,8 @@ class NavBar extends React.Component {
             <Navbar
                collapseOnSelect
                expand="md"
-               // bg="dark"
-               // variant="dark"
+               bg="dark"
+               variant="dark"
                expanded // I adding this so the menu is always expanded, even with a smaller screen size
             >
                <Navbar.Brand href="#home">

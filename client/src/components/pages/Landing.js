@@ -130,7 +130,9 @@ class Landing extends React.Component {
    renderLogin() {
       return (
          <div className="card">
-            <div className="card-header">Log In</div>
+            <div className="card-header">
+               <h5>Log In</h5>
+            </div>
             <div className="card-body">
                <form>
                   <div className="form-group">
@@ -191,7 +193,9 @@ class Landing extends React.Component {
    renderSignup() {
       return (
          <div className="card">
-            <div className="card-header">Sign Up</div>
+            <div className="card-header">
+               <h5>Sign Up</h5>
+            </div>
             <div className="card-body">
                <form>
                   <div className="form-group">
@@ -254,7 +258,11 @@ class Landing extends React.Component {
          <div className="container">
             <div className="row">
                <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
-                  <h1>Hawk Nation NFL Pick 'em</h1>
+                  <h1>
+                     Hawk Nation
+                     <br />
+                     NFL Pick 'em
+                  </h1>
                   {/* render component based on what mode we are in */}
                   {this.state.mode === "log-in" && this.renderLogin()}
                   {this.state.mode === "sign-up" && this.renderSignup()}

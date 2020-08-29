@@ -1,3 +1,14 @@
-h1 {
-   margin-top: 64px;
-}
+// FONTS
+
+@import url("https://fonts.googleapis.com/css2?family=Russo+One&family=Titillium+Web:wght@200;300;400;600;700&display=swap");
+
+// COLORS
+
+$navy: #002244;
+$white: hsl(0, 0, 95);
+$gray: #a5acaf;
+$green: #69be28;
+$red: hsl(0, 100, 40);
+
+$hover-darken: 10;
+$active-darken: 20;

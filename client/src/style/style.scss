@@ -1,0 +1,96 @@
+body {
+   font-family: "Titillium Web", sans-serif;
+   background-color: $navy;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.btn {
+   font-family: "Russo One", sans-serif;
+   text-transform: uppercase;
+}
+
+h1 {
+   color: $white;
+   margin-top: 64px;
+}
+
+.text-muted {
+   font-weight: 300;
+   color: black !important;
+}
+
+.counter {
+   font-weight: 600;
+}
+
+// remove bootstrap border and border radius
+.card,
+.form-control,
+textarea,
+.btn {
+   border-radius: 0;
+   border: none;
+}
+
+.btn-primary {
+   background-color: $green;
+   color: $navy;
+   border: 2px solid $navy;
+}
+.btn-primary:hover {
+   background-color: darken($green, $hover-darken);
+   color: darken($navy, $hover-darken);
+   border: 2px solid darken($navy, $hover-darken);
+}
+.btn-primary:active {
+   background-color: darken($green, $active-darken) !important;
+   color: darken($navy, $active-darken) !important;
+   border: 2px solid darken($navy, $active-darken) !important;
+}
+
+.btn-secondary {
+   background-color: $gray;
+   color: $navy;
+   border: 2px solid $navy;
+}
+.btn-secondary:hover {
+   background-color: darken($gray, $hover-darken);
+   color: darken($navy, $hover-darken);
+   border: 2px solid darken($navy, $hover-darken);
+}
+.btn-secondary:active {
+   background-color: darken($gray, $active-darken) !important;
+   color: darken($navy, $active-darken) !important;
+   border: 2px solid darken($navy, $active-darken) !important;
+}
+
+.card {
+   background-color: $gray;
+}
+
+.form-control,
+textarea {
+   background-color: $white;
+}
+
+.text-danger {
+   color: $red !important;
+}
+
+legend {
+   font-size: 1rem;
+}
+
+.table th,
+.table td {
+   padding: 0;
+}
+
+// .navbar {
+//    color: $white;
+// }

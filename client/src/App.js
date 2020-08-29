@@ -1,8 +1,6 @@
 import React from "react";
 
-// import "./style/master.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./style/theme.scss"; // apply my theme style (colors, fonts, spacing, etc.)
+import "./style/master.scss";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import jwtDecode from "jwt-decode";

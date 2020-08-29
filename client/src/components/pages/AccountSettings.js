@@ -127,127 +127,122 @@ class AccountSettings extends React.Component {
 
    renderChangeUserName() {
       return (
-         <div className="card">
-            <div className="card-header">Change User Name</div>
-            <div className="card-body">
-               <form>
-                  <div className="form-group">
-                     <label htmlFor="new-user-name-input">New User Name</label>
-                     <input
-                        type="text"
-                        className="form-control"
-                        id="new-user-name-input"
-                        placeholder={this.props.currentUser.user_name}
-                     />
-                     {this.state.newUserNameError && (
-                        <div className="text-danger">
-                           {this.state.newUserNameError}
-                        </div>
-                     )}
-                  </div>
-                  <div className="form-group">
-                     <label htmlFor="password-input">Password</label>
-                     <input
-                        type="password"
-                        className="form-control"
-                        id="password-input"
-                        placeholder="Enter your password"
-                     />
-                     {this.state.currentPasswordError && (
-                        <div className="text-danger" id="password-error">
-                           {this.state.currentPasswordError}
-                        </div>
-                     )}
-                  </div>
-                  <div
-                     type="submit"
-                     className="btn btn-primary btn-block"
-                     onClick={() =>
-                        this.validateAndChangeUserName(
-                           document.getElementById("new-user-name-input").value,
-                           document.getElementById("password-input").value
-                        )
-                     }
-                  >
-                     Change User Name
-                  </div>
-                  <div
-                     className="btn btn-secondary mt-3"
-                     onClick={() => {
-                        this.clearMessageAndErrors();
-                        this.setState({ mode: "account-settings-menu" });
-                     }}
-                  >
-                     Cancel
-                  </div>
-               </form>
-            </div>
-         </div>
+         <>
+            <h5>Change User Name</h5>
+            <form>
+               <div className="form-group">
+                  <label htmlFor="new-user-name-input">New User Name</label>
+                  <input
+                     type="text"
+                     className="form-control"
+                     id="new-user-name-input"
+                     placeholder={this.props.currentUser.user_name}
+                  />
+                  {this.state.newUserNameError && (
+                     <div className="text-danger">
+                        {this.state.newUserNameError}
+                     </div>
+                  )}
+               </div>
+               <div className="form-group">
+                  <label htmlFor="password-input">Password</label>
+                  <input
+                     type="password"
+                     className="form-control"
+                     id="password-input"
+                     placeholder="Enter your password"
+                  />
+                  {this.state.currentPasswordError && (
+                     <div className="text-danger" id="password-error">
+                        {this.state.currentPasswordError}
+                     </div>
+                  )}
+               </div>
+               <div
+                  type="submit"
+                  className="btn btn-primary btn-block"
+                  onClick={() =>
+                     this.validateAndChangeUserName(
+                        document.getElementById("new-user-name-input").value,
+                        document.getElementById("password-input").value
+                     )
+                  }
+               >
+                  Change User Name
+               </div>
+               <div
+                  className="btn btn-secondary mt-3"
+                  onClick={() => {
+                     this.clearMessageAndErrors();
+                     this.setState({ mode: "account-settings-menu" });
+                  }}
+               >
+                  Cancel
+               </div>
+            </form>
+         </>
       );
    }
 
    // TODO: add this to Chav Lads
    renderChangePassword() {
       return (
-         <div className="card">
-            <div className="card-header">Change Password</div>
-            <div className="card-body">
-               <form>
-                  <div className="form-group">
-                     <label htmlFor="current-password-input">
-                        Current Password
-                     </label>
-                     <input
-                        type="password"
-                        className="form-control"
-                        id="current-password-input"
-                        placeholder="Enter your existing password."
-                     />
-                     {this.state.currentPasswordError && (
-                        <div className="text-danger">
-                           {this.state.currentPasswordError}
-                        </div>
-                     )}
-                  </div>
-                  <div className="form-group">
-                     <label htmlFor="new-password-input">New Password</label>
-                     <input
-                        type="password"
-                        className="form-control"
-                        id="new-password-input"
-                        placeholder="Enter a new password"
-                     />
-                     {this.state.newPasswordError && (
-                        <div className="text-danger">
-                           {this.state.newPasswordError}
-                        </div>
-                     )}
-                  </div>
-                  <div
-                     type="submit"
-                     className="btn btn-primary btn-block"
-                     onClick={() =>
-                        this.validateAndChangePassword(
-                           document.getElementById("current-password-input")
-                              .value,
-                           document.getElementById("new-password-input").value
-                        )
-                     }
-                  >
-                     Change Password
-                  </div>
-                  <div
-                     className="btn btn-secondary mt-3"
-                     onClick={() => {
-                        this.clearMessageAndErrors();
-                        this.setState({ mode: "account-settings-menu" });
-                     }}
-                  >
-                     Cancel
-                  </div>
-               </form>
-            </div>
-         </div>
+         <>
+            <h5>Change Password</h5>
+            <form>
+               <div className="form-group">
+                  <label htmlFor="current-password-input">
+                     Current Password
+                  </label>
+                  <input
+                     type="password"
+                     className="form-control"
+                     id="current-password-input"
+                     placeholder="Enter your existing password."
+                  />
+                  {this.state.currentPasswordError && (
+                     <div className="text-danger">
+                        {this.state.currentPasswordError}
+                     </div>
+                  )}
+               </div>
+               <div className="form-group">
+                  <label htmlFor="new-password-input">New Password</label>
+                  <input
+                     type="password"
+                     className="form-control"
+                     id="new-password-input"
+                     placeholder="Enter a new password"
+                  />
+                  {this.state.newPasswordError && (
+                     <div className="text-danger">
+                        {this.state.newPasswordError}
+                     </div>
+                  )}
+               </div>
+               <div
+                  type="submit"
+                  className="btn btn-primary btn-block"
+                  onClick={() =>
+                     this.validateAndChangePassword(
+                        document.getElementById("current-password-input").value,
+                        document.getElementById("new-password-input").value
+                     )
+                  }
+               >
+                  Change Password
+               </div>
+               <div
+                  className="btn btn-secondary mt-3"
+                  onClick={() => {
+                     this.clearMessageAndErrors();
+                     this.setState({ mode: "account-settings-menu" });
+                  }}
+               >
+                  Cancel
+               </div>
+            </form>
+         </>
       );
    }
 
@@ -258,20 +253,26 @@ class AccountSettings extends React.Component {
             <div className="container">
                <div className="row">
                   <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
-                     <h2>
-                        Account Settings for&nbsp;
-                        {this.props.currentUser.user_name}
-                     </h2>
-                     {this.state.messageFromServer && (
-                        <p>{this.state.messageFromServer}</p>
-                     )}
-                     {/* render component based on what mode we are in */}
-                     {this.state.mode === "account-settings-menu" &&
-                        this.renderAccountSettingsMenu()}
-                     {this.state.mode === "change-user-name" &&
-                        this.renderChangeUserName()}
-                     {this.state.mode === "change-password" &&
-                        this.renderChangePassword()}
+                     <div className="card mt-5">
+                        <div className="card-header">
+                           <h2>
+                              Account Settings for&nbsp;
+                              {this.props.currentUser.user_name}
+                           </h2>
+                        </div>
+                        <div className="card-body">
+                           {this.state.messageFromServer && (
+                              <p>{this.state.messageFromServer}</p>
+                           )}
+                           {/* render component based on what mode we are in */}
+                           {this.state.mode === "account-settings-menu" &&
+                              this.renderAccountSettingsMenu()}
+                           {this.state.mode === "change-user-name" &&
+                              this.renderChangeUserName()}
+                           {this.state.mode === "change-password" &&
+                              this.renderChangePassword()}
+                        </div>
+                     </div>
                   </div>
                </div>
             </div>
