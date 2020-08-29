@@ -18,5 +18,3 @@ FROM
 `;
 
 module.exports = selectMyPicksForTheWeek;
-
-// group_id, user_id, season and week

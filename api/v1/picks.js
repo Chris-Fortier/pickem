@@ -1,4 +1,4 @@
-// The sponsorships resource
+// The picks resource
 const express = require("express");
 const router = express.Router();
 const db = require("../../db");
@@ -6,6 +6,7 @@ const validateJwt = require("../../utils/validateJwt");
 const selectMyPicksForTheWeek = require("../../queries/selectMyPicksForTheWeek");
 const upsertPick = require("../../queries/upsertPick");
 const selectGame = require("../../queries/selectGame");
+const selectGroupPicksForWeek = require("../../queries/selectGroupPicksForWeek");
 
 // @route      GET api/v1/picks (http://localhost:3060/api/v1/picks)
 // @desc       this gets the picks for a given user, group, season and week
@@ -27,10 +28,30 @@ router.get("/", validateJwt, (req, res) => {
       });
 });
 
-// @route      PUT api/v1/picks (http://localhost:3060/api/v1/picks)
+// @route      GET api/v1/picks/group-week
+// @desc       this gets the picks of the entire group for a week
+// @access     Private
+// test:
+router.get("/group-week", validateJwt, (req, res) => {
+   const user_id = req.user.id; // get the user id from the JWT
+   const { group_id, season, week } = req.query; // grabbing variables from req.query
+
+   db.query(selectGroupPicksForWeek, [user_id, group_id, season, week]) // this syntax style prevents hackers
+      .then((picks) => {
+         // successful response
+         return res.status(200).json(picks);
+      })
+      .catch((err) => {
+         // report error
+         console.log(err);
+         return res.status(400).json(err);
+      });
+});
+
+// @route      PUT api/v1/picks
 // @desc       upsert a pick (update or create)
 // @access     Private
-// test: http://localhost:3060/api/v1/picks
+// test:
 router.put("/", validateJwt, (req, res) => {
    const user_id = req.user.id; // get the user id from the JWT
    const { game_id, group_id, pick } = req.query; // grabbing variables from req.query

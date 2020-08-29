@@ -37,7 +37,7 @@ class MyPicks extends React.Component {
             `/api/v1/picks?group_id=${group_id}&season=${season}&week=${week}`
          )
          .then((res) => {
-            // send the sponsorships to Redux
+            // send the data to Redux
             this.props.dispatch({
                type: actions.STORE_MY_PICKS,
                payload: res.data,
@@ -48,16 +48,6 @@ class MyPicks extends React.Component {
             console.log("err", data);
          });
    }
-
-   // sends an API call to make a new user and if successful, pushes to new page depending on the type of user
-   // works with any user type
-   // makePick(game, pick) {
-   //    // post to API
-   //    axios
-   //       .put("/api/v1/picks", user) // put to this endpoint the user object we just made
-   //       .then((res) => {})
-   //       .catch((err) => {});
-   // }
 
    render() {
       let rollingDate = 0; // for keeping track when a game is on a new date
