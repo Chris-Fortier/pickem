@@ -4,6 +4,7 @@ import actions from "../../store/actions";
 import { connect } from "react-redux";
 import axios from "axios";
 // import jwtDecode from "jwt-decode";
+import isEmpty from "lodash/isEmpty";
 
 class AccountSettings extends React.Component {
    constructor(props) {
@@ -18,6 +19,16 @@ class AccountSettings extends React.Component {
          currentPasswordError: "",
          newPasswordError: "",
       };
+   }
+
+   // this is a "lifecycle" method like render(), we don't need to call it manually
+   componentDidMount() {
+      // if there is not user logged in
+      if (isEmpty(this.props.currentUser)) {
+         // send to landing page
+         this.props.history.push("/");
+      } else {
+      }
    }
 
    clearMessageAndErrors() {

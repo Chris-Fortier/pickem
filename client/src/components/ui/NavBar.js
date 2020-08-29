@@ -9,9 +9,14 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 class NavBar extends React.Component {
    logOutCurrentUser() {
       // clear the user from Redux
+      console.log("log out");
       this.props.dispatch({
          type: actions.UPDATE_CURRENT_USER,
          payload: {}, // empty user object
+      });
+      this.props.dispatch({
+         type: actions.STORE_MY_PICKS,
+         payload: [], // empty
       });
    }
 
@@ -47,7 +52,14 @@ class NavBar extends React.Component {
                         <NavDropdown.Item href="/account-settings">
                            Account Settings
                         </NavDropdown.Item>
-                        <NavDropdown.Item href="/">Log Out</NavDropdown.Item>
+                        <NavDropdown.Item
+                           href="/"
+                           onClick={() => {
+                              this.logOutCurrentUser();
+                           }}
+                        >
+                           Log Out
+                        </NavDropdown.Item>
                      </NavDropdown>
                   </Nav>
                </Navbar.Collapse>

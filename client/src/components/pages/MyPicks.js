@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 import toDisplayDate from "date-fns/format";
 import Pick from "../ui/Pick";
+import isEmpty from "lodash/isEmpty";
 
 const group_id = "3fd8d78c-8151-4145-b276-aea3559deb76";
 const season = 2020;
@@ -19,7 +20,14 @@ class MyPicks extends React.Component {
 
    // this is a "lifecycle" method like render(), we don't need to call it manually
    componentDidMount() {
-      this.getMyPicks();
+      // if there is not user logged in
+      if (isEmpty(this.props.currentUser)) {
+         // send to landing page
+         this.props.history.push("/");
+      } else {
+         // do what needs to be done when loading the page
+         this.getMyPicks();
+      }
    }
 
    getMyPicks() {
@@ -110,7 +118,7 @@ class MyPicks extends React.Component {
 
 // maps the Redux store/state to props
 function mapStateToProps(state) {
-   return { myPicks: state.myPicks };
+   return { myPicks: state.myPicks, currentUser: state.currentUser };
 }
 
 export default connect(mapStateToProps)(MyPicks);
