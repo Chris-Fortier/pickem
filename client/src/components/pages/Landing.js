@@ -129,7 +129,7 @@ class Landing extends React.Component {
 
    renderLogin() {
       return (
-         <div className="card">
+         <div className="card mb-5">
             <div className="card-header">
                <h5>Log In</h5>
             </div>
@@ -164,7 +164,7 @@ class Landing extends React.Component {
                      )}
                   </div>
                   <div
-                     type="submit"
+                     // type="submit"
                      className="btn btn-primary btn-block"
                      onClick={() =>
                         this.validateAndLogInUser(
@@ -192,7 +192,7 @@ class Landing extends React.Component {
 
    renderSignup() {
       return (
-         <div className="card">
+         <div className="card mb-5">
             <div className="card-header">
                <h5>Sign Up</h5>
             </div>
@@ -227,7 +227,7 @@ class Landing extends React.Component {
                      )}
                   </div>
                   <div
-                     type="submit"
+                     // type="submit"
                      className="btn btn-primary btn-block"
                      onClick={() =>
                         this.validateAndCreateUser(

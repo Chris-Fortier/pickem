@@ -159,7 +159,7 @@ class AccountSettings extends React.Component {
                   )}
                </div>
                <div
-                  type="submit"
+                  // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
                      this.validateAndChangeUserName(
@@ -221,7 +221,7 @@ class AccountSettings extends React.Component {
                   )}
                </div>
                <div
-                  type="submit"
+                  // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
                      this.validateAndChangePassword(
@@ -253,7 +253,7 @@ class AccountSettings extends React.Component {
             <div className="container">
                <div className="row">
                   <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
-                     <div className="card mt-5">
+                     <div className="card mt-5 mb-5">
                         <div className="card-header">
                            <h2>
                               Account Settings for&nbsp;
