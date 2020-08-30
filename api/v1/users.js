@@ -11,6 +11,7 @@ const setUserUserName = require("../../queries/setUserUserName");
 const setUserPassword = require("../../queries/setUserPassword");
 const { toHash, TOKEN_EXPIRE_TIME } = require("../../utils/helpers");
 const getSignUpUserNameError = require("../../validation/getSignUpUserNameError");
+const getSignUpInitialsError = require("../../validation/getSignUpInitialsError");
 const getSignUpPasswordError = require("../../validation/getSignUpPasswordError");
 const getLoginUserNameError = require("../../validation/getLoginUserNameError");
 const getLoginPasswordError = require("../../validation/getLoginPasswordError");
@@ -24,20 +25,26 @@ const uuid = require("uuid");
 // @desc       Create a new user
 // @access     Public
 router.post("/", async (req, res) => {
-   const { user_name, password } = req.body; // destructuring to simplify code below, grabbing variables from req.body
+   const { user_name, initials, password } = req.body; // destructuring to simplify code below, grabbing variables from req.body
    const newUserNameError = await getSignUpUserNameError(user_name);
+   const newInitialsError = await getSignUpInitialsError(initials);
    const newPasswordError = getSignUpPasswordError(password);
    let dbError = ""; // this will store some text describing an error from the database
 
    console.log({ newUserNameError, newPasswordError });
 
-   // if there are no errors with user_name and password:
-   if (newUserNameError === "" && newPasswordError === "") {
+   // if there are no errors with user_name, initials and password:
+   if (
+      newUserNameError === "" &&
+      newInitialsError === "" &&
+      newPasswordError === ""
+   ) {
       newUserId = uuid.v4(); // generate a uuid
       currentDateTime = Date.now();
       const user = {
          id: newUserId,
          user_name, // if the key and value are called the same, you can just have the key
+         initials,
          password: await toHash(password), // hash the password (npm install bcrypt)
          created_at: currentDateTime,
          last_login_at: currentDateTime,
@@ -54,6 +61,7 @@ router.post("/", async (req, res) => {
                   const user = {
                      id: users[0].id,
                      user_name: users[0].user_name,
+                     initials: users[0].initials,
                      created_at: users[0].created_at,
                      last_login_at: users[0].last_login_at,
                      this_login_at: currentDateTime,
@@ -96,6 +104,7 @@ router.post("/", async (req, res) => {
       // return a 400 error to user
       res.status(400).json({
          newUserNameError,
+         newInitialsError,
          newPasswordError,
       });
    }
@@ -127,6 +136,7 @@ router.post("/auth", async (req, res) => {
             const user = {
                id: users[0].id,
                user_name: users[0].user_name,
+               initials: users[0].initials,
                created_at: users[0].created_at,
                last_login_at: users[0].last_login_at,
                this_login_at: currentDateTime,

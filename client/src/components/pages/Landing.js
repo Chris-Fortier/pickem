@@ -13,6 +13,7 @@ class Landing extends React.Component {
 
          // errors
          newUserNameError: "",
+         newInitialsError: "",
          newPasswordError: "",
          currentUserNameError: "",
          currentPasswordError: "",
@@ -22,6 +23,7 @@ class Landing extends React.Component {
    clearErrors() {
       this.setState({
          newUserNameError: "",
+         newInitialsError: "",
          newPasswordError: "",
          currentUserNameError: "",
          currentPasswordError: "",
@@ -60,21 +62,27 @@ class Landing extends React.Component {
          .catch((err) => {
             const data = err.response.data;
             console.log("err", data);
-            const { newUserNameError, newPasswordError } = data;
+            const {
+               newUserNameError,
+               newInitialsError,
+               newPasswordError,
+            } = data;
 
             // push errors or lack thereof to state
             this.setState({
                newUserNameError,
+               newInitialsError,
                newPasswordError,
             });
          });
    }
 
    // tests if the user_name and password are valid and if so creates the user
-   async validateAndCreateUser(userNameInput, passwordInput) {
+   async validateAndCreateUser(userNameInput, initialsInput, passwordInput) {
       // create user obj
       const user = {
          user_name: userNameInput,
+         initials: initialsInput,
          password: passwordInput, // send the plain text password over secure connection, the server will hash it
       };
 
@@ -142,6 +150,7 @@ class Landing extends React.Component {
                         className="form-control"
                         id="user-name-input"
                         placeholder="Enter your user name"
+                        maxLength="24" // TODO: make these utils constants
                      />
                      {this.state.currentUserNameError && (
                         <div className="text-danger">
@@ -206,10 +215,26 @@ class Landing extends React.Component {
                         className="form-control"
                         id="user-name-input"
                         placeholder="Enter a new user name"
+                        maxLength="24"
                      />
                      {this.state.newUserNameError && (
                         <div className="text-danger">
                            {this.state.newUserNameError}
+                        </div>
+                     )}
+                  </div>
+                  <div className="form-group">
+                     <label htmlFor="initials-input">Initials</label>
+                     <input
+                        type="text"
+                        className="form-control"
+                        id="initials-input"
+                        placeholder="Enter your initials"
+                        maxLength="3"
+                     />
+                     {this.state.newInitialsError && (
+                        <div className="text-danger">
+                           {this.state.newInitialsError}
                         </div>
                      )}
                   </div>
@@ -233,6 +258,7 @@ class Landing extends React.Component {
                      onClick={() => {
                         this.validateAndCreateUser(
                            document.getElementById("user-name-input").value,
+                           document.getElementById("initials-input").value,
                            document.getElementById("password-input").value
                         );
                      }}
