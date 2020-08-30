@@ -13,7 +13,8 @@ SELECT
         ELSE NULL
     END) AS \`pick\`,
     \`winner\`,
-    \`user_name\`
+    \`user_name\`,
+    \`users\`.\`initials\` AS \`user_initials\`
 FROM
     \`games\`
         CROSS JOIN

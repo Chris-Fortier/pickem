@@ -17,6 +17,7 @@ class GroupPicks extends React.Component {
 
       this.state = {
          group_user_names: [],
+         group_user_initials: [],
          match_ups: [],
       };
    }
@@ -47,6 +48,7 @@ class GroupPicks extends React.Component {
 
             const game_user_picks = res.data; // the data from server (one object for every combination of user and game)
             const group_user_names = []; // an array of user names
+            const group_user_initials = []; // an array of user initials
             const match_ups = []; // an array of objects (one object per game with a pick for each user)
             const game_ids = [];
             const num_completed_games = 0;
@@ -54,6 +56,7 @@ class GroupPicks extends React.Component {
             for (let i in game_user_picks) {
                if (!group_user_names.includes(game_user_picks[i].user_name)) {
                   group_user_names.push(game_user_picks[i].user_name); // add a new user name
+                  group_user_initials.push(game_user_picks[i].user_initials); // add a new user initials
                }
 
                // if this game_user_pick refers to a new game
@@ -105,8 +108,9 @@ class GroupPicks extends React.Component {
             }
 
             this.setState({
-               group_user_names: group_user_names,
-               match_ups: match_ups,
+               group_user_names,
+               group_user_initials,
+               match_ups,
             });
          })
          .catch((err) => {
@@ -139,8 +143,8 @@ class GroupPicks extends React.Component {
                      <tr>
                         <th scope="col">Game</th>
                         {/* list the user names across the top of the table */}
-                        {this.state.group_user_names.map((user_name) => {
-                           return <th scope="col">{user_name}</th>;
+                        {this.state.group_user_initials.map((user_initials) => {
+                           return <th scope="col">{user_initials}</th>;
                         })}
                      </tr>
                   </thead>
