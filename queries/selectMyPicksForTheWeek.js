@@ -12,7 +12,7 @@ FROM
     \`games\`
         LEFT JOIN
     \`picks\` ON \`games\`.\`id\` = \`picks\`.\`game_id\`
-        AND \`user_id\` = ?
+        WHERE \`user_id\` = ?
         AND \`season\` = ?
         AND \`week\` = ?;
 `;

@@ -58,29 +58,12 @@ FROM
     `games`
         LEFT JOIN
     `picks` ON `games`.`id` = `picks`.`game_id`
-        AND `user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc'
+        WHERE `user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc'
         AND `season` = 2020
         AND `week` = 1;
         
 -- get all picks for the week for the entire group
--- user picks are shown but for games that haven't started yet it only shows if picks have been made (null means no pick, 0 means visitor, 1 means home, 2 means pick made but other user and game hasn't started yet)
-SELECT 
-    `game_at`,
-    `away_team`,
-    `home_team`,
-    `games`.`id` AS `game_id`,
-    (case when `user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc' then `pick` when `game_at` < (UNIX_TIMESTAMP() * 1000) then `pick` when `pick` is not null then 2 else null end) AS `pick`,
-    `winner`
-FROM
-    `games`
-        JOIN
-    `picks` ON `games`.`id` = `picks`.`game_id`
-WHERE
-    `group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
-        AND `season` = 2020
-        AND `week` = 1;
-    ;
-    
+-- user picks are shown but for games that haven't started yet it only shows if picks have been made (null means no pick, 0 means visitor, 1 means home, 2 means pick made but other user and game hasn't started yet) 
 SELECT 
     `game_at`,
     `away_team`,
@@ -93,7 +76,8 @@ SELECT
         ELSE NULL
     END) AS `pick`,
     `winner`,
-    `user_name`
+    `user_name`,
+    `users`.`initials` AS `user_initials`
 FROM
     `games`
         CROSS JOIN
