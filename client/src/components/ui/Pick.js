@@ -6,9 +6,9 @@ import classnames from "classnames";
 import axios from "axios";
 
 class Pick extends React.Component {
-   constructor(props) {
-      super(props); // boilerplate line that needs to be in the constructor
-   }
+   // constructor(props) {
+   //    super(props); // boilerplate line that needs to be in the constructor
+   // }
 
    upsertPick(game_id, group_id, pick) {
       // TODO: do not allow changing of pick if game has already started on client (already have server side check)

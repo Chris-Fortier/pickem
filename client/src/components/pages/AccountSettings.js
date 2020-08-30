@@ -5,6 +5,10 @@ import { connect } from "react-redux";
 import axios from "axios";
 // import jwtDecode from "jwt-decode";
 import isEmpty from "lodash/isEmpty";
+import {
+   MAX_USER_NAME_LENGTH,
+   MAX_USER_INITIALS_LENGTH,
+} from "../../utils/helpers";
 
 class AccountSettings extends React.Component {
    constructor(props) {
@@ -15,8 +19,9 @@ class AccountSettings extends React.Component {
          messageFromServer: "",
 
          // errors
-         newUserNameError: "",
          currentPasswordError: "",
+         newUserNameError: "",
+         newInitialsError: "",
          newPasswordError: "",
       };
    }
@@ -34,8 +39,9 @@ class AccountSettings extends React.Component {
    clearMessageAndErrors() {
       this.setState({
          messageFromServer: "",
-         newUserNameError: "",
          currentPasswordError: "",
+         newUserNameError: "",
+         newInitialsError: "",
          newPasswordError: "",
       });
    }
@@ -77,6 +83,48 @@ class AccountSettings extends React.Component {
             // push errors or lack thereof to state
             this.setState({
                newUserNameError,
+               currentPasswordError,
+            });
+         });
+   }
+
+   // tests if the new initials and password are valid and if so changes initials
+   async validateAndChangeInitials(initialsInput, passwordInput) {
+      // create the object that will be the body that is sent
+      const submission = {
+         newInitials: initialsInput,
+         password: passwordInput, // send the plain text password over secure connection, the server will hash it
+      };
+
+      // post to API
+      axios
+         .put("api/v1/users/set-initials", submission)
+         .then((res) => {
+            const oldInitials = this.props.currentUser.initials; // storing old name so I can put it in the message
+            // send the user with new name to Redux
+            this.props.currentUser.initials = initialsInput;
+            this.props.dispatch({
+               type: actions.UPDATE_CURRENT_USER,
+               payload: this.props.currentUser,
+            });
+
+            // TODO: local token is not updated with the new initials, but I don't think I am using that initials for anything
+            // if they refresh it will put the initials from token in currentUser
+
+            this.clearMessageAndErrors();
+            this.setState({
+               messageFromServer: `User initials changed from ${oldInitials} to ${initialsInput}`,
+               mode: "account-settings-menu",
+            });
+         })
+         .catch((err) => {
+            const data = err.response.data;
+            console.log("err", data);
+            const { newInitialsError, currentPasswordError } = data;
+
+            // push errors or lack thereof to state
+            this.setState({
+               newInitialsError,
                currentPasswordError,
             });
          });
@@ -132,6 +180,16 @@ class AccountSettings extends React.Component {
             >
                Change User Name...
             </button>
+            <button
+               type="button"
+               className="btn btn-secondary btn-block"
+               onClick={() => {
+                  this.clearMessageAndErrors();
+                  this.setState({ mode: "change-initials" });
+               }}
+            >
+               Change Initials...
+            </button>
          </>
       );
    }
@@ -148,6 +206,7 @@ class AccountSettings extends React.Component {
                      className="form-control"
                      id="new-user-name-input"
                      placeholder={this.props.currentUser.user_name}
+                     maxLength={MAX_USER_NAME_LENGTH}
                   />
                   {this.state.newUserNameError && (
                      <div className="text-danger">
@@ -180,6 +239,66 @@ class AccountSettings extends React.Component {
                   }
                >
                   Change User Name
+               </div>
+               <div
+                  className="btn btn-secondary mt-3"
+                  onClick={() => {
+                     this.clearMessageAndErrors();
+                     this.setState({ mode: "account-settings-menu" });
+                  }}
+               >
+                  Cancel
+               </div>
+            </form>
+         </>
+      );
+   }
+
+   renderChangeInitials() {
+      return (
+         <>
+            <h5>Change Initials</h5>
+            <form>
+               <div className="form-group">
+                  <label htmlFor="new-initials-input">New Initials</label>
+                  <input
+                     type="text"
+                     className="form-control"
+                     id="new-initials-input"
+                     placeholder={this.props.currentUser.initials}
+                     maxLength={MAX_USER_INITIALS_LENGTH}
+                  />
+                  {this.state.newInitialsError && (
+                     <div className="text-danger">
+                        {this.state.newInitialsError}
+                     </div>
+                  )}
+               </div>
+               <div className="form-group">
+                  <label htmlFor="password-input">Password</label>
+                  <input
+                     type="password"
+                     className="form-control"
+                     id="password-input"
+                     placeholder="Enter your password"
+                  />
+                  {this.state.currentPasswordError && (
+                     <div className="text-danger" id="password-error">
+                        {this.state.currentPasswordError}
+                     </div>
+                  )}
+               </div>
+               <div
+                  // type="submit"
+                  className="btn btn-primary btn-block"
+                  onClick={() =>
+                     this.validateAndChangeInitials(
+                        document.getElementById("new-initials-input").value,
+                        document.getElementById("password-input").value
+                     )
+                  }
+               >
+                  Change Initials
                </div>
                <div
                   className="btn btn-secondary mt-3"
@@ -281,6 +400,8 @@ class AccountSettings extends React.Component {
                               this.renderAccountSettingsMenu()}
                            {this.state.mode === "change-user-name" &&
                               this.renderChangeUserName()}
+                           {this.state.mode === "change-initials" &&
+                              this.renderChangeInitials()}
                            {this.state.mode === "change-password" &&
                               this.renderChangePassword()}
                         </div>

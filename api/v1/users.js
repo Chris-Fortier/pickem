@@ -8,6 +8,7 @@ const selectUserById = require("../../queries/selectUserById");
 const selectUserByUserName = require("../../queries/selectUserByUserName");
 const deleteUser = require("../../queries/deleteUser");
 const setUserUserName = require("../../queries/setUserUserName");
+const setUserInitials = require("../../queries/setUserInitials");
 const setUserPassword = require("../../queries/setUserPassword");
 const { toHash, TOKEN_EXPIRE_TIME } = require("../../utils/helpers");
 const getSignUpUserNameError = require("../../validation/getSignUpUserNameError");
@@ -248,6 +249,48 @@ router.put("/set-user-name", validateJwt, async (req, res) => {
       // return a 400 error to user
       res.status(400).json({
          newUserNameError,
+         currentPasswordError,
+      });
+   }
+});
+
+// @route      PUT api/v1/users/set-initials
+// @desc       change a user's initials
+// @access     Private
+// test:
+router.put("/set-initials", validateJwt, async (req, res) => {
+   const { newInitials, password } = req.body; // grabbing variables from req.body
+   const userId = req.user.id; // get the user id from the JWT
+   console.log({ userId });
+   const newInitialsError = await getSignUpInitialsError(newInitials); // check to see if the new initials is valid
+   console.log({ newInitialsError });
+   const currentPasswordError = await checkPasswordAgainstUserId(
+      password,
+      userId
+   ); // check to see if the password submitted is correct
+   console.log({
+      userId,
+      newInitialsError,
+      currentPasswordError,
+   });
+
+   if (newInitialsError === "" && currentPasswordError === "") {
+      // if it gets this far, initials can be changed
+      console.log("initials can be changed");
+
+      db.query(setUserInitials, [newInitials, userId])
+         .then((dbRes) => {
+            console.log("dbRes", dbRes);
+            res.status(200).json("initials changed to " + newInitials);
+         })
+         .catch((err) => {
+            console.log("err", err);
+            res.status(400).json(err);
+         });
+   } else {
+      // return a 400 error to user
+      res.status(400).json({
+         newInitialsError,
          currentPasswordError,
       });
    }

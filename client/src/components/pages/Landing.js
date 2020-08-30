@@ -3,6 +3,10 @@ import actions from "../../store/actions";
 import { connect } from "react-redux";
 import axios from "axios";
 import jwtDecode from "jwt-decode";
+import {
+   MAX_USER_NAME_LENGTH,
+   MAX_USER_INITIALS_LENGTH,
+} from "../../utils/helpers";
 
 class Landing extends React.Component {
    constructor(props) {
@@ -150,7 +154,7 @@ class Landing extends React.Component {
                         className="form-control"
                         id="user-name-input"
                         placeholder="Enter your user name"
-                        maxLength="24" // TODO: make these utils constants
+                        // maxLength={MAX_USER_NAME_LENGTH} no max length for existing users
                      />
                      {this.state.currentUserNameError && (
                         <div className="text-danger">
@@ -215,7 +219,7 @@ class Landing extends React.Component {
                         className="form-control"
                         id="user-name-input"
                         placeholder="Enter a new user name"
-                        maxLength="24"
+                        maxLength={MAX_USER_NAME_LENGTH}
                      />
                      {this.state.newUserNameError && (
                         <div className="text-danger">
@@ -230,7 +234,7 @@ class Landing extends React.Component {
                         className="form-control"
                         id="initials-input"
                         placeholder="Enter your initials"
-                        maxLength="3"
+                        maxLength={MAX_USER_INITIALS_LENGTH}
                      />
                      {this.state.newInitialsError && (
                         <div className="text-danger">

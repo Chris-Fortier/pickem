@@ -1,10 +1,10 @@
 import React from "react";
 import NavBar from "../ui/NavBar";
-import actions from "../../store/actions";
+// import actions from "../../store/actions";
 import { connect } from "react-redux";
 import axios from "axios";
-import toDisplayDate from "date-fns/format";
-import Pick from "../ui/Pick";
+// import toDisplayDate from "date-fns/format";
+// import Pick from "../ui/Pick";
 import isEmpty from "lodash/isEmpty";
 
 const group_id = "3fd8d78c-8151-4145-b276-aea3559deb76";
@@ -51,7 +51,7 @@ class GroupPicks extends React.Component {
             const group_user_initials = []; // an array of user initials
             const match_ups = []; // an array of objects (one object per game with a pick for each user)
             const game_ids = [];
-            const num_completed_games = 0;
+            let num_completed_games = 0;
 
             for (let i in game_user_picks) {
                if (!group_user_names.includes(game_user_picks[i].user_name)) {
@@ -111,6 +111,7 @@ class GroupPicks extends React.Component {
                group_user_names,
                group_user_initials,
                match_ups,
+               num_completed_games,
             });
          })
          .catch((err) => {
