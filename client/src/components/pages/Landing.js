@@ -180,6 +180,7 @@ class Landing extends React.Component {
                      onClick={() => {
                         this.clearErrors();
                         this.setState({ mode: "sign-up" });
+                        window.scrollTo(0, 0); // sets focus to the top of the page
                      }}
                   >
                      Make a new account
@@ -229,12 +230,12 @@ class Landing extends React.Component {
                   <div
                      // type="submit"
                      className="btn btn-primary btn-block"
-                     onClick={() =>
+                     onClick={() => {
                         this.validateAndCreateUser(
                            document.getElementById("user-name-input").value,
                            document.getElementById("password-input").value
-                        )
-                     }
+                        );
+                     }}
                   >
                      Sign up
                   </div>
@@ -243,6 +244,7 @@ class Landing extends React.Component {
                      onClick={() => {
                         this.clearErrors();
                         this.setState({ mode: "log-in" });
+                        window.scrollTo(0, 0); // sets focus to the top of the page
                      }}
                   >
                      Use an existing account

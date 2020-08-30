@@ -134,9 +134,11 @@ router.post("/auth", async (req, res) => {
 
             // this contains the user, a secret and the timeframe
             // 1m for testing, could be longer like 3h, 7d etc
-            const accessToken = jwt.sign(user, process.env.JWT_ACCESS_SECRET, {
-               expiresIn: TOKEN_EXPIRE_TIME,
-            });
+            const accessToken = jwt.sign(
+               user,
+               process.env.JWT_ACCESS_SECRET
+               //{expiresIn: TOKEN_EXPIRE_TIME,}
+            );
 
             // enter new last login
             db.query(setUserLastLoginAt, [currentDateTime, users[0].id])

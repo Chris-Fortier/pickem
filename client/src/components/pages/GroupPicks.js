@@ -49,6 +49,7 @@ class GroupPicks extends React.Component {
             const group_user_names = []; // an array of user names
             const match_ups = []; // an array of objects (one object per game with a pick for each user)
             const game_ids = [];
+            const num_completed_games = 0;
 
             for (let i in game_user_picks) {
                if (!group_user_names.includes(game_user_picks[i].user_name)) {
@@ -66,6 +67,9 @@ class GroupPicks extends React.Component {
                      winner: game_user_picks[i].winner,
                      picks: {}, // empty object to store all the picks as key (user_name) value (pick) pairs
                   });
+                  if (game_user_picks[i].winner !== null) {
+                     num_completed_games++;
+                  }
                }
 
                // set the label of the pick
@@ -80,12 +84,23 @@ class GroupPicks extends React.Component {
                   pick_label = "-";
                }
 
+               // get the result of the pick
+               let pick_result = null;
+               if (game_user_picks[i].winner !== null) {
+                  if (game_user_picks[i].pick === game_user_picks[i].winner) {
+                     pick_result = true;
+                  } else {
+                     pick_result = false;
+                  }
+               }
+
                // find the match_up that this game_user_pick refers to and add the pick to it
                match_ups.find((match_up) => {
                   return match_up.game_id === game_user_picks[i].game_id;
                }).picks[game_user_picks[i].user_name] = {
                   pick: game_user_picks[i].pick,
                   pick_label,
+                  pick_result,
                };
             }
 
@@ -103,61 +118,60 @@ class GroupPicks extends React.Component {
    render() {
       return (
          <>
-            <NavBar />
-            <div className="container">
+            {/* <NavBar /> */}
+            {/* <div className="container">
                <div className="row">
                   <div className="col-12">
                      <div className="card mt-5 mb-5">
                         <div className="card-header">
                            <h2>Group Picks For Week {week}</h2>
                         </div>
-                        <div className="card-body">
-                           <table className="table table-dark">
-                              <thead>
-                                 <tr>
-                                    <th scope="col">Game</th>
-                                    {/* list the user names across the top of the table */}
-                                    {this.state.group_user_names.map(
-                                       (user_name) => {
-                                          return (
-                                             <th scope="col">{user_name}</th>
-                                          );
-                                       }
-                                    )}
-                                 </tr>
-                              </thead>
-                              <tbody>
-                                 {/* each game of the week has one row */}
-                                 {this.state.match_ups.map((match_up) => {
-                                    return (
-                                       <tr>
-                                          <th scope="row">{match_up.title}</th>
-                                          {this.state.group_user_names.map(
-                                             (user_name) => {
-                                                return (
-                                                   <td>
-                                                      {
-                                                         match_up.picks[
-                                                            user_name
-                                                         ].pick_label
-                                                      }
-                                                   </td>
-                                                );
-                                             }
-                                          )}
-                                          {/* <td>Mark</td>
+                        <div className="card-body"> */}
+            {/* <div className="table-responsive"> */}
+            {/* <table className="table table-dark table-striped"> */}
+            <div className="my-table-container">
+               <NavBar />
+               <div className="card card-header">
+                  <h2>Group Picks For Week {week}</h2>
+               </div>
+               <table className="table-dark table-striped">
+                  <thead>
+                     <tr>
+                        <th scope="col">Game</th>
+                        {/* list the user names across the top of the table */}
+                        {this.state.group_user_names.map((user_name) => {
+                           return <th scope="col">{user_name}</th>;
+                        })}
+                     </tr>
+                  </thead>
+                  <tbody>
+                     {/* each game of the week has one row */}
+                     {this.state.match_ups.map((match_up) => {
+                        return (
+                           <tr>
+                              <th scope="row">{match_up.title}</th>
+                              {this.state.group_user_names.map((user_name) => {
+                                 return (
+                                    <td>
+                                       {match_up.picks[user_name].pick_label}
+                                    </td>
+                                 );
+                              })}
+                              {/* <td>Mark</td>
                                        <td>Otto</td>
                                        <td>@mdo</td> */}
-                                       </tr>
-                                    );
-                                 })}
-                              </tbody>
-                           </table>
-                        </div>
+                           </tr>
+                        );
+                     })}
+                  </tbody>
+               </table>
+            </div>
+            {/* </div> */}
+            {/* </div>
                      </div>
                   </div>
                </div>
-            </div>
+            </div> */}
          </>
       );
    }
