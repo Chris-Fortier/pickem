@@ -43,11 +43,10 @@ if (authToken) {
       // set authorization headers for every request
       axios.defaults.headers.common["x-auth-token"] = authToken;
 
-      // // redirect to default page if they are currently logged in, this is in an if statement so it won't keep refreshing forever
-      // if (window.location.pathname === "/") {
-      //    window.location.href = "/loadout-list"; // so if the user goes to our website with a valid token, they will go here
-      //    // TODO, this needs to depend on the type of user
-      // }
+      // redirect to default page if they are currently logged in, this is in an if statement so it won't keep refreshing forever
+      if (window.location.pathname === "/") {
+         window.location.href = "/my-picks"; // so if the user goes to our website with a valid token, they will go here
+      }
    }
 } else {
    console.log("no token");
