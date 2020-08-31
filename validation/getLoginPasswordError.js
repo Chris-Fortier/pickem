@@ -2,21 +2,23 @@ const db = require("../db");
 const selectUserByUserName = require("../queries/selectUserByUserName");
 const bcrypt = require("bcrypt");
 
-module.exports = async function getSignUpPasswordError(password, user_name) {
+module.exports = async function getLoginPasswordError(password, user_name) {
+   console.log("getLoginPasswordError()...");
    if (password === "") {
       // check if password input is blank
       return "Please enter your password.";
    }
-   if ((await checkIsValidUser(user_name, password)) === false) {
-      return "The user_name and/or password you entered is invalid.";
+   if (await checkIsValidUser(user_name, password)) {
+      return "";
    }
-   return "";
+   return "The user_name and/or password you entered is invalid.";
 };
 
 function checkIsValidUser(user_name, password) {
    // get the user by user_name
    // compare user.password with password
    // if a match, return true, else false
+   console.log("checkIsValidUser()...");
    return db
       .query(selectUserByUserName, user_name)
       .then(async (users) => {
