@@ -1,6 +1,7 @@
 import React from "react";
 import NavBar from "../ui/NavBar";
 import { connect } from "react-redux";
+import classnames from "classnames";
 
 class GroupPicks extends React.Component {
    render() {
@@ -33,7 +34,14 @@ class GroupPicks extends React.Component {
                         {/* list the user names across the top of the table */}
                         {this.props.groupPicks.group_user_initials.map(
                            (user_initials) => {
-                              return <th scope="col">{user_initials}</th>;
+                              return (
+                                 <th
+                                    scope="col"
+                                    style={{ "text-align": "center" }}
+                                 >
+                                    {user_initials}
+                                 </th>
+                              );
                            }
                         )}
                      </tr>
@@ -47,7 +55,19 @@ class GroupPicks extends React.Component {
                               {this.props.groupPicks.group_user_names.map(
                                  (user_name) => {
                                     return (
-                                       <td>
+                                       <td
+                                          className={classnames({
+                                             "locked-pick-group":
+                                                match_up.game_at < Date.now(),
+                                             "correct-pick-group":
+                                                match_up.picks[user_name]
+                                                   .pick_result === true,
+                                             "incorrect-pick-group":
+                                                match_up.picks[user_name]
+                                                   .pick_result === false,
+                                          })}
+                                          style={{ "text-align": "center" }}
+                                       >
                                           {match_up.picks[user_name].pick_label}
                                        </td>
                                     );

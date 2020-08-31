@@ -96,20 +96,66 @@ td {
 //    color: $white;
 // }
 
-.pick-team {
+// base style for each team in a match up
+.team-choice {
    width: 50%;
    padding-left: 4px;
    padding-right: 4px;
-   border: 3px solid hsla(0, 0, 0, 0);
+   border: 3px solid $non-pick-color;
    margin-bottom: 4px;
+   cursor: not-allowed;
+}
+.team-choice.pickable {
+   cursor: pointer;
+}
+.team-choice.pickable:hover {
+   border: 3px solid $non-pick-color-hover;
+}
+.team-choice.pickable:active {
+   border: 3px solid $non-pick-color-active;
 }
 
-.pick-team-selected {
-   border: 3px solid $white;
+.team-choice-picked {
+   border: 3px solid $pick-color;
+}
+.team-choice-picked.pickable {
+   cursor: pointer;
+}
+.team-choice-picked.pickable:hover {
+   border: 3px solid $pick-color-hover;
+}
+.team-choice-picked.pickable:active {
+   border: 3px solid $pick-color-active;
 }
 
-.pick-team-winner {
+// style for any game that has started
+.team-choice.started {
+   font-weight: bold;
+}
+
+// style for the winning team if you picked it on my picks
+.team-choice-winner {
    background-color: $green;
+   color: $white;
+}
+
+// style for the winning team if you didn't pick it on my picks
+.team-choice-loser {
+   background-color: $red;
+   // background-color: transparentize($red, 0.5);
+   color: $white;
+}
+
+.locked-pick-group {
+   background-color: transparentize($navy, 0.5);
+}
+
+.correct-pick-group {
+   background-color: transparentize($green, 0.5);
+}
+
+.incorrect-pick-group {
+   background-color: transparentize($red, 0.5);
 }
 
 .right {

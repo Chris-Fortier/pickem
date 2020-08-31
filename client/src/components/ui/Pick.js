@@ -6,13 +6,8 @@ import classnames from "classnames";
 import axios from "axios";
 
 class Pick extends React.Component {
-   // constructor(props) {
-   //    super(props); // boilerplate line that needs to be in the constructor
-   // }
-
+   // only allow changing of pick if game has not stated yet (has server side check too)
    upsertPick(game_id, group_id, pick) {
-      // TODO: do not allow changing of pick if game has already started on client (already have server side check)
-
       // get the previous pick value
       const prev_pick = this.props.pick.pick;
 
@@ -48,20 +43,28 @@ class Pick extends React.Component {
    }
 
    render() {
+      const is_pickable = this.props.pick.game_at > Date.now(); // whether or not you can pick this game
       return (
          <div className="d-flex">
             <div
                className={classnames({
-                  "pick-team right": true,
-                  "pick-team-selected": this.props.pick.pick === 0,
-                  "pick-team-winner": this.props.pick.winner === 0,
+                  "team-choice right": true,
+                  "team-choice-picked": this.props.pick.pick === 0,
+                  "team-choice-winner":
+                     this.props.pick.winner === 0 && this.props.pick.pick === 0,
+                  "team-choice-loser":
+                     this.props.pick.winner === 0 && this.props.pick.pick === 1,
+                  pickable: is_pickable,
+                  started: !is_pickable,
                })}
                onClick={() => {
-                  this.upsertPick(
-                     this.props.pick.game_id,
-                     this.props.pick.group_id,
-                     0
-                  );
+                  if (is_pickable) {
+                     this.upsertPick(
+                        this.props.pick.game_id,
+                        this.props.pick.group_id,
+                        0
+                     );
+                  }
                }}
             >
                {teamNames[this.props.pick.away_team]}
@@ -69,16 +72,23 @@ class Pick extends React.Component {
             &nbsp;@&nbsp;
             <div
                className={classnames({
-                  "pick-team": true,
-                  "pick-team-selected": this.props.pick.pick === 1,
-                  "pick-team-winner": this.props.pick.winner === 1,
+                  "team-choice": true,
+                  "team-choice-picked": this.props.pick.pick === 1,
+                  "team-choice-winner":
+                     this.props.pick.winner === 1 && this.props.pick.pick === 1,
+                  "team-choice-loser":
+                     this.props.pick.winner === 1 && this.props.pick.pick === 0,
+                  pickable: is_pickable,
+                  started: !is_pickable,
                })}
                onClick={() => {
-                  this.upsertPick(
-                     this.props.pick.game_id,
-                     this.props.pick.group_id,
-                     1
-                  );
+                  if (is_pickable) {
+                     this.upsertPick(
+                        this.props.pick.game_id,
+                        this.props.pick.group_id,
+                        1
+                     );
+                  }
                }}
             >
                {teamNames[this.props.pick.home_team]}
