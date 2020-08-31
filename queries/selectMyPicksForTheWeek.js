@@ -9,12 +9,12 @@ SELECT
     \`pick\`,
     \`winner\`
 FROM
-    \`games\`
-        LEFT JOIN
-    \`picks\` ON \`games\`.\`id\` = \`picks\`.\`game_id\`
-        WHERE \`user_id\` = ?
-        AND \`season\` = ?
-        AND \`week\` = ?;
+    \`picks\`
+        RIGHT JOIN
+    \`games\` ON \`games\`.\`id\` = \`picks\`.\`game_id\`
+        AND \`user_id\` = ?
+WHERE
+    \`season\` = ? AND \`week\` = ?;
 `;
 
 module.exports = selectMyPicksForTheWeek;

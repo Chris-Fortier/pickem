@@ -1,15 +1,15 @@
 import React from "react";
 import NavBar from "../ui/NavBar";
-import actions from "../../store/actions";
+// import actions from "../../store/actions";
 import { connect } from "react-redux";
-import axios from "axios";
+// import axios from "axios";
 import toDisplayDate from "date-fns/format";
 import Pick from "../ui/Pick";
-import isEmpty from "lodash/isEmpty";
+// import isEmpty from "lodash/isEmpty";
 
-const group_id = "3fd8d78c-8151-4145-b276-aea3559deb76";
-const season = 2020;
-const week = 1;
+// const group_id = "3fd8d78c-8151-4145-b276-aea3559deb76";
+// const season = 2020;
+// const week = 1;
 
 class MyPicks extends React.Component {
    constructor(props) {
@@ -18,36 +18,17 @@ class MyPicks extends React.Component {
       this.state = {};
    }
 
-   // this is a "lifecycle" method like render(), we don't need to call it manually
-   componentDidMount() {
-      // if there is not user logged in
-      if (isEmpty(this.props.currentUser)) {
-         // send to landing page
-         this.props.history.push("/");
-      } else {
-         // do what needs to be done when loading the page
-         this.getMyPicks();
-      }
-   }
-
-   getMyPicks() {
-      // get my picks from the API
-      axios
-         .get(
-            `/api/v1/picks?group_id=${group_id}&season=${season}&week=${week}`
-         )
-         .then((res) => {
-            // send the data to Redux
-            this.props.dispatch({
-               type: actions.STORE_MY_PICKS,
-               payload: res.data,
-            });
-         })
-         .catch((err) => {
-            const data = err.response.data;
-            console.log("err", data);
-         });
-   }
+   // // this is a "lifecycle" method like render(), we don't need to call it manually
+   // componentDidMount() {
+   //    // if there is not user logged in
+   //    if (isEmpty(this.props.currentUser)) {
+   //       // send to landing page
+   //       this.props.history.push("/");
+   //    } else {
+   //       // do what needs to be done when loading the page
+   //       this.getMyPicks();
+   //    }
+   // }
 
    render() {
       let rollingDate = 0; // for keeping track when a game is on a new date
@@ -55,13 +36,16 @@ class MyPicks extends React.Component {
       let renderTime = true;
       return (
          <>
-            <NavBar />
+            <NavBar parentProps={this.props} />
             <div className="container">
                <div className="row">
                   <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
                      <div className="card mt-5 mb-5">
                         <div className="card-header">
-                           <h2>My Picks For Week {week}</h2>
+                           <h2>
+                              My Picks For Week{" "}
+                              {this.props.groupSeasonWeek.week}
+                           </h2>
                         </div>
                         <div className="card-body">
                            {this.props.myPicks.map((pick) => {
@@ -108,7 +92,11 @@ class MyPicks extends React.Component {
 
 // maps the Redux store/state to props
 function mapStateToProps(state) {
-   return { myPicks: state.myPicks, currentUser: state.currentUser };
+   return {
+      currentUser: state.currentUser,
+      groupSeasonWeek: state.groupSeasonWeek,
+      myPicks: state.myPicks,
+   };
 }
 
 export default connect(mapStateToProps)(MyPicks);

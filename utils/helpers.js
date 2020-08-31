@@ -24,6 +24,7 @@ module.exports = {
 
    // returns a hashed version of a given password
    toHash(myPlaintextPassword) {
+      SALT_ROUNDS = 12;
       return bcrypt.hash(myPlaintextPassword, SALT_ROUNDS);
    },
 
@@ -66,5 +67,4 @@ module.exports = {
    EMAIL_REGEX: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
    PHONE_REGEX: /^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/, // https://regexlib.com Laurence O'Donnell
    TOKEN_EXPIRE_TIME: "3h",
-   SALT_ROUNDS: 12,
 };

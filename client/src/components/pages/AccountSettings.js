@@ -379,7 +379,7 @@ class AccountSettings extends React.Component {
    render() {
       return (
          <>
-            <NavBar />
+            <NavBar parentProps={this.props} />
             <div className="container">
                <div className="row">
                   <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">

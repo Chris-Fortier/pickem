@@ -3,6 +3,8 @@
 // we use screaming snake case to show that this is a global thing
 const actions = {
    UPDATE_CURRENT_USER: "UPDATE_CURRENT_USER",
+   SET_GROUP_SEASON_WEEK: "SET_GROUP_SEASON_WEEK",
+   STORE_GROUP_PICKS: "STORE_GROUP_PICKS",
    STORE_MY_PICKS: "STORE_MY_PICKS",
 };
 

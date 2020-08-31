@@ -55,12 +55,12 @@ SELECT
     `pick`,
     `winner`
 FROM
-    `games`
-        LEFT JOIN
-    `picks` ON `games`.`id` = `picks`.`game_id`
-        WHERE `user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc'
-        AND `season` = 2020
-        AND `week` = 1;
+    `picks`
+        RIGHT JOIN
+    `games` ON `games`.`id` = `picks`.`game_id`
+        AND `user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc'
+WHERE
+    `season` = 2020 AND `week` = 2;
         
 -- get all picks for the week for the entire group
 -- user picks are shown but for games that haven't started yet it only shows if picks have been made (null means no pick, 0 means visitor, 1 means home, 2 means pick made but other user and game hasn't started yet) 
