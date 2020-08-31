@@ -7,6 +7,7 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
+import classnames from "classnames";
 
 class NavBar extends React.Component {
    // this is a "lifecycle" method like render(), we don't need to call it manually
@@ -219,10 +220,24 @@ class NavBar extends React.Component {
                      {/* <Nav.Link href="/my-picks">My Picks</Nav.Link>
                      <Nav.Link href="/group-picks">Group Picks</Nav.Link> */}
                      {/* using standard react-router Link makes it not refresh the page when loading */}
-                     <Link to="/my-picks" className="nav-link">
+                     <Link
+                        to="/my-picks"
+                        className={classnames({
+                           "nav-link": true,
+                           "selected-nav-page":
+                              window.location.pathname === "/my-picks",
+                        })}
+                     >
                         My Picks
                      </Link>
-                     <Link to="/group-picks" className="nav-link">
+                     <Link
+                        to="/group-picks"
+                        className={classnames({
+                           "nav-link": true,
+                           "selected-nav-page":
+                              window.location.pathname === "/group-picks",
+                        })}
+                     >
                         Group Picks
                      </Link>
                      {/* <Nav.Link href="/group-leader-board">
@@ -234,6 +249,10 @@ class NavBar extends React.Component {
                         title={this.props.currentUser.user_name}
                         id="collapsible-nav-dropdown"
                         alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
+                        // className={classnames({
+                        //    "selected-nav-page":
+                        //       window.location.pathname === "/account-settings",
+                        // })}
                      >
                         <Link to="/account-settings" className="dropdown-item">
                            Account Settings
