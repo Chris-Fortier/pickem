@@ -127,7 +127,7 @@ td {
    // min-width: 100%; // cjf
    // max-height: 150px;
    max-height: 100vh; // cjf
-   // overflow: scroll;
+   overflow: scroll;
 }
 
 thead th {
@@ -142,8 +142,14 @@ tbody th {
    position: -webkit-sticky; /* for Safari */
    position: sticky;
    left: 0;
+   width: 100px; // cjf
    min-width: 100px; // cjf
    background: #000; // cjf
+}
+
+.lock-x-pos {
+   position: sticky;
+   left: 0;
 }
 
 /* To have the header in the first column stick to the left: */

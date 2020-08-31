@@ -118,7 +118,7 @@ class NavBar extends React.Component {
                   } else if (game_user_picks[i].pick === 1) {
                      pick_label = game_user_picks[i].home_team;
                   } else if (game_user_picks[i].pick === 2) {
-                     pick_label = "picked";
+                     pick_label = "pick";
                   } else if (game_user_picks[i].pick === null) {
                      pick_label = "-";
                   }

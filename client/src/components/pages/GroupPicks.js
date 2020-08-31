@@ -18,11 +18,13 @@ class GroupPicks extends React.Component {
             {/* <div className="table-responsive"> */}
             {/* <table className="table table-dark table-striped"> */}
             <div className="my-table-container">
-               <NavBar parentProps={this.props} />
-               <div className="card card-header">
-                  <h2>
-                     Group Picks For Week {this.props.groupSeasonWeek.week}
-                  </h2>
+               <div className="lock-x-pos">
+                  <NavBar parentProps={this.props} />
+                  <div className="card card-header">
+                     <h2>
+                        Group Picks For Week {this.props.groupSeasonWeek.week}
+                     </h2>
+                  </div>
                </div>
                <table className="table-dark table-striped">
                   <thead>
