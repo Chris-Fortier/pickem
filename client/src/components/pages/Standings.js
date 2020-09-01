@@ -29,17 +29,21 @@ class Standings extends React.Component {
                         <div className="card-body">
                            <table style={{ width: "100%" }}>
                               <tr>
-                                 <th>Rank</th>
-                                 <th>User Name</th>
-                                 <th>Picks</th>
-                                 <th>Behind</th>
+                                 {/* <th>Rank</th> */}
+                                 <th>Player</th>
+                                 <th>CP</th>
+                                 <th>PB</th>
                               </tr>
                               {this.props.standings.map((user) => {
                                  return (
-                                    <tr>
-                                       <td>{user.rank}</td>
+                                    <tr
+                                       style={{
+                                          "border-top": "gray 1px solid",
+                                       }}
+                                    >
                                        <td>
-                                          {user.user_name} ({user.initials})
+                                          {user.rank}.&nbsp;{user.user_name}
+                                          &nbsp;({user.initials})
                                        </td>
                                        <td>{user.num_correct}</td>
                                        <td>{user.num_behind}</td>

@@ -193,7 +193,7 @@ class NavBar extends React.Component {
                   }
                   standings[i].rank = current_rank;
                   standings[i].num_behind =
-                     leader_num_correct - standings[i].num_correct;
+                     standings[i].num_correct - leader_num_correct;
                }
                console.log(3);
                // send the data to Redux
