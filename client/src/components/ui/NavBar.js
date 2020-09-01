@@ -8,6 +8,13 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
 import classnames from "classnames";
+import { logOutCurrentUser } from "../../utils/helpers";
+
+const defaultGroupSeasonWeek = {
+   group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
+   season: 2020,
+   week: 1,
+};
 
 class NavBar extends React.Component {
    // this is a "lifecycle" method like render(), we don't need to call it manually
@@ -17,28 +24,17 @@ class NavBar extends React.Component {
          this.props.parentProps.history.push("/");
       }
 
-      this.getData(this.props.groupSeasonWeek);
-   }
+      // set the default groupSeasonWeek if there is no data there
+      if (isEmpty(this.props.groupSeasonWeek)) {
+         this.props.dispatch({
+            type: actions.SET_GROUP_SEASON_WEEK,
+            payload: defaultGroupSeasonWeek,
+         });
 
-   logOutCurrentUser() {
-      // clear reducers from Redux
-      console.log("log out");
-      this.props.dispatch({
-         type: actions.UPDATE_CURRENT_USER,
-         payload: {}, // empty user object
-      });
-      this.props.dispatch({
-         type: actions.SET_GROUP_SEASON_WEEK,
-         payload: {}, // empty
-      });
-      this.props.dispatch({
-         type: actions.STORE_MY_PICKS,
-         payload: [], // empty
-      });
-      this.props.dispatch({
-         type: actions.STORE_GROUP_PICKS,
-         payload: {}, // empty
-      });
+         this.getData(defaultGroupSeasonWeek);
+      } else {
+         this.getData(this.props.groupSeasonWeek);
+      }
    }
 
    // change any property in the groupSeasonWeek
@@ -257,14 +253,15 @@ class NavBar extends React.Component {
                         <Link to="/account-settings" className="dropdown-item">
                            Account Settings
                         </Link>
-                        <NavDropdown.Item
-                           href="/"
+                        <Link
+                           className="dropdown-item"
+                           to="/"
                            onClick={() => {
-                              this.logOutCurrentUser();
+                              logOutCurrentUser();
                            }}
                         >
                            Log Out
-                        </NavDropdown.Item>
+                        </Link>
                      </NavDropdown>
                   </Nav>
                </Navbar.Collapse>

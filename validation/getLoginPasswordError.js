@@ -11,7 +11,7 @@ module.exports = async function getLoginPasswordError(password, user_name) {
    if (await checkIsValidUser(user_name, password)) {
       return "";
    }
-   return "The user_name and/or password you entered is invalid.";
+   return "The user name and/or password you entered is invalid.";
 };
 
 function checkIsValidUser(user_name, password) {

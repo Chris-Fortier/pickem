@@ -69,6 +69,22 @@ textarea,
    border: 2px solid darken($navy, $active-darken) !important;
 }
 
+.btn-danger {
+   background-color: $red;
+   color: $white;
+   border: 2px solid $navy;
+}
+.btn-danger:hover {
+   background-color: darken($red, $hover-darken);
+   color: darken($white, $hover-darken);
+   border: 2px solid darken($navy, $hover-darken);
+}
+.btn-danger:active {
+   background-color: darken($red, $active-darken) !important;
+   color: darken($white, $active-darken) !important;
+   border: 2px solid darken($navy, $active-darken) !important;
+}
+
 .card {
    background-color: $gray;
 }

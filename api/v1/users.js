@@ -177,19 +177,16 @@ router.post("/auth", async (req, res) => {
 // @access     Private
 // test:
 router.put("/delete", validateJwt, async (req, res) => {
-   console.log("req.body", req.body);
-   const { password } = req.body; // grabbing variable from req.body
+   const { currentPassword } = req.body; // grabbing variable from req.body
    const userId = req.user.id; // get the user id from the JWT
 
-   const deleteAccountPasswordError = await checkPasswordAgainstUserId(
-      password,
+   const currentPasswordError = await checkPasswordAgainstUserId(
+      currentPassword,
       userId
    ); // check to see if the password submitted is correct
 
-   if (deleteAccountPasswordError === "") {
+   if (currentPasswordError === "") {
       // if it gets this far, user_name can be changed
-
-      // TODO: can probably do the first part by doing something with foreign keys and cascading
 
       db.query(deleteUser, [userId])
          .then((dbRes) => {
@@ -202,9 +199,9 @@ router.put("/delete", validateJwt, async (req, res) => {
          });
    } else {
       // return a 400 error to user
-      console.log({ deleteAccountPasswordError });
+      console.log({ currentPasswordError });
       res.status(400).json({
-         deleteAccountPasswordError,
+         currentPasswordError,
       });
    }
 });

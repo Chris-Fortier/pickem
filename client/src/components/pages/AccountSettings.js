@@ -8,6 +8,7 @@ import isEmpty from "lodash/isEmpty";
 import {
    MAX_USER_NAME_LENGTH,
    MAX_USER_INITIALS_LENGTH,
+   logOutCurrentUser,
 } from "../../utils/helpers";
 
 class AccountSettings extends React.Component {
@@ -71,7 +72,7 @@ class AccountSettings extends React.Component {
 
             this.clearMessageAndErrors();
             this.setState({
-               messageFromServer: `User name changed from ${oldUserName} to ${userNameInput}`,
+               messageFromServer: `User name changed from "${oldUserName}" to "${userNameInput}"`,
                mode: "account-settings-menu",
             });
          })
@@ -113,7 +114,7 @@ class AccountSettings extends React.Component {
 
             this.clearMessageAndErrors();
             this.setState({
-               messageFromServer: `User initials changed from ${oldInitials} to ${initialsInput}`,
+               messageFromServer: `User initials changed from "${oldInitials}" to "${initialsInput}"`,
                mode: "account-settings-menu",
             });
          })
@@ -156,6 +157,35 @@ class AccountSettings extends React.Component {
          });
    }
 
+   // tests if the password is valid and if so deletes the account
+   async validateAndDeleteAccount(currentPasswordInput) {
+      // create the object that will be the body that is sent
+      const submission = {
+         currentPassword: currentPasswordInput, // send the plain text password over secure connection, the server will hash it
+      };
+
+      // post to API
+      axios
+         .put("api/v1/users/delete", submission)
+         .then((res) => {
+            // const data = res.data;
+            this.clearMessageAndErrors();
+            // this.setState(data); // the data received from server has the same keywords as state variables
+            this.setState({
+               messageFromServer: "This account has been deleted",
+               mode: "account-settings-menu",
+            });
+            logOutCurrentUser();
+            this.props.history.push("/");
+         })
+         .catch((err) => {
+            const data = err.response.data;
+
+            this.clearMessageAndErrors();
+            this.setState(data); // the data received from server has the same keywords as state variables
+         });
+   }
+
    // renders the account settings menu buttons
    renderAccountSettingsMenu() {
       return (
@@ -189,6 +219,26 @@ class AccountSettings extends React.Component {
                }}
             >
                Change Initials...
+            </button>
+            <button
+               type="button"
+               className="btn btn-secondary text-danger btn-block"
+               onClick={() => {
+                  this.clearMessageAndErrors();
+                  this.setState({ mode: "delete-account" });
+               }}
+            >
+               Delete Account...
+            </button>
+            <button
+               type="button"
+               className="btn btn-secondary mt-2"
+               onClick={() => {
+                  logOutCurrentUser();
+                  this.props.history.push("/");
+               }}
+            >
+               Log out
             </button>
          </>
       );
@@ -376,6 +426,54 @@ class AccountSettings extends React.Component {
       );
    }
 
+   renderDeleteAccount() {
+      return (
+         <>
+            <h5>Delete Account</h5>
+            <form>
+               <div className="form-group">
+                  <label htmlFor="current-password-input">Password</label>
+                  <input
+                     type="password"
+                     className="form-control"
+                     id="current-password-input"
+                     placeholder="Enter your password."
+                  />
+                  {this.state.currentPasswordError && (
+                     <div className="text-danger">
+                        {this.state.currentPasswordError}
+                     </div>
+                  )}
+               </div>
+               <p>
+                  Are you sure you want to delete account&nbsp;"
+                  {this.props.currentUser.user_name}"?
+               </p>
+               <div
+                  // type="submit"
+                  className="btn btn-danger btn-block"
+                  onClick={() =>
+                     this.validateAndDeleteAccount(
+                        document.getElementById("current-password-input").value
+                     )
+                  }
+               >
+                  Delete Account
+               </div>
+               <div
+                  className="btn btn-secondary mt-3"
+                  onClick={() => {
+                     this.clearMessageAndErrors();
+                     this.setState({ mode: "account-settings-menu" });
+                  }}
+               >
+                  Cancel
+               </div>
+            </form>
+         </>
+      );
+   }
+
    render() {
       return (
          <>
@@ -404,6 +502,8 @@ class AccountSettings extends React.Component {
                               this.renderChangeInitials()}
                            {this.state.mode === "change-password" &&
                               this.renderChangePassword()}
+                           {this.state.mode === "delete-account" &&
+                              this.renderDeleteAccount()}
                         </div>
                      </div>
                   </div>
