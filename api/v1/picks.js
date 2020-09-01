@@ -7,6 +7,7 @@ const selectMyPicksForTheWeek = require("../../queries/selectMyPicksForTheWeek")
 const upsertPick = require("../../queries/upsertPick");
 const selectGame = require("../../queries/selectGame");
 const selectGroupPicksForWeek = require("../../queries/selectGroupPicksForWeek");
+const selectGroupSeasonStandings = require("../../queries/selectGroupSeasonStandings");
 
 // @route      GET api/v1/picks (http://localhost:3060/api/v1/picks)
 // @desc       this gets the picks for a given user, group, season and week
@@ -40,6 +41,28 @@ router.get("/group-week", validateJwt, (req, res) => {
       .then((picks) => {
          // successful response
          return res.status(200).json(picks);
+      })
+      .catch((err) => {
+         // report error
+         console.log(err);
+         return res.status(400).json(err);
+      });
+});
+
+// @route      GET api/v1/picks/standings
+// @desc       this gets the standings for a group season
+// @access     Public
+// test:
+router.get("/standings", (req, res) => {
+   // const user_id = req.user.id; // get the user id from the JWT
+   const { group_id, season } = req.query; // grabbing variables from req.query
+   console.log({ group_id, season });
+
+   db.query(selectGroupSeasonStandings, [group_id, season]) // this syntax style prevents hackers
+      .then((standings) => {
+         // successful response
+         console.log(standings);
+         return res.status(200).json(standings);
       })
       .catch((err) => {
          // report error
@@ -87,7 +110,6 @@ router.put("/", validateJwt, (req, res) => {
                   return res.status(400).json(err);
                });
          } else {
-            console.log("slkjdslkjdfs");
             return res
                .status(400)
                .json(

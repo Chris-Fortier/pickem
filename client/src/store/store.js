@@ -12,6 +12,7 @@ const initialState = {
       match_ups: [],
       num_completed_games: 0,
    },
+   standings: [],
 };
 
 const store = createStore(combineReducers, initialState, composeWithDevTools());

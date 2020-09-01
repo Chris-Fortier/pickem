@@ -28,4 +28,5 @@
 3. add `client\src\store\reducers\newReducer.js`
 4. `client\src\store\combine\combineReducers.js`
    1. `import newReducer from "./reducers/newReducer";`
+   2. add it to combineReducers
 5. clear it when logging out

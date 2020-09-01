@@ -37,7 +37,7 @@ class GroupPicks extends React.Component {
                               return (
                                  <th
                                     scope="col"
-                                    style={{ "text-align": "center" }}
+                                    style={{ textAlign: "center" }}
                                  >
                                     {user_initials}
                                  </th>

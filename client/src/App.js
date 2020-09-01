@@ -12,6 +12,7 @@ import Landing from "./components/pages/Landing";
 import AccountSettings from "./components/pages/AccountSettings";
 import MyPicks from "./components/pages/MyPicks";
 import GroupPicks from "./components/pages/GroupPicks";
+import Standings from "./components/pages/Standings";
 import NotFound from "./components/pages/NotFound";
 
 const authToken = localStorage.authToken; // get the auth token from local storage
@@ -63,6 +64,7 @@ function App() {
             <Route exact path="/account-settings" component={AccountSettings} />
             <Route exact path="/my-picks" component={MyPicks} />
             <Route exact path="/group-picks" component={GroupPicks} />
+            <Route exact path="/standings" component={Standings} />
             <Route component={NotFound} />
          </Switch>
       </Router>

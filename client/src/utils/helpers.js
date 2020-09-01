@@ -37,4 +37,8 @@ export function logOutCurrentUser() {
          num_completed_games: 0,
       }, // empty
    });
+   store.dispatch({
+      type: actions.STORE_STANDINGS,
+      payload: [], // empty
+   });
 }

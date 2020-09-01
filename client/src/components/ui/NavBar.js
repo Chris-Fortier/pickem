@@ -172,6 +172,40 @@ class NavBar extends React.Component {
                const data = err.response.data;
                console.log("err", data);
             });
+      } else if (window.location.pathname === "/standings") {
+         // if on the standings page get standings
+         axios
+            .get(
+               `/api/v1/picks/standings?group_id=${groupSeasonWeek.group_id}&season=${groupSeasonWeek.season}`
+            )
+            .then((res) => {
+               const standings = res.data;
+               // get derived standings data
+               let current_rank = 1;
+               let current_num_correct = standings[0].num_correct;
+               const leader_num_correct = standings[0].num_correct;
+               console.log(1);
+               for (let i in standings) {
+                  console.log({ i });
+                  if (standings[i].num_correct < current_num_correct) {
+                     current_rank = Number(i) + 1;
+                     console.log("i + 1", current_rank);
+                  }
+                  standings[i].rank = current_rank;
+                  standings[i].num_behind =
+                     leader_num_correct - standings[i].num_correct;
+               }
+               console.log(3);
+               // send the data to Redux
+               this.props.dispatch({
+                  type: actions.STORE_STANDINGS,
+                  payload: res.data,
+               });
+            })
+            .catch((err) => {
+               const data = err.response.data;
+               console.log("err", data);
+            });
       }
    }
 
@@ -236,9 +270,16 @@ class NavBar extends React.Component {
                      >
                         Group Picks
                      </Link>
-                     {/* <Nav.Link href="/group-leader-board">
-                        Leader Board
-                     </Nav.Link> */}
+                     <Link
+                        to="/standings"
+                        className={classnames({
+                           "nav-link": true,
+                           "selected-nav-page":
+                              window.location.pathname === "/standings",
+                        })}
+                     >
+                        Standings
+                     </Link>
                   </Nav>
                   <Nav>
                      <NavDropdown
