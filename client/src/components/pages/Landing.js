@@ -153,7 +153,7 @@ class Landing extends React.Component {
                         type="text"
                         className="form-control"
                         id="user-name-input"
-                        placeholder="Enter your user name"
+                        placeholder="Enter your user name."
                         // maxLength={MAX_USER_NAME_LENGTH} no max length for existing users
                      />
                      {this.state.currentUserNameError && (
@@ -168,7 +168,7 @@ class Landing extends React.Component {
                         type="password"
                         className="form-control"
                         id="password-input"
-                        placeholder="Enter your password"
+                        placeholder="Enter your password."
                      />
                      {this.state.currentPasswordError && (
                         <div className="text-danger" id="password-error">
@@ -218,7 +218,7 @@ class Landing extends React.Component {
                         type="text"
                         className="form-control"
                         id="user-name-input"
-                        placeholder="Enter a new user name"
+                        placeholder="Enter a public name."
                         maxLength={MAX_USER_NAME_LENGTH}
                      />
                      {this.state.newUserNameError && (
@@ -233,7 +233,7 @@ class Landing extends React.Component {
                         type="text"
                         className="form-control"
                         id="initials-input"
-                        placeholder="Enter your initials"
+                        placeholder="Enter a 3-letter identifier."
                         maxLength={MAX_USER_INITIALS_LENGTH}
                      />
                      {this.state.newInitialsError && (
@@ -248,7 +248,7 @@ class Landing extends React.Component {
                         type="password"
                         className="form-control"
                         id="password-input"
-                        placeholder="Enter a password"
+                        placeholder="Enter a password."
                      />
                      {this.state.newPasswordError && (
                         <div className="text-danger">
