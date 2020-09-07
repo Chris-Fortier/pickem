@@ -5,6 +5,7 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 import {
    MAX_USER_NAME_LENGTH,
+   MAX_TEAM_NAME_LENGTH,
    MAX_USER_INITIALS_LENGTH,
 } from "../../utils/helpers";
 
@@ -68,6 +69,7 @@ class Landing extends React.Component {
             console.log("err", data);
             const {
                newUserNameError,
+               newTeamNameError,
                newInitialsError,
                newPasswordError,
             } = data;
@@ -75,6 +77,7 @@ class Landing extends React.Component {
             // push errors or lack thereof to state
             this.setState({
                newUserNameError,
+               newTeamNameError,
                newInitialsError,
                newPasswordError,
             });
@@ -82,10 +85,16 @@ class Landing extends React.Component {
    }
 
    // tests if the user_name and password are valid and if so creates the user
-   async validateAndCreateUser(userNameInput, initialsInput, passwordInput) {
+   async validateAndCreateUser(
+      userNameInput,
+      teamNameInput,
+      initialsInput,
+      passwordInput
+   ) {
       // create user obj
       const user = {
          user_name: userNameInput,
+         team_name: teamNameInput,
          initials: initialsInput,
          password: passwordInput, // send the plain text password over secure connection, the server will hash it
       };
@@ -218,12 +227,27 @@ class Landing extends React.Component {
                         type="text"
                         className="form-control"
                         id="user-name-input"
-                        placeholder="Enter a public name."
+                        placeholder="Name for logging in"
                         maxLength={MAX_USER_NAME_LENGTH}
                      />
                      {this.state.newUserNameError && (
                         <div className="text-danger">
                            {this.state.newUserNameError}
+                        </div>
+                     )}
+                  </div>
+                  <div className="form-group">
+                     <label htmlFor="team-name-input">Team Name</label>
+                     <input
+                        type="text"
+                        className="form-control"
+                        id="team-name-input"
+                        placeholder="Public team name"
+                        maxLength={MAX_TEAM_NAME_LENGTH}
+                     />
+                     {this.state.newTeamNameError && (
+                        <div className="text-danger">
+                           {this.state.newTeamNameError}
                         </div>
                      )}
                   </div>
@@ -262,6 +286,7 @@ class Landing extends React.Component {
                      onClick={() => {
                         this.validateAndCreateUser(
                            document.getElementById("user-name-input").value,
+                           document.getElementById("team-name-input").value,
                            document.getElementById("initials-input").value,
                            document.getElementById("password-input").value
                         );

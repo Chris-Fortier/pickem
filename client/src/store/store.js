@@ -7,7 +7,7 @@ const initialState = {
    groupSeasonWeek: {},
    myPicks: [],
    groupPicks: {
-      group_user_names: [],
+      group_user_ids: [],
       group_user_initials: [],
       match_ups: [],
       num_completed_games: 0,

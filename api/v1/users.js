@@ -8,14 +8,16 @@ const selectUserById = require("../../queries/selectUserById");
 const selectUserByUserName = require("../../queries/selectUserByUserName");
 const deleteUser = require("../../queries/deleteUser");
 const setUserUserName = require("../../queries/setUserUserName");
+const setUserTeamName = require("../../queries/setUserTeamName");
 const setUserInitials = require("../../queries/setUserInitials");
 const setUserPassword = require("../../queries/setUserPassword");
 const { toHash, TOKEN_EXPIRE_TIME } = require("../../utils/helpers");
-const getSignUpUserNameError = require("../../validation/getSignUpUserNameError");
-const getSignUpInitialsError = require("../../validation/getSignUpInitialsError");
-const getSignUpPasswordError = require("../../validation/getSignUpPasswordError");
-const getLoginUserNameError = require("../../validation/getLoginUserNameError");
-const getLoginPasswordError = require("../../validation/getLoginPasswordError");
+const getNewUserNameError = require("../../validation/getNewUserNameError");
+const getNewTeamNameError = require("../../validation/getNewTeamNameError");
+const getNewInitialsError = require("../../validation/getNewInitialsError");
+const getNewPasswordError = require("../../validation/getNewPasswordError");
+const getCurrentUserNameError = require("../../validation/getCurrentUserNameError");
+const getCurrentPasswordError = require("../../validation/getCurrentPasswordError");
 const jwt = require("jsonwebtoken");
 const validateJwt = require("../../utils/validateJwt");
 const setUserLastLoginAt = require("../../queries/setUserLastLoginAt");
@@ -26,17 +28,17 @@ const uuid = require("uuid");
 // @desc       Create a new user
 // @access     Public
 router.post("/", async (req, res) => {
-   const { user_name, initials, password } = req.body; // destructuring to simplify code below, grabbing variables from req.body
-   const newUserNameError = await getSignUpUserNameError(user_name);
-   const newInitialsError = await getSignUpInitialsError(initials);
-   const newPasswordError = getSignUpPasswordError(password);
+   const { user_name, team_name, initials, password } = req.body; // destructuring to simplify code below, grabbing variables from req.body
+   const newUserNameError = await getNewUserNameError(user_name);
+   const newTeamNameError = await getNewTeamNameError(team_name);
+   const newInitialsError = await getNewInitialsError(initials);
+   const newPasswordError = getNewPasswordError(password);
    let dbError = ""; // this will store some text describing an error from the database
 
-   console.log({ newUserNameError, newPasswordError });
-
-   // if there are no errors with user_name, initials and password:
+   // if there are no errors with user_name, team_name, initials and password:
    if (
       newUserNameError === "" &&
+      newTeamNameError === "" &&
       newInitialsError === "" &&
       newPasswordError === ""
    ) {
@@ -45,6 +47,7 @@ router.post("/", async (req, res) => {
       const user = {
          id: newUserId,
          user_name, // if the key and value are called the same, you can just have the key
+         team_name,
          initials,
          password: await toHash(password), // hash the password (npm install bcrypt)
          created_at: currentDateTime,
@@ -62,6 +65,7 @@ router.post("/", async (req, res) => {
                   const user = {
                      id: users[0].id,
                      user_name: users[0].user_name,
+                     team_name: users[0].team_name,
                      initials: users[0].initials,
                      created_at: users[0].created_at,
                      last_login_at: users[0].last_login_at,
@@ -78,15 +82,6 @@ router.post("/", async (req, res) => {
                   );
 
                   res.status(200).json({ accessToken });
-
-                  // enter new last login
-                  // db.query(setUserLastLoginAt, [this_login_at, users[0].id])
-                  //    .then(() => {
-                  //       res.status(200).json({ accessToken }); // instead of passing the user as the response, pass the access token
-                  //    })
-                  //    .catch((err) => {
-                  //       res.status(400).json("error updating last login time");
-                  //    });
                })
                .catch((err) => {
                   console.log("err", err);
@@ -105,6 +100,7 @@ router.post("/", async (req, res) => {
       // return a 400 error to user
       res.status(400).json({
          newUserNameError,
+         newTeamNameError,
          newInitialsError,
          newPasswordError,
       });
@@ -116,8 +112,8 @@ router.post("/", async (req, res) => {
 // @access     Public
 router.post("/auth", async (req, res) => {
    const { user_name, password } = req.body; // destructuring to simplify code below, grabbing variables from req.body
-   const currentUserNameError = getLoginUserNameError(user_name);
-   const currentPasswordError = await getLoginPasswordError(
+   const currentUserNameError = getCurrentUserNameError(user_name);
+   const currentPasswordError = await getCurrentPasswordError(
       password,
       user_name
    );
@@ -137,6 +133,7 @@ router.post("/auth", async (req, res) => {
             const user = {
                id: users[0].id,
                user_name: users[0].user_name,
+               team_name: users[0].team_name,
                initials: users[0].initials,
                created_at: users[0].created_at,
                last_login_at: users[0].last_login_at,
@@ -216,7 +213,7 @@ router.put("/set-user-name", validateJwt, async (req, res) => {
    const { newUserName, password } = req.body; // grabbing variables from req.body
    const userId = req.user.id; // get the user id from the JWT
    console.log({ userId });
-   const newUserNameError = await getSignUpUserNameError(newUserName); // check to see if the new user_name is valid
+   const newUserNameError = await getNewUserNameError(newUserName); // check to see if the new user_name is valid
    console.log({ newUserNameError });
    const currentPasswordError = await checkPasswordAgainstUserId(
       password,
@@ -251,6 +248,40 @@ router.put("/set-user-name", validateJwt, async (req, res) => {
    }
 });
 
+// @route      PUT api/v1/users/set-team-name
+// @desc       change a user's team name
+// @access     Private
+// test:
+router.put("/set-team-name", validateJwt, async (req, res) => {
+   const { newTeamName, password } = req.body; // grabbing variables from req.body
+   const userId = req.user.id; // get the user id from the JWT
+   const newTeamNameError = await getNewTeamNameError(newTeamName); // check to see if the new team name is valid
+   const currentPasswordError = await checkPasswordAgainstUserId(
+      password,
+      userId
+   ); // check to see if the password submitted is correct
+
+   if (newTeamNameError === "" && currentPasswordError === "") {
+      // if it gets this far, team name can be changed
+
+      db.query(setUserTeamName, [newTeamName, userId])
+         .then((dbRes) => {
+            console.log("dbRes", dbRes);
+            res.status(200).json("team name changed to " + newTeamName);
+         })
+         .catch((err) => {
+            console.log("err", err);
+            res.status(400).json(err);
+         });
+   } else {
+      // return a 400 error to user
+      res.status(400).json({
+         newTeamNameError,
+         currentPasswordError,
+      });
+   }
+});
+
 // @route      PUT api/v1/users/set-initials
 // @desc       change a user's initials
 // @access     Private
@@ -259,7 +290,7 @@ router.put("/set-initials", validateJwt, async (req, res) => {
    const { newInitials, password } = req.body; // grabbing variables from req.body
    const userId = req.user.id; // get the user id from the JWT
    console.log({ userId });
-   const newInitialsError = await getSignUpInitialsError(newInitials); // check to see if the new initials is valid
+   const newInitialsError = await getNewInitialsError(newInitials); // check to see if the new initials is valid
    console.log({ newInitialsError });
    const currentPasswordError = await checkPasswordAgainstUserId(
       password,
@@ -304,7 +335,7 @@ router.put("/set-password", validateJwt, async (req, res) => {
       currentPassword,
       userId
    ); // check to see if the currentPassword submitted is correct
-   const newPasswordError = await getSignUpPasswordError(newPassword); // check to see if the newPassword submitted is gtg
+   const newPasswordError = await getNewPasswordError(newPassword); // check to see if the newPassword submitted is gtg
    let messageFromServer = "";
    let resStatus = 200;
 

@@ -42,7 +42,7 @@ class Standings extends React.Component {
                                        }}
                                     >
                                        <td>
-                                          {user.rank}.&nbsp;{user.user_name}
+                                          {user.rank}.&nbsp;{user.team_name}
                                           &nbsp;({user.initials})
                                        </td>
                                        <td>{user.num_correct}</td>

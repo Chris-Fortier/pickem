@@ -76,7 +76,7 @@ SELECT
         ELSE NULL
     END) AS `pick`,
     `winner`,
-    `user_name`,
+    `users`.`id` AS `user_id`,
     `users`.`initials` AS `user_initials`
 FROM
     `games`
@@ -94,7 +94,7 @@ ORDER BY `game_at` ASC;
 
 -- get standings for a each user in a group season
 SELECT 
-	`user_name`,
+	`team_name`,
     `initials`,
     -- COUNT(*) AS `num_picks`,
     SUM(CASE WHEN `pick` = `winner` AND `pick` is not null THEN 1 ELSE 0 END) AS `num_correct`

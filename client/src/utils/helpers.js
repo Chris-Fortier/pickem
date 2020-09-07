@@ -5,6 +5,7 @@ import actions from "../store/actions";
 // client-side constants
 // const SALT_ROUNDS = 12;
 export const MAX_USER_NAME_LENGTH = 24;
+export const MAX_TEAM_NAME_LENGTH = 24;
 export const MAX_USER_INITIALS_LENGTH = 3;
 
 // // returns a hashed version of a given password
@@ -31,7 +32,7 @@ export function logOutCurrentUser() {
    store.dispatch({
       type: actions.STORE_GROUP_PICKS,
       payload: {
-         group_user_names: [],
+         group_user_ids: [],
          group_user_initials: [],
          match_ups: [],
          num_completed_games: 0,

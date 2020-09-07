@@ -2,7 +2,7 @@
 // given group, season
 const selectGroupSeasonStandings = `
 SELECT 
-   \`user_name\`,
+   \`team_name\`,
    \`initials\`,
     -- COUNT(*) AS \`num_picks\`,
     SUM(CASE WHEN \`pick\` = \`winner\` AND \`pick\` is not null THEN 1 ELSE 0 END) AS \`num_correct\`

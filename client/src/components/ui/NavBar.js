@@ -77,17 +77,15 @@ class NavBar extends React.Component {
                // process the data into an array of objects (one object per game with a pick for each user)
 
                const game_user_picks = res.data; // the data from server (one object for every combination of user and game)
-               const group_user_names = []; // an array of user names
+               const group_user_ids = []; // an array of user names
                const group_user_initials = []; // an array of user initials
                const match_ups = []; // an array of objects (one object per game with a pick for each user)
                const game_ids = [];
                let num_completed_games = 0;
 
                for (let i in game_user_picks) {
-                  if (
-                     !group_user_names.includes(game_user_picks[i].user_name)
-                  ) {
-                     group_user_names.push(game_user_picks[i].user_name); // add a new user name
+                  if (!group_user_ids.includes(game_user_picks[i].user_id)) {
+                     group_user_ids.push(game_user_picks[i].user_id); // add a new user name
                      group_user_initials.push(game_user_picks[i].user_initials); // add a new user initials
                   }
 
@@ -100,7 +98,7 @@ class NavBar extends React.Component {
                         game_id: game_user_picks[i].game_id,
                         game_at: game_user_picks[i].game_at,
                         winner: game_user_picks[i].winner,
-                        picks: {}, // empty object to store all the picks as key (user_name) value (pick) pairs
+                        picks: {}, // empty object to store all the picks as key (user_id) value (pick) pairs
                      });
                      if (game_user_picks[i].winner !== null) {
                         num_completed_games++;
@@ -134,7 +132,7 @@ class NavBar extends React.Component {
                   // find the match_up that this game_user_pick refers to and add the pick to it
                   match_ups.find((match_up) => {
                      return match_up.game_id === game_user_picks[i].game_id;
-                  }).picks[game_user_picks[i].user_name] = {
+                  }).picks[game_user_picks[i].user_id] = {
                      pick: game_user_picks[i].pick,
                      pick_label,
                      pick_result,
@@ -144,7 +142,7 @@ class NavBar extends React.Component {
                this.props.dispatch({
                   type: actions.STORE_GROUP_PICKS,
                   payload: {
-                     group_user_names,
+                     group_user_ids,
                      group_user_initials,
                      match_ups,
                      num_completed_games,

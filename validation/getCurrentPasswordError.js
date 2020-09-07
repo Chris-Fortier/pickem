@@ -2,8 +2,8 @@ const db = require("../db");
 const selectUserByUserName = require("../queries/selectUserByUserName");
 const bcrypt = require("bcrypt");
 
-module.exports = async function getLoginPasswordError(password, user_name) {
-   console.log("getLoginPasswordError()...");
+module.exports = async function getCurrentPasswordError(password, user_name) {
+   console.log("getCurrentPasswordError()...");
    if (password === "") {
       // check if password input is blank
       return "Please enter your password.";

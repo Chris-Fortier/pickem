@@ -13,7 +13,7 @@ SELECT
         ELSE NULL
     END) AS \`pick\`,
     \`winner\`,
-    \`user_name\`,
+    \`users\`.\`id\` AS \`user_id\`,
     \`users\`.\`initials\` AS \`user_initials\`
 FROM
     \`games\`

@@ -52,7 +52,7 @@ class GroupPicks extends React.Component {
                         return (
                            <tr>
                               <th scope="row">{match_up.title}</th>
-                              {this.props.groupPicks.group_user_names.map(
+                              {this.props.groupPicks.group_user_ids.map(
                                  (user_name) => {
                                     return (
                                        <td

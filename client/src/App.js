@@ -19,7 +19,9 @@ const authToken = localStorage.authToken; // get the auth token from local stora
 if (authToken) {
    const currentTimeInSec = Date.now() / 1000;
    const user = jwtDecode(authToken);
-   if (currentTimeInSec > user.exp) {
+
+   if (currentTimeInSec > user.exp || user.this_login_at < 1599508200000) {
+      // user.this_login_at < 1599508200000 to force the user to log in with an old token before change
       console.log("expired token");
 
       // remove the currentUser from the global state / redux store

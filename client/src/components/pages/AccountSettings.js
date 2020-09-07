@@ -7,6 +7,7 @@ import axios from "axios";
 import isEmpty from "lodash/isEmpty";
 import {
    MAX_USER_NAME_LENGTH,
+   MAX_TEAM_NAME_LENGTH,
    MAX_USER_INITIALS_LENGTH,
    logOutCurrentUser,
 } from "../../utils/helpers";
@@ -42,6 +43,7 @@ class AccountSettings extends React.Component {
          messageFromServer: "",
          currentPasswordError: "",
          newUserNameError: "",
+         newTeamNameError: "",
          newInitialsError: "",
          newPasswordError: "",
       });
@@ -131,6 +133,48 @@ class AccountSettings extends React.Component {
          });
    }
 
+   // tests if the new team name and password are valid and if so changes team name
+   async validateAndChangeTeamName(teamNameInput, passwordInput) {
+      // create the object that will be the body that is sent
+      const submission = {
+         newTeamName: teamNameInput,
+         password: passwordInput, // send the plain text password over secure connection, the server will hash it
+      };
+
+      // post to API
+      axios
+         .put("api/v1/users/set-team-name", submission)
+         .then((res) => {
+            const oldTeamName = this.props.currentUser.team_name; // storing old name so I can put it in the message
+            // send the user with new name to Redux
+            this.props.currentUser.team_name = teamNameInput;
+            this.props.dispatch({
+               type: actions.UPDATE_CURRENT_USER,
+               payload: this.props.currentUser,
+            });
+
+            // TODO: local token is not updated with the new team name, but I don't think I am using that team name for anything
+            // if they refresh it will put the team name from token in currentUser
+
+            this.clearMessageAndErrors();
+            this.setState({
+               messageFromServer: `Team name changed from "${oldTeamName}" to "${teamNameInput}"`,
+               mode: "account-settings-menu",
+            });
+         })
+         .catch((err) => {
+            const data = err.response.data;
+            console.log("err", data);
+            const { newTeamNameError, currentPasswordError } = data;
+
+            // push errors or lack thereof to state
+            this.setState({
+               newTeamNameError,
+               currentPasswordError,
+            });
+         });
+   }
+
    // tests if the old password is valid and if so changes password to new one
    async validateAndChangePassword(currentPasswordInput, newPasswordInput) {
       // create the object that will be the body that is sent
@@ -209,6 +253,16 @@ class AccountSettings extends React.Component {
                }}
             >
                Change User Name...
+            </button>
+            <button
+               type="button"
+               className="btn btn-secondary btn-block"
+               onClick={() => {
+                  this.clearMessageAndErrors();
+                  this.setState({ mode: "change-team-name" });
+               }}
+            >
+               Change Team Name...
             </button>
             <button
                type="button"
@@ -364,7 +418,66 @@ class AccountSettings extends React.Component {
       );
    }
 
-   // TODO: add this to Chav Lads
+   renderChangeTeamName() {
+      return (
+         <>
+            <h5>Change Team Name</h5>
+            <form>
+               <div className="form-group">
+                  <label htmlFor="new-team-name-input">New Team Name</label>
+                  <input
+                     type="text"
+                     className="form-control"
+                     id="new-team-name-input"
+                     placeholder={this.props.currentUser.team_name}
+                     maxLength={MAX_TEAM_NAME_LENGTH}
+                  />
+                  {this.state.newTeamNameError && (
+                     <div className="text-danger">
+                        {this.state.newTeamNameError}
+                     </div>
+                  )}
+               </div>
+               <div className="form-group">
+                  <label htmlFor="password-input">Password</label>
+                  <input
+                     type="password"
+                     className="form-control"
+                     id="password-input"
+                     placeholder="Enter your password"
+                  />
+                  {this.state.currentPasswordError && (
+                     <div className="text-danger" id="password-error">
+                        {this.state.currentPasswordError}
+                     </div>
+                  )}
+               </div>
+               <div
+                  // type="submit"
+                  className="btn btn-primary btn-block"
+                  onClick={() =>
+                     this.validateAndChangeTeamName(
+                        document.getElementById("new-team-name-input").value,
+                        document.getElementById("password-input").value
+                     )
+                  }
+               >
+                  Change Team Name
+               </div>
+               <div
+                  className="btn btn-secondary mt-3"
+                  onClick={() => {
+                     this.clearMessageAndErrors();
+                     this.setState({ mode: "account-settings-menu" });
+                  }}
+               >
+                  Cancel
+               </div>
+            </form>
+         </>
+      );
+   }
+
    renderChangePassword() {
       return (
          <>
@@ -498,6 +611,8 @@ class AccountSettings extends React.Component {
                               this.renderAccountSettingsMenu()}
                            {this.state.mode === "change-user-name" &&
                               this.renderChangeUserName()}
+                           {this.state.mode === "change-team-name" &&
+                              this.renderChangeTeamName()}
                            {this.state.mode === "change-initials" &&
                               this.renderChangeInitials()}
                            {this.state.mode === "change-password" &&
