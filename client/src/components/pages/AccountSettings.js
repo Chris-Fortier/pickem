@@ -371,6 +371,7 @@ class AccountSettings extends React.Component {
                      id="new-initials-input"
                      placeholder={this.props.currentUser.initials}
                      maxLength={MAX_USER_INITIALS_LENGTH}
+                     style={{ textTransform: "uppercase" }}
                   />
                   {this.state.newInitialsError && (
                      <div className="text-danger">
@@ -397,7 +398,9 @@ class AccountSettings extends React.Component {
                   className="btn btn-primary btn-block"
                   onClick={() =>
                      this.validateAndChangeInitials(
-                        document.getElementById("new-initials-input").value,
+                        document
+                           .getElementById("new-initials-input")
+                           .value.toUpperCase(),
                         document.getElementById("password-input").value
                      )
                   }

@@ -257,8 +257,9 @@ class Landing extends React.Component {
                         type="text"
                         className="form-control"
                         id="initials-input"
-                        placeholder="Enter a 3-letter identifier."
+                        // placeholder="Enter a 3-letter identifier."
                         maxLength={MAX_USER_INITIALS_LENGTH}
+                        style={{ textTransform: "uppercase" }}
                      />
                      {this.state.newInitialsError && (
                         <div className="text-danger">
@@ -287,7 +288,9 @@ class Landing extends React.Component {
                         this.validateAndCreateUser(
                            document.getElementById("user-name-input").value,
                            document.getElementById("team-name-input").value,
-                           document.getElementById("initials-input").value,
+                           document
+                              .getElementById("initials-input")
+                              .value.toUpperCase(),
                            document.getElementById("password-input").value
                         );
                      }}

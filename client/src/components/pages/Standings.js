@@ -35,6 +35,7 @@ class Standings extends React.Component {
                                  <th>PB</th>
                               </tr>
                               {this.props.standings.map((user) => {
+                                 const initials = user.initials.toUpperCase();
                                  return (
                                     <tr
                                        style={{
@@ -43,7 +44,7 @@ class Standings extends React.Component {
                                     >
                                        <td>
                                           {user.rank}.&nbsp;{user.team_name}
-                                          &nbsp;({user.initials})
+                                          &nbsp;({initials})
                                        </td>
                                        <td>{user.num_correct}</td>
                                        <td>{user.num_behind}</td>

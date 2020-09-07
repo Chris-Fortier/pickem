@@ -39,7 +39,7 @@ class GroupPicks extends React.Component {
                                     scope="col"
                                     style={{ textAlign: "center" }}
                                  >
-                                    {user_initials}
+                                    {user_initials.toUpperCase()}
                                  </th>
                               );
                            }
