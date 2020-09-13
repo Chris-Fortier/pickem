@@ -16,7 +16,7 @@ INSERT INTO `users` (
 )
 VALUES ('84cbd806-1a5d-4b2c-beed-3b7b7ca686bc','Pfhortier'),('71c89a20-4102-4427-8ed3-b7808a7b968d','ElBerserko'),('5c17b595-9f69-41bf-a45c-323572ad9ca3','BuddyBomar');
 
-SELECT * FROM `users` ORDER BY `created_at` DESC;
+SELECT * FROM `users` ORDER BY `last_login_at` DESC;
 
 ALTER TABLE `users`
 ADD COLUMN `initials` VARCHAR(3) NOT NULL AFTER `user_name`;

@@ -48,6 +48,11 @@ class MyPicks extends React.Component {
                            </h2>
                         </div>
                         <div className="card-body">
+                           <p>
+                              Picks are saved as soon as they are selected. You
+                              can change your picks for a game as many times as
+                              you want until the game starts.
+                           </p>
                            {this.props.myPicks.map((pick) => {
                               if (pick.game_at > rollingDate + 43200000) {
                                  renderDate = true;

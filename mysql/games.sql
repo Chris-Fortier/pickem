@@ -11,7 +11,7 @@ CREATE TABLE `games`(
 	`away_score` TINYINT UNSIGNED DEFAULT NULL,
 	`home_score` TINYINT UNSIGNED DEFAULT NULL
 );
-DROP TABLE `games`;
+-- DROP TABLE `games`;
 
 -- 2020 week 1
 INSERT INTO `games` (
