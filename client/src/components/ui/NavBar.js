@@ -187,6 +187,7 @@ class NavBar extends React.Component {
                   console.log({ i });
                   if (standings[i].num_correct < current_num_correct) {
                      current_rank = Number(i) + 1;
+                     current_num_correct = standings[i].num_correct;
                      console.log("i + 1", current_rank);
                   }
                   standings[i].rank = current_rank;

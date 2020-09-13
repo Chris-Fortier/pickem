@@ -40,14 +40,14 @@ VALUES
 
 SELECT * FROM `games`;
 
--- get all games with no winners that started at least four hours in the past
+-- get all games with no winners that started at least three hours in the past
 -- useful for data entry
 SELECT 
     *
 FROM
     `games`
 WHERE
-    `winner` IS NULL and (`game_at` + 3600000) < (UNIX_TIMESTAMP() * 1000);
+    `winner` IS NULL and (`game_at` + 3600000 * 3) < (UNIX_TIMESTAMP() * 1000);
 
 -- selectGame
 -- get the details of a single game form the game id
