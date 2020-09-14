@@ -181,18 +181,33 @@ class NavBar extends React.Component {
                // get derived standings data
                let current_rank = 1;
                let current_num_correct = standings[0].num_correct;
+               let is_new_rank = true; // if true will style with a border above it to separate tied teams
                const leader_num_correct = standings[0].num_correct;
                console.log(1);
                for (let i in standings) {
                   console.log({ i });
-                  if (standings[i].num_correct < current_num_correct) {
+                  if (
+                     standings[i].num_correct < current_num_correct ||
+                     i === "0"
+                  ) {
+                     console.log("new rank");
                      current_rank = Number(i) + 1;
                      current_num_correct = standings[i].num_correct;
                      console.log("i + 1", current_rank);
+                     is_new_rank = true;
+                  } else {
+                     is_new_rank = false;
                   }
                   standings[i].rank = current_rank;
                   standings[i].num_behind =
                      standings[i].num_correct - leader_num_correct;
+                  standings[i].is_new_rank = is_new_rank;
+                  console.log(
+                     i,
+                     standings[i].team_name,
+                     standings[i].rank,
+                     standings[i].is_new_rank
+                  );
                }
                console.log(3);
                // send the data to Redux

@@ -1,10 +1,7 @@
 import React from "react";
 import NavBar from "../ui/NavBar";
-// import actions from "../../store/actions";
 import { connect } from "react-redux";
-// import axios from "axios";
-// import toDisplayDate from "date-fns/format";
-// import isEmpty from "lodash/isEmpty";
+import classnames from "classnames";
 
 class Standings extends React.Component {
    constructor(props) {
@@ -23,31 +20,39 @@ class Standings extends React.Component {
                      <div className="card mt-5 mb-5">
                         <div className="card-header">
                            <h2>
-                              {this.props.groupSeasonWeek.season}&nbsp;Standings
+                              {this.props.groupSeasonWeek.season}
+                              <br />
+                              Standings
                            </h2>
                         </div>
                         <div className="card-body">
                            <table style={{ width: "100%" }}>
                               <tr>
                                  {/* <th>Rank</th> */}
-                                 <th>Player</th>
-                                 <th>CP</th>
-                                 <th>PB</th>
+                                 <th>Rk</th>
+                                 <th>Team</th>
+                                 <th>Abbr</th>
+                                 <th style={{ textAlign: "right" }}>CP</th>
+                                 <th style={{ textAlign: "right" }}>PB</th>
                               </tr>
                               {this.props.standings.map((user) => {
                                  const initials = user.initials.toUpperCase();
                                  return (
                                     <tr
-                                       style={{
-                                          "border-top": "gray 1px solid",
-                                       }}
+                                       class={classnames({
+                                          "new-standings-rank":
+                                             user.is_new_rank,
+                                       })}
                                     >
-                                       <td>
-                                          {user.rank}.&nbsp;{user.team_name}
-                                          &nbsp;({initials})
+                                       <td>{user.rank}</td>
+                                       <td>{user.team_name}</td>
+                                       <td>{initials}</td>
+                                       <td style={{ textAlign: "right" }}>
+                                          {user.num_correct}
                                        </td>
-                                       <td>{user.num_correct}</td>
-                                       <td>{user.num_behind}</td>
+                                       <td style={{ textAlign: "right" }}>
+                                          {user.num_behind}
+                                       </td>
                                     </tr>
                                  );
                               })}
