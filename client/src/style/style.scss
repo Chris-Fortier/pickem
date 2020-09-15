@@ -192,12 +192,23 @@ td {
    overflow: scroll;
 }
 
+// drop downs will cover the table header in large size
+// table header will stick only in small size
 thead th {
-   position: -webkit-sticky; /* for Safari */
-   position: sticky;
-   top: 0;
+   // position: -webkit-sticky; /* for Safari */
+   // position: sticky;
+   // top: 0;
    background: #000;
-   z-index: 1;
+   // z-index: 1;
+}
+@media (max-width: 576px) {
+   thead th {
+      position: -webkit-sticky; /* for Safari */
+      position: sticky;
+      top: 0;
+      // background: #000;
+      z-index: 1;
+   }
 }
 
 tbody th {

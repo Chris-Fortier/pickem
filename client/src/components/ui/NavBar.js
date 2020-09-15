@@ -13,8 +13,10 @@ import { logOutCurrentUser } from "../../utils/helpers";
 const defaultGroupSeasonWeek = {
    group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
    season: 2020,
-   week: 1,
+   week: Math.floor((Date.now() - 1599548400000) / 604800000 + 1), // set the week to how many Tuesdays have started since 9/8/2020 in PDT (9/8 is 1)
 };
+
+const weeks = [1, 2]; // the weeks the user can select from
 
 class NavBar extends React.Component {
    // this is a "lifecycle" method like render(), we don't need to call it manually
@@ -224,47 +226,54 @@ class NavBar extends React.Component {
    }
 
    render() {
+      // get the title for the page nav drop down menu
+      let page_nav_title;
+      if (window.location.pathname === "/my-picks") {
+         page_nav_title = "My Picks";
+      } else if (window.location.pathname === "/group-picks") {
+         page_nav_title = "Group Picks";
+      } else if (window.location.pathname === "/standings") {
+         page_nav_title = "Standings";
+      }
+
       return (
          <>
             {/* React-Bootstrap navbar */}
             {/* changed expand from lg to md */}
             <Navbar
                collapseOnSelect
-               expand="md"
+               expand="sm"
                bg="dark"
                variant="dark"
-               expanded // I adding this so the menu is always expanded, even with a smaller screen size
+               // expanded // I adding this so the menu is always expanded, even with a smaller screen size
             >
                <Navbar.Brand href="#home">
                   Hawk Nation NFL Pick 'em
                </Navbar.Brand>
-               {/* <Navbar.Toggle aria-controls="responsive-navbar-nav" /> */}
+               <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                <Navbar.Collapse id="responsive-navbar-nav">
                   <Nav className="mr-auto">
                      <NavDropdown
                         title={`Week ${this.props.groupSeasonWeek.week}`}
-                        id="collapsible-nav-dropdown"
-                        alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
+                        // id="collapsible-nav-dropdown"
+                        // alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
                      >
-                        <NavDropdown.Item
-                           onClick={() => {
-                              this.changeGroupSeasonWeek({ week: 1 });
-                           }}
-                        >
-                           Week 1
-                        </NavDropdown.Item>
-                        <NavDropdown.Item
-                           onClick={() => {
-                              this.changeGroupSeasonWeek({ week: 2 });
-                           }}
-                        >
-                           Week 2
-                        </NavDropdown.Item>
-                     </NavDropdown>{" "}
+                        {weeks.map((week) => {
+                           return (
+                              <NavDropdown.Item
+                                 onClick={() => {
+                                    this.changeGroupSeasonWeek({ week: week });
+                                 }}
+                              >
+                                 Week {week}
+                              </NavDropdown.Item>
+                           );
+                        })}
+                     </NavDropdown>
                      {/* <Nav.Link href="/my-picks">My Picks</Nav.Link>
                      <Nav.Link href="/group-picks">Group Picks</Nav.Link> */}
                      {/* using standard react-router Link makes it not refresh the page when loading */}
-                     <Link
+                     {/* <Link
                         to="/my-picks"
                         className={classnames({
                            "nav-link": true,
@@ -293,12 +302,26 @@ class NavBar extends React.Component {
                         })}
                      >
                         Standings
-                     </Link>
+                     </Link> */}
+                     <NavDropdown
+                        title={page_nav_title}
+                        // id="collapsible-nav-dropdown"
+                     >
+                        <Link to="/my-picks" className="dropdown-item">
+                           My Picks
+                        </Link>
+                        <Link className="dropdown-item" to="/group-picks">
+                           Group Picks
+                        </Link>
+                        <Link to="/standings" className="dropdown-item">
+                           Standings
+                        </Link>
+                     </NavDropdown>
                   </Nav>
                   <Nav>
                      <NavDropdown
                         title={this.props.currentUser.user_name}
-                        id="collapsible-nav-dropdown"
+                        // id="collapsible-nav-dropdown"
                         alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
                         // className={classnames({
                         //    "selected-nav-page":
