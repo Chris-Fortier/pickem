@@ -32,7 +32,10 @@ INSERT INTO `picks` (
 VALUES
 ('84cbd806-1a5d-4b2c-beed-3b7b7ca686bc','0781b32a-e97f-11ea-b134-06a4a2a4eb91','3fd8d78c-8151-4145-b276-aea3559deb76',1);
 
-SELECT * FROM `picks`;
+SELECT * FROM `picks` ORDER BY `last_change_at` DESC;
+
+-- select all picks made or updated in the last x hours
+SELECT * FROM `picks` WHERE `last_change_at` > (UNIX_TIMESTAMP() * 1000 - 3600000 * 1) ORDER BY `last_change_at` DESC;
 
 -- upsert a pick (update or create)
 -- upsertPick
