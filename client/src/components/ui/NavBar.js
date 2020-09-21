@@ -84,26 +84,35 @@ class NavBar extends React.Component {
                let num_completed_games = 0;
 
                // an array of teams that stores user id as well as initials
-               const teams = [
+               let teams = [
                   {
                      user_id: this.props.currentUser.id,
                      initials: this.props.currentUser.initials,
+                     num_picks: 0, // stores the number of picks for this team in the week
                   }, // initialize with the current user so they are the first column when group picks are displayed
                ];
 
-               console.log("hello there", this.props.currentUser.id);
-
                for (let i in game_user_picks) {
                   // if this team isn't in the list already
-                  if (
-                     teams.find((team) => {
-                        return team.user_id === game_user_picks[i].user_id;
-                     }) === undefined
-                  ) {
+                  const this_team = teams.find((team) => {
+                     return team.user_id === game_user_picks[i].user_id;
+                  }); // stores this team
+
+                  // this counts as a pick if its not a null pick
+                  let this_pick_count = 0;
+                  if (game_user_picks[i].pick !== null) {
+                     this_pick_count = 1;
+                  }
+
+                  if (this_team === undefined) {
+                     // add a new team
                      teams.push({
                         user_id: game_user_picks[i].user_id,
                         initials: game_user_picks[i].user_initials,
-                     }); // add new team
+                        num_picks: this_pick_count, // count this pick if its a real pick
+                     });
+                  } else {
+                     this_team.num_picks += this_pick_count; // count this pick if its a real pick
                   }
 
                   // if this game_user_pick refers to a new game
@@ -155,6 +164,14 @@ class NavBar extends React.Component {
                      pick_result,
                   };
                }
+
+               // filter out teams that have no picks and are not the current user
+               teams = teams.filter((team) => {
+                  return (
+                     team.user_id === this.props.currentUser.id ||
+                     team.num_picks > 0
+                  );
+               });
 
                this.props.dispatch({
                   type: actions.STORE_GROUP_PICKS,
