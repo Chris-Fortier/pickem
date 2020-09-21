@@ -234,6 +234,8 @@ class NavBar extends React.Component {
          page_nav_title = "Group Picks";
       } else if (window.location.pathname === "/standings") {
          page_nav_title = "Standings";
+      } else if (window.location.pathname === "/account-settings") {
+         page_nav_title = "Picks/Standings";
       }
 
       return (
