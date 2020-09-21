@@ -49,8 +49,8 @@ class MyPicks extends React.Component {
                         </div>
                         <div className="card-body">
                            <p>
-                              Picks are saved as soon as they are selected. You
-                              can change your picks for a game as many times as
+                              Each pick is saved as soon as it is selected. You
+                              can change your pick for a game as many times as
                               you want until the game starts.
                            </p>
                            {this.props.myPicks.map((pick) => {
