@@ -7,17 +7,6 @@ class GroupPicks extends React.Component {
    render() {
       return (
          <>
-            {/* <NavBar /> */}
-            {/* <div className="container">
-               <div className="row">
-                  <div className="col-12">
-                     <div className="card mt-5 mb-5">
-                        <div className="card-header">
-                           <h2>Group Picks For Week {week}</h2>
-                        </div>
-                        <div className="card-body"> */}
-            {/* <div className="table-responsive"> */}
-            {/* <table className="table table-dark table-striped"> */}
             <div className="my-table-container">
                <div className="lock-x-pos">
                   <NavBar parentProps={this.props} />
@@ -32,18 +21,13 @@ class GroupPicks extends React.Component {
                      <tr>
                         <th scope="col">Game</th>
                         {/* list the user names across the top of the table */}
-                        {this.props.groupPicks.group_user_initials.map(
-                           (user_initials) => {
-                              return (
-                                 <th
-                                    scope="col"
-                                    style={{ textAlign: "center" }}
-                                 >
-                                    {user_initials.toUpperCase()}
-                                 </th>
-                              );
-                           }
-                        )}
+                        {this.props.groupPicks.teams.map((team) => {
+                           return (
+                              <th scope="col" style={{ textAlign: "center" }}>
+                                 {team.initials.toUpperCase()}
+                              </th>
+                           );
+                        })}
                      </tr>
                   </thead>
                   <tbody>
@@ -52,42 +36,31 @@ class GroupPicks extends React.Component {
                         return (
                            <tr>
                               <th scope="row">{match_up.title}</th>
-                              {this.props.groupPicks.group_user_ids.map(
-                                 (user_name) => {
-                                    return (
-                                       <td
-                                          className={classnames({
-                                             "locked-pick-group":
-                                                match_up.game_at < Date.now(),
-                                             "correct-pick-group":
-                                                match_up.picks[user_name]
-                                                   .pick_result === true,
-                                             "incorrect-pick-group":
-                                                match_up.picks[user_name]
-                                                   .pick_result === false,
-                                          })}
-                                          style={{ "text-align": "center" }}
-                                       >
-                                          {match_up.picks[user_name].pick_label}
-                                       </td>
-                                    );
-                                 }
-                              )}
-                              {/* <td>Mark</td>
-                                       <td>Otto</td>
-                                       <td>@mdo</td> */}
+                              {this.props.groupPicks.teams.map((team) => {
+                                 return (
+                                    <td
+                                       className={classnames({
+                                          "locked-pick-group":
+                                             match_up.game_at < Date.now(),
+                                          "correct-pick-group":
+                                             match_up.picks[team.user_id]
+                                                .pick_result === true,
+                                          "incorrect-pick-group":
+                                             match_up.picks[team.user_id]
+                                                .pick_result === false,
+                                       })}
+                                       style={{ "text-align": "center" }}
+                                    >
+                                       {match_up.picks[team.user_id].pick_label}
+                                    </td>
+                                 );
+                              })}
                            </tr>
                         );
                      })}
                   </tbody>
                </table>
             </div>
-            {/* </div> */}
-            {/* </div>
-                     </div>
-                  </div>
-               </div>
-            </div> */}
          </>
       );
    }

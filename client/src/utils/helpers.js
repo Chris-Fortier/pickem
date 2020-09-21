@@ -32,8 +32,7 @@ export function logOutCurrentUser() {
    store.dispatch({
       type: actions.STORE_GROUP_PICKS,
       payload: {
-         group_user_ids: [],
-         group_user_initials: [],
+         teams: [],
          match_ups: [],
          num_completed_games: 0,
       }, // empty
