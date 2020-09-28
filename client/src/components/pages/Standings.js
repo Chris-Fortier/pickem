@@ -55,6 +55,9 @@ class Standings extends React.Component {
                                        class={classnames({
                                           "new-standings-rank":
                                              user.is_new_rank,
+                                          "this-user-standings":
+                                             user.team_name ===
+                                             this.props.currentUser.team_name,
                                        })}
                                     >
                                        <td>{user.rank}</td>
@@ -85,6 +88,7 @@ function mapStateToProps(state) {
    return {
       groupSeasonWeek: state.groupSeasonWeek,
       standings: state.standings,
+      currentUser: state.currentUser,
    };
 }
 

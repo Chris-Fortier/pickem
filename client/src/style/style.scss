@@ -239,6 +239,11 @@ table {
    min-width: 100%; // cjf
 }
 
+// style for this user's row in the standings
+.this-user-standings {
+   background-color: rgba($navy, 0.1);
+}
+
 // td,
 // th {
 //    padding: 0.5em;
