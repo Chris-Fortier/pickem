@@ -52,6 +52,7 @@ WHERE
 -- set winners from scores, run these after manually adding the scores using the query above
 UPDATE `pickem_app`.`games` SET `winner` = '0' WHERE (`away_score` > `home_score`) and `winner` is null;
 UPDATE `pickem_app`.`games` SET `winner` = '1' WHERE (`away_score` < `home_score`) and `winner` is null;
+UPDATE `pickem_app`.`games` SET `winner` = '2' WHERE (`away_score` = `home_score`) and `winner` is null;
 
 -- selectGame
 -- get the details of a single game form the game id
