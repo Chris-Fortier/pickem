@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "../ui/NavBar";
 import { connect } from "react-redux";
 import classnames from "classnames";
+import { get_week_or_season_text } from "../../utils/helpers";
 
 class Standings extends React.Component {
    constructor(props) {
@@ -21,9 +22,21 @@ class Standings extends React.Component {
                         <div className="card-header">
                            <h2>
                               {this.props.groupSeasonWeek.season}
+                              &nbsp;
+                              {get_week_or_season_text(
+                                 this.props.groupSeasonWeek.week
+                              )}
                               <br />
                               Standings
                            </h2>
+                           {this.props.groupSeasonWeek.week !== "%" && (
+                              <p>
+                                 These are standings for week{" "}
+                                 {this.props.groupSeasonWeek.week} only. To see
+                                 the standings for the entire season, choose
+                                 "Season" in the week dropdown.
+                              </p>
+                           )}
                         </div>
                         <div className="card-body">
                            <table style={{ width: "100%" }}>

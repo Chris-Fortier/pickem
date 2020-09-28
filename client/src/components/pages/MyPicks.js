@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import toDisplayDate from "date-fns/format";
 import Pick from "../ui/Pick";
 // import isEmpty from "lodash/isEmpty";
+import { get_week_or_season_text } from "../../utils/helpers";
 
 // const group_id = "3fd8d78c-8151-4145-b276-aea3559deb76";
 // const season = 2020;
@@ -43,8 +44,12 @@ class MyPicks extends React.Component {
                      <div className="card mt-5 mb-5">
                         <div className="card-header">
                            <h2>
-                              My Picks For Week{" "}
-                              {this.props.groupSeasonWeek.week}
+                              My Picks For&nbsp;
+                              {this.props.groupSeasonWeek.season}
+                              &nbsp;
+                              {get_week_or_season_text(
+                                 this.props.groupSeasonWeek.week
+                              )}
                            </h2>
                         </div>
                         <div className="card-body">

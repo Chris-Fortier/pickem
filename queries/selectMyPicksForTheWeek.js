@@ -14,7 +14,9 @@ FROM
     \`games\` ON \`games\`.\`id\` = \`picks\`.\`game_id\`
         AND \`user_id\` = ?
 WHERE
-    \`season\` = ? AND \`week\` = ?;
+    \`season\` = ? AND \`week\` LIKE ?
+ORDER BY
+	\`game_at\` ASC;
 `;
 
 module.exports = selectMyPicksForTheWeek;

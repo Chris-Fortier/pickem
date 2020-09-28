@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "../ui/NavBar";
 import { connect } from "react-redux";
 import classnames from "classnames";
+import { get_week_or_season_text } from "../../utils/helpers";
 
 class GroupPicks extends React.Component {
    render() {
@@ -12,7 +13,11 @@ class GroupPicks extends React.Component {
                   <NavBar parentProps={this.props} />
                   <div className="card card-header">
                      <h2>
-                        Group Picks For Week {this.props.groupSeasonWeek.week}
+                        Group Picks For&nbsp;{this.props.groupSeasonWeek.season}
+                        &nbsp;
+                        {get_week_or_season_text(
+                           this.props.groupSeasonWeek.week
+                        )}
                      </h2>
                   </div>
                </div>

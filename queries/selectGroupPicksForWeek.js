@@ -26,7 +26,7 @@ WHERE
     (\`group_id\` = ?
         OR \`group_id\` IS NULL)
         AND \`season\` = ?
-        AND \`week\` = ?
+        AND \`week\` LIKE ?
 ORDER BY \`game_at\` ASC;
 `;
 

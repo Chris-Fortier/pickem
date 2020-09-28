@@ -63,7 +63,9 @@ FROM
     `games` ON `games`.`id` = `picks`.`game_id`
         AND `user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc'
 WHERE
-    `season` = 2020 AND `week` = 2;
+    `season` = 2020 AND `week` LIKE 2
+ORDER BY
+	`game_at` ASC;
         
 -- get all picks for the week for the entire group
 -- user picks are shown but for games that haven't started yet it only shows if picks have been made (null means no pick, 0 means visitor, 1 means home, 2 means pick made but other user and game hasn't started yet) 
@@ -92,7 +94,7 @@ WHERE
     (`group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
         OR `group_id` IS NULL)
         AND `season` = 2020
-        AND `week` = 1
+        AND `week` LIKE '1'
 ORDER BY `game_at` ASC;
 
 -- get standings for a each user in a group season
@@ -111,4 +113,21 @@ FROM
 -- WHERE
    -- `group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
      --   AND `season` = 2020 AND `pick` = `winner` AND `pick` is not null
+         GROUP BY `user_id` ORDER BY `num_correct` DESC;
+
+-- new version with week or wildcard week for entire season
+SELECT 
+	`team_name`,
+    `initials`,
+    COUNT(*) AS `num_correct`
+    -- NULL as `hello`
+FROM
+    `games`
+        RIGHT JOIN
+    `picks` ON `picks`.`game_id` = `games`.`id`
+    RIGHT JOIN
+    `users` ON `picks`.`user_id` = `users`.`id`
+WHERE
+   `group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
+       AND `season` = 2020 AND `week` LIKE '%' AND `pick` = `winner` AND `pick` is not null
          GROUP BY `user_id` ORDER BY `num_correct` DESC;

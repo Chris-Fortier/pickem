@@ -8,7 +8,10 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
 // import classnames from "classnames";
-import { logOutCurrentUser } from "../../utils/helpers";
+import {
+   logOutCurrentUser,
+   get_week_or_season_text,
+} from "../../utils/helpers";
 
 const defaultGroupSeasonWeek = {
    group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
@@ -16,7 +19,7 @@ const defaultGroupSeasonWeek = {
    week: Math.floor((Date.now() - 1599548400000) / 604800000 + 1), // set the week to how many Tuesdays have started since 9/8/2020 in PDT (9/8 is 1)
 };
 
-const weeks = [1, 2, 3, 4]; // the weeks the user can select from
+const weeks = ["%", 1, 2, 3, 4]; // the weeks the user can select from
 
 class NavBar extends React.Component {
    // this is a "lifecycle" method like render(), we don't need to call it manually
@@ -207,40 +210,42 @@ class NavBar extends React.Component {
          // if on the standings page get standings
          axios
             .get(
-               `/api/v1/picks/standings?group_id=${groupSeasonWeek.group_id}&season=${groupSeasonWeek.season}`
+               `/api/v1/picks/standings?group_id=${groupSeasonWeek.group_id}&season=${groupSeasonWeek.season}&week=${groupSeasonWeek.week}`
             )
             .then((res) => {
                const standings = res.data;
                // get derived standings data
-               let current_rank = 1;
-               let current_num_correct = standings[0].num_correct;
-               let is_new_rank = true; // if true will style with a border above it to separate tied teams
-               const leader_num_correct = standings[0].num_correct;
-               console.log(1);
-               for (let i in standings) {
-                  console.log({ i });
-                  if (
-                     standings[i].num_correct < current_num_correct ||
-                     i === "0"
-                  ) {
-                     console.log("new rank");
-                     current_rank = Number(i) + 1;
-                     current_num_correct = standings[i].num_correct;
-                     console.log("i + 1", current_rank);
-                     is_new_rank = true;
-                  } else {
-                     is_new_rank = false;
+               if (standings.length > 0) {
+                  let current_rank = 1;
+                  let current_num_correct = standings[0].num_correct;
+                  let is_new_rank = true; // if true will style with a border above it to separate tied teams
+                  const leader_num_correct = standings[0].num_correct;
+                  console.log(1);
+                  for (let i in standings) {
+                     console.log({ i });
+                     if (
+                        standings[i].num_correct < current_num_correct ||
+                        i === "0"
+                     ) {
+                        console.log("new rank");
+                        current_rank = Number(i) + 1;
+                        current_num_correct = standings[i].num_correct;
+                        console.log("i + 1", current_rank);
+                        is_new_rank = true;
+                     } else {
+                        is_new_rank = false;
+                     }
+                     standings[i].rank = current_rank;
+                     standings[i].num_behind =
+                        standings[i].num_correct - leader_num_correct;
+                     standings[i].is_new_rank = is_new_rank;
+                     console.log(
+                        i,
+                        standings[i].team_name,
+                        standings[i].rank,
+                        standings[i].is_new_rank
+                     );
                   }
-                  standings[i].rank = current_rank;
-                  standings[i].num_behind =
-                     standings[i].num_correct - leader_num_correct;
-                  standings[i].is_new_rank = is_new_rank;
-                  console.log(
-                     i,
-                     standings[i].team_name,
-                     standings[i].rank,
-                     standings[i].is_new_rank
-                  );
                }
                console.log(3);
                // send the data to Redux
@@ -250,8 +255,7 @@ class NavBar extends React.Component {
                });
             })
             .catch((err) => {
-               const data = err.response.data;
-               console.log("err", data);
+               console.log(err);
             });
       }
    }
@@ -287,7 +291,9 @@ class NavBar extends React.Component {
                <Navbar.Collapse id="responsive-navbar-nav">
                   <Nav className="mr-auto">
                      <NavDropdown
-                        title={`Week ${this.props.groupSeasonWeek.week}`}
+                        title={get_week_or_season_text(
+                           this.props.groupSeasonWeek.week
+                        )}
                         // id="collapsible-nav-dropdown"
                         // alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
                      >
@@ -298,7 +304,7 @@ class NavBar extends React.Component {
                                     this.changeGroupSeasonWeek({ week: week });
                                  }}
                               >
-                                 Week {week}
+                                 {get_week_or_season_text(week)}
                               </NavDropdown.Item>
                            );
                         })}

@@ -7,7 +7,7 @@ const selectMyPicksForTheWeek = require("../../queries/selectMyPicksForTheWeek")
 const upsertPick = require("../../queries/upsertPick");
 const selectGame = require("../../queries/selectGame");
 const selectGroupPicksForWeek = require("../../queries/selectGroupPicksForWeek");
-const selectGroupSeasonStandings = require("../../queries/selectGroupSeasonStandings");
+const selectStandings = require("../../queries/selectStandings");
 
 // @route      GET api/v1/picks (http://localhost:3060/api/v1/picks)
 // @desc       this gets the picks for a given user, group, season and week
@@ -55,10 +55,12 @@ router.get("/group-week", validateJwt, (req, res) => {
 // test:
 router.get("/standings", (req, res) => {
    // const user_id = req.user.id; // get the user id from the JWT
-   const { group_id, season } = req.query; // grabbing variables from req.query
-   console.log({ group_id, season });
+   const { group_id, season, week } = req.query; // grabbing variables from req.query
+   console.log({ group_id, season, week });
 
-   db.query(selectGroupSeasonStandings, [group_id, season]) // this syntax style prevents hackers
+   // const week = '%';
+
+   db.query(selectStandings, [group_id, season, week]) // this syntax style prevents hackers
       .then((standings) => {
          // successful response
          console.log(standings);

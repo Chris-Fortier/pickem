@@ -42,3 +42,12 @@ export function logOutCurrentUser() {
       payload: [], // empty
    });
 }
+
+// input a week number or '%' and return 'Week X' or 'Season'
+export function get_week_or_season_text(week) {
+   let text = `Week ${week}`;
+   if (week === "%") {
+      text = "Season";
+   }
+   return text;
+}
