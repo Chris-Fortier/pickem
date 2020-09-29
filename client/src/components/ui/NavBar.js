@@ -19,7 +19,7 @@ const defaultGroupSeasonWeek = {
    week: Math.floor((Date.now() - 1599548400000) / 604800000 + 1), // set the week to how many Tuesdays have started since 9/8/2020 in PDT (9/8 is 1)
 };
 
-const weeks = ["%", 1, 2, 3, 4]; // the weeks the user can select from
+const weeks = ["%", 1, 2, 3, 4, 5]; // the weeks the user can select from
 
 class NavBar extends React.Component {
    // this is a "lifecycle" method like render(), we don't need to call it manually
