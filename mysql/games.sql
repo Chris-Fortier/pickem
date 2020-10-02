@@ -137,3 +137,33 @@ VALUES
 (4,1601843100000,'BUF','LV'),
 (4,1601857200000,'PHI','SF'),
 (4,1601943300000,'ATL','GB');
+
+-- 2020 week 5
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(5,1602202800000,'TB','CHI'),
+(5,1602435600000,'JAX','HOU'),
+(5,1602447900000,'DEN','NE'),
+(5,1602435600000,'BUF','TEN'),
+(5,1602435600000,'ARI','NYJ'),
+(5,1602435600000,'PHI','PIT'),
+(5,1602435600000,'CAR','ATL'),
+(5,1602435600000,'LAR','WAS'),
+(5,1602435600000,'CIN','BAL'),
+(5,1602435600000,'LV','KC'),
+(5,1602446700000,'MIA','SF'),
+(5,1602447900000,'IND','CLE'),
+(5,1602447900000,'NYG','DAL'),
+(5,1602462000000,'MIN','SEA'),
+(5,1602548100000,'LAC','NO');
+
+-- Steelers/Titans postponed game
+SELECT * FROM `games` WHERE `away_team` = 'PIT' AND `home_team` = 'TEN' AND `week` = 4 AND `season` = 2020;
+SELECT * FROM `games` WHERE `away_team` = 'PIT' AND `home_team` = 'TEN' AND `week` = 0 AND `season` = 2020;
+UPDATE `pickem_app`.`games` SET `week` = 0 WHERE (`id` = '13c096bf-fc26-11ea-b134-06a4a2a4eb91');
+UPDATE `pickem_app`.`games` SET `game_at` = '1609401600000' WHERE (`id` = '13c096bf-fc26-11ea-b134-06a4a2a4eb91');
