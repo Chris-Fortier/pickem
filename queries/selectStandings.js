@@ -4,7 +4,7 @@ const selectStandings = `
 SELECT 
 	\`team_name\`,
     \`initials\`,
-    COUNT(*) AS \`num_correct\`
+    SUM(CASE WHEN \`pick\` = \`winner\` AND \`pick\` is not null THEN 1 ELSE 0 END) AS \`num_correct\`
     -- NULL as \`hello\`
 FROM
     \`games\`
@@ -14,7 +14,7 @@ FROM
     \`users\` ON \`picks\`.\`user_id\` = \`users\`.\`id\`
 WHERE
    \`group_id\` = ?
-       AND \`season\` = ? AND \`week\` LIKE ? AND \`pick\` = \`winner\` AND \`pick\` is not null
+       AND \`season\` = ? AND \`week\` LIKE ? AND \`pick\` is not null
          GROUP BY \`user_id\` ORDER BY \`num_correct\` DESC;
 `;
 
