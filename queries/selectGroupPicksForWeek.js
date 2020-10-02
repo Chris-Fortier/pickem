@@ -12,7 +12,7 @@ SELECT
         WHEN \`pick\` IS NOT NULL THEN 2
         ELSE NULL
     END) AS \`pick\`,
-    \`winner\`,
+    (CASE WHEN \`away_score\` > \`home_score\` THEN 0 WHEN \`away_score\` < \`home_score\` THEN 1 WHEN \`away_score\` = \`home_score\` THEN 2 ELSE NULL END) AS \`winner\`,
     \`users\`.\`id\` AS \`user_id\`,
     \`users\`.\`initials\` AS \`user_initials\`
 FROM

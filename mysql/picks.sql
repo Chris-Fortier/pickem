@@ -56,7 +56,7 @@ SELECT
     `games`.`id` AS `game_id`,
     '3fd8d78c-8151-4145-b276-aea3559deb76' AS `group_id`,
     `pick`,
-    `winner`
+    (CASE WHEN `away_score` > `home_score` THEN 0 WHEN `away_score` < `home_score` THEN 1 WHEN `away_score` = `home_score` THEN 2 ELSE NULL END) AS `winner`
 FROM
     `picks`
         RIGHT JOIN
@@ -67,6 +67,7 @@ WHERE
 ORDER BY
 	`game_at` ASC;
         
+-- selectGroupPicksForWeek
 -- get all picks for the week for the entire group
 -- user picks are shown but for games that haven't started yet it only shows if picks have been made (null means no pick, 0 means visitor, 1 means home, 2 means pick made but other user and game hasn't started yet) 
 SELECT 
@@ -80,7 +81,7 @@ SELECT
         WHEN `pick` IS NOT NULL THEN 2
         ELSE NULL
     END) AS `pick`,
-    `winner`,
+    (CASE WHEN `away_score` > `home_score` THEN 0 WHEN `away_score` < `home_score` THEN 1 WHEN `away_score` = `home_score` THEN 2 ELSE NULL END) AS `winner`,
     `users`.`id` AS `user_id`,
     `users`.`initials` AS `user_initials`
 FROM
@@ -97,30 +98,12 @@ WHERE
         AND `week` LIKE '1'
 ORDER BY `game_at` ASC;
 
--- get standings for a each user in a group season
-SELECT 
-	`team_name`,
-    `initials`,
-    -- COUNT(*) AS `num_picks`,
-    SUM(CASE WHEN `pick` = `winner` AND `pick` is not null THEN 1 ELSE 0 END) AS `num_correct`
-    -- NULL as `hello`
-FROM
-    `games`
-        RIGHT JOIN
-    `picks` ON `picks`.`game_id` = `games`.`id`
-    RIGHT JOIN
-    `users` ON `picks`.`user_id` = `users`.`id`
--- WHERE
-   -- `group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
-     --   AND `season` = 2020 AND `pick` = `winner` AND `pick` is not null
-         GROUP BY `user_id` ORDER BY `num_correct` DESC;
-
+-- selectStandings
 -- new version with week or wildcard week for entire season
 SELECT 
 	`team_name`,
     `initials`,
-    SUM(CASE WHEN `pick` = `winner` AND `pick` is not null THEN 1 ELSE 0 END) AS `num_correct`
-    -- NULL as `hello`
+    SUM(CASE WHEN `pick` = (CASE WHEN `away_score` > `home_score` THEN 0 WHEN `away_score` < `home_score` THEN 1 WHEN `away_score` = `home_score` THEN 2 ELSE NULL END) AND `pick` is not null THEN 1 ELSE 0 END) AS `num_correct`
 FROM
     `games`
         RIGHT JOIN
@@ -129,5 +112,5 @@ FROM
     `users` ON `picks`.`user_id` = `users`.`id`
 WHERE
    `group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
-       AND `season` = 2020 AND `week` LIKE '4' AND `pick` is not null
+       AND `season` = 2020 AND `week` LIKE '3' AND `pick` is not null
          GROUP BY `user_id` ORDER BY `num_correct` DESC;

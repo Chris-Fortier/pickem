@@ -47,12 +47,14 @@ SELECT
 FROM
     `games`
 WHERE
-    `winner` IS NULL and (`game_at` + 3600000 * 3) < (UNIX_TIMESTAMP() * 1000);
+    (`away_score` IS NULL OR `home_score` IS NULL) AND (`game_at` + 3600000 * 3) < (UNIX_TIMESTAMP() * 1000);
     
 -- set winners from scores, run these after manually adding the scores using the query above
-UPDATE `pickem_app`.`games` SET `winner` = '0' WHERE (`away_score` > `home_score`) and `winner` is null;
-UPDATE `pickem_app`.`games` SET `winner` = '1' WHERE (`away_score` < `home_score`) and `winner` is null;
-UPDATE `pickem_app`.`games` SET `winner` = '2' WHERE (`away_score` = `home_score`) and `winner` is null;
+-- these should be no longer needed as my queries calculate winner based on score and don't use the manually entered field anymore
+-- TODO: should delete the winner column in the future after I verify it works with no data added to it
+-- UPDATE `pickem_app`.`games` SET `winner` = '0' WHERE (`away_score` > `home_score`) and `winner` is null;
+-- UPDATE `pickem_app`.`games` SET `winner` = '1' WHERE (`away_score` < `home_score`) and `winner` is null;
+-- UPDATE `pickem_app`.`games` SET `winner` = '2' WHERE (`away_score` = `home_score`) and `winner` is null;
 
 -- selectGame
 -- get the details of a single game form the game id
@@ -163,7 +165,7 @@ VALUES
 (5,1602548100000,'LAC','NO');
 
 -- Steelers/Titans postponed game
-SELECT * FROM `games` WHERE `away_team` = 'PIT' AND `home_team` = 'TEN' AND `week` = 4 AND `season` = 2020;
-SELECT * FROM `games` WHERE `away_team` = 'PIT' AND `home_team` = 'TEN' AND `week` = 0 AND `season` = 2020;
+SELECT * FROM `games` WHERE `away_team` = 'PIT' AND `home_team` = 'TEN' AND `season` = 2020; -- select the game
 UPDATE `pickem_app`.`games` SET `week` = 0 WHERE (`id` = '13c096bf-fc26-11ea-b134-06a4a2a4eb91');
 UPDATE `pickem_app`.`games` SET `game_at` = '1609401600000' WHERE (`id` = '13c096bf-fc26-11ea-b134-06a4a2a4eb91');
+UPDATE `pickem_app`.`games` SET `game_at` = '1603645200000', `week` = '7' WHERE (`id` = '13c096bf-fc26-11ea-b134-06a4a2a4eb91'); -- move PIT/TEN to week 7 with new time

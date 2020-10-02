@@ -7,7 +7,7 @@ SELECT
     \`games\`.\`id\` AS \`game_id\`,
     ? AS \`group_id\`,
     \`pick\`,
-    \`winner\`
+    (CASE WHEN \`away_score\` > \`home_score\` THEN 0 WHEN \`away_score\` < \`home_score\` THEN 1 WHEN \`away_score\` = \`home_score\` THEN 2 ELSE NULL END) AS \`winner\`
 FROM
     \`picks\`
         RIGHT JOIN
