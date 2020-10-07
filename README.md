@@ -30,3 +30,7 @@
    1. `import newReducer from "./reducers/newReducer";`
    2. add it to combineReducers
 5. clear it when logging out
+
+## To Do List
+
+- [x] Make it show all players with any picks for the week on the standings page for a given week.
