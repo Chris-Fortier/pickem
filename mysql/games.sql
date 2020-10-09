@@ -42,6 +42,7 @@ SELECT * FROM `games`;
 
 -- get all games with no winners that started at least three hours in the past
 -- useful for data entry
+USE `pickem_app`;
 SELECT 
     *
 FROM
@@ -164,6 +165,30 @@ VALUES
 (5,1602462000000,'MIN','SEA'),
 (5,1602548100000,'LAC','NO');
 
+-- 2020 week 6
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(6,1602807600000,'KC','BUF'),
+(6,1603040400000,'CIN','IND'),
+(6,1603040400000,'HOU','TEN'),
+(6,1603040400000,'ATL','MIN'),
+(6,1603040400000,'WAS','NYG'),
+(6,1603040400000,'DET','JAX'),
+(6,1603040400000,'CHI','CAR'),
+(6,1603040400000,'BAL','PHI'),
+(6,1603040400000,'CLE','PIT'),
+(6,1603051500000,'MIA','DEN'),
+(6,1603051500000,'NYJ','LAC'),
+(6,1603052700000,'GB','TB'),
+(6,1603066800000,'LAR','SF'),
+(6,1603152900000,'ARI','DAL');
+
 -- Steelers/Titans postponed game
 SELECT * FROM `games` WHERE `away_team` = 'PIT' AND `home_team` = 'TEN' AND `season` = 2020; -- select the game
 UPDATE `pickem_app`.`games` SET `week` = 0 WHERE (`id` = '13c096bf-fc26-11ea-b134-06a4a2a4eb91');
@@ -176,3 +201,10 @@ UPDATE `pickem_app`.`games` SET `game_at` = '1601939100000' WHERE (`id` = '13c09
 -- move time of falc pack game
 SELECT * FROM `games` WHERE `away_team` = 'ATL' AND `home_team` = 'GB' AND `season` = 2020; -- select the game
 UPDATE `pickem_app`.`games` SET `game_at` = '1601945400000' WHERE (`id` = '13c099f9-fc26-11ea-b134-06a4a2a4eb91'); -- change game time
+
+-- week 5 moves
+SELECT * FROM `games` WHERE `away_team` = 'DEN' AND `home_team` = 'NE' AND `season` = 2020; -- select the game
+UPDATE `pickem_app`.`games` SET `game_at` = '1602536400000' WHERE (`id` = 'fae87b89-02ae-11eb-b134-06a4a2a4eb91'); -- change it
+SELECT * FROM `games` WHERE `away_team` = 'BUF' AND `home_team` = 'TEN' AND `season` = 2020; -- select the game
+UPDATE `pickem_app`.`games` SET `game_at` = '1602630000000' WHERE (`id` = 'fae87c07-02ae-11eb-b134-06a4a2a4eb91'); -- change it
+
