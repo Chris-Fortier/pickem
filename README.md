@@ -1,8 +1,10 @@
 # Running the App Locally
 
--  Both of these command are done from the project folder:
-   -  `npm run server` runs the server
-   -  `npm run client` runs the client
+Open up separate consoles to run the server and client.
+Run these commands in each terminal from the project folder:
+
+-  `npm run server` runs the server
+-  `npm run client` runs the client
 
 # Deployment
 
@@ -33,4 +35,4 @@
 
 ## To Do List
 
-- [x] Make it show all players with any picks for the week on the standings page for a given week.
+-  [x] Make it show all players with any picks for the week on the standings page for a given week.
