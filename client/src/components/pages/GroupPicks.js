@@ -3,6 +3,7 @@ import NavBar from "../ui/NavBar";
 import { connect } from "react-redux";
 import classnames from "classnames";
 import { get_week_or_season_text } from "../../utils/helpers";
+import toDisplayDate from "date-fns/format";
 
 class GroupPicks extends React.Component {
    render() {
@@ -28,7 +29,15 @@ class GroupPicks extends React.Component {
                         {/* list the user names across the top of the table */}
                         {this.props.groupPicks.teams.map((team) => {
                            return (
-                              <th scope="col" style={{ textAlign: "center" }}>
+                              <th
+                                 scope="col"
+                                 style={{ textAlign: "center" }}
+                                 className={classnames({
+                                    "own-column":
+                                       team.user_id ===
+                                       this.props.currentUser.id,
+                                 })} // this locks your own column on the screen
+                              >
                                  {team.initials.toUpperCase()}
                               </th>
                            );
@@ -39,28 +48,53 @@ class GroupPicks extends React.Component {
                      {/* each game of the week has one row */}
                      {this.props.groupPicks.match_ups.map((match_up) => {
                         return (
-                           <tr>
-                              <th scope="row">{match_up.title}</th>
-                              {this.props.groupPicks.teams.map((team) => {
-                                 return (
+                           <>
+                              {/* each new date has a row divider */}
+                              {match_up.is_new_date && (
+                                 <tr>
+                                    <th scope="row" className="new-table-date">
+                                       <br />
+                                       {toDisplayDate(
+                                          match_up.game_at,
+                                          "EE MM/dd"
+                                       )}
+                                    </th>
                                     <td
-                                       className={classnames({
-                                          "locked-pick-group":
-                                             match_up.game_at < Date.now(),
-                                          "correct-pick-group":
+                                       className="new-table-date"
+                                       colSpan="100%"
+                                    ></td>
+                                 </tr>
+                              )}
+                              <tr>
+                                 <th scope="row">{match_up.title}</th>
+                                 {this.props.groupPicks.teams.map((team) => {
+                                    return (
+                                       <td
+                                          className={classnames({
+                                             "pregame-pick-group": true,
+                                             "locked-pick-group":
+                                                match_up.game_at < Date.now(),
+                                             "correct-pick-group":
+                                                match_up.picks[team.user_id]
+                                                   .pick_result === true,
+                                             "incorrect-pick-group":
+                                                match_up.picks[team.user_id]
+                                                   .pick_result === false,
+                                             "own-column":
+                                                team.user_id ===
+                                                this.props.currentUser.id, // makes own column stay on screen
+                                          })}
+                                          style={{ "text-align": "center" }}
+                                       >
+                                          {
                                              match_up.picks[team.user_id]
-                                                .pick_result === true,
-                                          "incorrect-pick-group":
-                                             match_up.picks[team.user_id]
-                                                .pick_result === false,
-                                       })}
-                                       style={{ "text-align": "center" }}
-                                    >
-                                       {match_up.picks[team.user_id].pick_label}
-                                    </td>
-                                 );
-                              })}
-                           </tr>
+                                                .pick_label
+                                          }
+                                       </td>
+                                    );
+                                 })}
+                              </tr>
+                           </>
                         );
                      })}
                   </tbody>

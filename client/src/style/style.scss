@@ -162,16 +162,30 @@ td {
    color: $white;
 }
 
+// for the date rows on the group picks table
+.new-table-date {
+   background-color: darken($gray, 55);
+}
+
+// color for picked or unpicked games before they start
+.pregame-pick-group {
+   // background-color: transparentize($navy, 0.5);
+   background-color: darken($gray, 45);
+}
+
 .locked-pick-group {
-   background-color: transparentize($navy, 0.5);
+   // background-color: transparentize($navy, 0.5);
+   background-color: desaturate(lighten($navy, 5), 40);
 }
 
 .correct-pick-group {
-   background-color: transparentize($green, 0.5);
+   // background-color: transparentize($green, 0.5);
+   background-color: desaturate(darken($green, 10), 20);
 }
 
 .incorrect-pick-group {
-   background-color: transparentize($red, 0.5);
+   // background-color: transparentize($red, 0.5);
+   background-color: desaturate(darken($red, 5), 30);
 }
 
 .right {
@@ -223,6 +237,15 @@ tbody th {
 .lock-x-pos {
    position: sticky;
    left: 0;
+}
+
+// make your own column on group picks stay on the screen
+.own-column {
+   position: sticky;
+   left: 100px;
+   // background-color: gray;
+   opacity: 100%;
+   z-index: 100;
 }
 
 /* To have the header in the first column stick to the left: */

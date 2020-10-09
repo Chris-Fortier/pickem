@@ -12,6 +12,7 @@ import {
    logOutCurrentUser,
    get_week_or_season_text,
 } from "../../utils/helpers";
+import { differenceInDays } from "date-fns";
 
 const defaultGroupSeasonWeek = {
    group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
@@ -175,6 +176,20 @@ class NavBar extends React.Component {
                      team.num_picks > 0
                   );
                });
+
+               // go through each matchup and flag the ones that are on new dates
+               let current_date_at = null;
+               for (let m of match_ups) {
+                  if (
+                     differenceInDays(m.game_at, current_date_at) > 0 ||
+                     current_date_at === null
+                  ) {
+                     m.is_new_date = true;
+                     current_date_at = m.game_at;
+                  } else {
+                     m.is_new_date = false;
+                  }
+               }
 
                this.props.dispatch({
                   type: actions.STORE_GROUP_PICKS,
