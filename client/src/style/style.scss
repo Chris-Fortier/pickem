@@ -241,11 +241,12 @@ tbody th {
 
 // make your own column on group picks stay on the screen
 .own-column {
+   position: -webkit-sticky; /* for Safari */
    position: sticky;
    left: 100px;
    // background-color: gray;
-   opacity: 100%;
-   z-index: 100;
+   opacity: 1;
+   // z-index: 100;
 }
 
 /* To have the header in the first column stick to the left: */
