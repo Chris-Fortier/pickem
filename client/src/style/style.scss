@@ -246,7 +246,11 @@ tbody th {
    left: 100px;
    // background-color: gray;
    opacity: 1;
-   z-index: 100;
+   z-index: 3;
+}
+
+.own-heading {
+   z-index: 4; // make sure your own heading is above your own picks
 }
 
 /* To have the header in the first column stick to the left: */

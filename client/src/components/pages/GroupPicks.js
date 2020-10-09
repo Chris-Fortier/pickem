@@ -36,6 +36,9 @@ class GroupPicks extends React.Component {
                                     "own-column":
                                        team.user_id ===
                                        this.props.currentUser.id,
+                                    "own-heading":
+                                       team.user_id ===
+                                       this.props.currentUser.id,
                                  })} // this locks your own column on the screen
                               >
                                  {team.initials.toUpperCase()}
