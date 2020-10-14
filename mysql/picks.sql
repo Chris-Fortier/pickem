@@ -114,3 +114,5 @@ WHERE
    `group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
        AND `season` = 2020 AND `week` LIKE '3' AND `pick` is not null
          GROUP BY `user_id` ORDER BY `num_correct` DESC;
+	
+-- see who got the most correct picks in a week
