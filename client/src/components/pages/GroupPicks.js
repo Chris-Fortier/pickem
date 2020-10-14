@@ -23,30 +23,6 @@ class GroupPicks extends React.Component {
                   </div>
                </div>
                <table className="table-dark table-striped">
-                  <thead>
-                     <tr>
-                        <th scope="col">Game</th>
-                        {/* list the user names across the top of the table */}
-                        {this.props.groupPicks.teams.map((team) => {
-                           return (
-                              <th
-                                 scope="col"
-                                 style={{ textAlign: "center" }}
-                                 className={classnames({
-                                    "own-column":
-                                       team.user_id ===
-                                       this.props.currentUser.id,
-                                    "own-heading":
-                                       team.user_id ===
-                                       this.props.currentUser.id,
-                                 })} // this locks your own column on the screen
-                              >
-                                 {team.initials.toUpperCase()}
-                              </th>
-                           );
-                        })}
-                     </tr>
-                  </thead>
                   <tbody>
                      {/* each game of the week has one row */}
                      {this.props.groupPicks.match_ups.map((match_up) => {
@@ -55,21 +31,32 @@ class GroupPicks extends React.Component {
                               {/* each new date has a row divider */}
                               {match_up.is_new_date && (
                                  <tr>
-                                    <th scope="row" className="new-table-date">
-                                       <br />
+                                    <th
+                                       scope="row"
+                                       className="left-column top-row date"
+                                    >
                                        {toDisplayDate(
                                           match_up.game_at,
                                           "EE MM/dd"
                                        )}
                                     </th>
-                                    <td
-                                       className="new-table-date"
-                                       colSpan="100%"
-                                    ></td>
+                                    {this.props.groupPicks.teams.map((team) => {
+                                       return (
+                                          <th
+                                             scope="col"
+                                             style={{ textAlign: "center" }}
+                                             className="top-row"
+                                          >
+                                             {team.initials.toUpperCase()}
+                                          </th>
+                                       );
+                                    })}
                                  </tr>
                               )}
                               <tr>
-                                 <th scope="row">{match_up.title}</th>
+                                 <th scope="row" className="left-column">
+                                    {match_up.title}
+                                 </th>
                                  {this.props.groupPicks.teams.map((team) => {
                                     return (
                                        <td
@@ -83,9 +70,6 @@ class GroupPicks extends React.Component {
                                              "incorrect-pick-group":
                                                 match_up.picks[team.user_id]
                                                    .pick_result === false,
-                                             "own-column":
-                                                team.user_id ===
-                                                this.props.currentUser.id, // makes own column stay on screen
                                           })}
                                           style={{ "text-align": "center" }}
                                        >

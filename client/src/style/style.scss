@@ -174,18 +174,18 @@ td {
 }
 
 .locked-pick-group {
-   // background-color: transparentize($navy, 0.5);
-   background-color: desaturate(lighten($navy, 5), 40);
+   background-color: transparentize($navy, 0.5);
+   // background-color: desaturate(lighten($navy, 5), 40);
 }
 
 .correct-pick-group {
-   // background-color: transparentize($green, 0.5);
-   background-color: desaturate(darken($green, 10), 20);
+   background-color: transparentize($green, 0.5);
+   // background-color: desaturate(darken($green, 10), 20);
 }
 
 .incorrect-pick-group {
-   // background-color: transparentize($red, 0.5);
-   background-color: desaturate(darken($red, 5), 30);
+   background-color: transparentize($red, 0.5);
+   // background-color: desaturate(darken($red, 5), 30);
 }
 
 .right {
@@ -203,29 +203,30 @@ td {
    // min-width: 100%; // cjf
    // max-height: 150px;
    max-height: 100vh; // cjf
-   overflow: scroll;
+   min-height: 100vh; // cjf
+   overflow-x: scroll;
 }
 
-// drop downs will cover the table header in large size
-// table header will stick only in small size
-thead th {
-   // position: -webkit-sticky; /* for Safari */
-   // position: sticky;
-   // top: 0;
-   background: #000;
-   // z-index: 1;
-}
-@media (max-width: 576px) {
-   thead th {
-      position: -webkit-sticky; /* for Safari */
-      position: sticky;
-      top: 0;
-      // background: #000;
-      z-index: 1;
-   }
-}
+// // drop downs will cover the table header in large size
+// // table header will stick only in small size
+// thead th {
+//    // position: -webkit-sticky; /* for Safari */
+//    // position: sticky;
+//    // top: 0;
+//    background: #000;
+//    // z-index: 1;
+// }
+// @media (max-width: 576px) {
+//    thead th {
+//       position: -webkit-sticky; /* for Safari */
+//       position: sticky;
+//       top: 0;
+//       // background: #000;
+//       z-index: 1;
+//    }
+// }
 
-tbody th {
+.left-column {
    position: -webkit-sticky; /* for Safari */
    position: sticky;
    left: 0;
@@ -234,31 +235,27 @@ tbody th {
    background: #000; // cjf
 }
 
+.top-row {
+   background: #000; // cjf
+   height: 36px;
+   vertical-align: bottom;
+}
+
+.date {
+   color: transparentize($color: $white, $amount: 0.4);
+}
+
 .lock-x-pos {
    position: sticky;
    left: 0;
 }
 
-// make your own column on group picks stay on the screen
-.own-column {
-   position: -webkit-sticky; /* for Safari */
-   position: sticky;
-   left: 100px;
-   // background-color: gray;
-   opacity: 1;
-   z-index: 3;
-}
-
-.own-heading {
-   z-index: 4; // make sure your own heading is above your own picks
-}
-
 /* To have the header in the first column stick to the left: */
 
-thead th:first-child {
-   left: 0;
-   z-index: 2;
-}
+// thead th:first-child {
+//    left: 0;
+//    z-index: 2;
+// }
 
 /* Just to display it nicely: */
 
