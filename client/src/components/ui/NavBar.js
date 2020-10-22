@@ -4,10 +4,10 @@ import actions from "../../store/actions";
 import { connect } from "react-redux";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
+import Alert from "react-bootstrap/Alert";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
-// import classnames from "classnames";
 import {
    logOutCurrentUser,
    get_week_or_season_text,
@@ -70,6 +70,13 @@ class NavBar extends React.Component {
 
    // gets the data based on the group, season and week being viewed and also what page the user is on
    getData(groupSeasonWeek) {
+      // display a message until we get data back from the server
+      this.props.dispatch({
+         type: actions.STORE_WARNING_MESSAGE,
+         payload:
+            "Getting data from the server... If this takes awhile the server might be waking up.",
+      });
+
       // get the group picks if on that page
       if (window.location.pathname === "/group-picks") {
          console.log(this.props);
@@ -199,10 +206,22 @@ class NavBar extends React.Component {
                      num_completed_games,
                   },
                });
+
+               // clear the server message
+               this.props.dispatch({
+                  type: actions.CLEAR_MESSAGE,
+               });
             })
             .catch((err) => {
                const data = err.response.data;
                console.log("err", data);
+
+               // post an error message
+               this.props.dispatch({
+                  type: actions.STORE_DANGER_MESSAGE,
+                  payload:
+                     "Could not connect. The server might need to wake up. Try again in a few moments.",
+               });
             });
       } else if (window.location.pathname === "/my-picks") {
          // if on the my picks page get my picks
@@ -216,10 +235,22 @@ class NavBar extends React.Component {
                   type: actions.STORE_MY_PICKS,
                   payload: res.data,
                });
+
+               // clear the server message
+               this.props.dispatch({
+                  type: actions.CLEAR_MESSAGE,
+               });
             })
             .catch((err) => {
                const data = err.response.data;
                console.log("err", data);
+
+               // post an error message
+               this.props.dispatch({
+                  type: actions.STORE_DANGER_MESSAGE,
+                  payload:
+                     "Could not connect. The server might need to wake up. Try again in a few moments.",
+               });
             });
       } else if (window.location.pathname === "/standings") {
          // if on the standings page get standings
@@ -235,7 +266,6 @@ class NavBar extends React.Component {
                   let current_num_correct = standings[0].num_correct;
                   let is_new_rank = true; // if true will style with a border above it to separate tied teams
                   const leader_num_correct = standings[0].num_correct;
-                  console.log(1);
                   for (let i in standings) {
                      console.log({ i });
                      if (
@@ -262,15 +292,25 @@ class NavBar extends React.Component {
                      );
                   }
                }
-               console.log(3);
                // send the data to Redux
                this.props.dispatch({
                   type: actions.STORE_STANDINGS,
                   payload: res.data,
                });
+
+               // clear the server message
+               this.props.dispatch({
+                  type: actions.CLEAR_MESSAGE,
+               });
             })
             .catch((err) => {
                console.log(err);
+               // post an error message
+               this.props.dispatch({
+                  type: actions.STORE_DANGER_MESSAGE,
+                  payload:
+                     "Could not connect. The server might need to wake up. Try again in a few moments.",
+               });
             });
       }
    }
@@ -398,6 +438,12 @@ class NavBar extends React.Component {
                   </Nav>
                </Navbar.Collapse>
             </Navbar>
+            {/* message pop up */}
+            {!isEmpty(this.props.message) && (
+               <Alert variant={this.props.message.variant} className="message">
+                  {this.props.message.message}
+               </Alert>
+            )}
          </>
       );
    }
@@ -408,6 +454,7 @@ function mapStateToProps(state) {
    return {
       currentUser: state.currentUser,
       groupSeasonWeek: state.groupSeasonWeek,
+      message: state.message,
    };
 }
 

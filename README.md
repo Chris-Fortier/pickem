@@ -32,6 +32,7 @@ Run these commands in each terminal from the project folder:
    1. `import newReducer from "./reducers/newReducer";`
    2. add it to combineReducers
 5. clear it when logging out
+   1. add to `client\src\utils\helpers.js` `logOutCurrentUser()`
 
 ## To Do List
 

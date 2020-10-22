@@ -117,7 +117,7 @@ class Landing extends React.Component {
             // set token in localStorage
             const authToken = res.data.accessToken;
             localStorage.setItem("authToken", authToken);
-            console.log("authToken", authToken);
+            // console.log("authToken", authToken);
 
             const user = jwtDecode(authToken); // decode the user from the access token
 

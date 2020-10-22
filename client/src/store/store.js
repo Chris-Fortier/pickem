@@ -12,6 +12,7 @@ const initialState = {
       num_completed_games: 0,
    },
    standings: [],
+   message: {},
 };
 
 const store = createStore(combineReducers, initialState, composeWithDevTools());

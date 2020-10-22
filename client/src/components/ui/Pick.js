@@ -23,6 +23,12 @@ class Pick extends React.Component {
          payload: [...this.props.myPicks],
       });
 
+      // post a message about waiting for server response
+      this.props.dispatch({
+         type: actions.STORE_WARNING_MESSAGE,
+         payload: "Sending pick to the server...",
+      });
+
       // get my picks from the API
       axios
          .put(
@@ -30,6 +36,12 @@ class Pick extends React.Component {
          )
          .then((res) => {
             // the pick was already updated above
+
+            // post a response message
+            this.props.dispatch({
+               type: actions.STORE_SUCCESS_MESSAGE,
+               payload: "Pick updated.",
+            });
          })
          .catch((err) => {
             console.log(err.response);
@@ -38,6 +50,13 @@ class Pick extends React.Component {
             this.props.dispatch({
                type: actions.STORE_MY_PICKS,
                payload: [...this.props.myPicks],
+            });
+
+            // post an error message
+            this.props.dispatch({
+               type: actions.STORE_DANGER_MESSAGE,
+               payload:
+                  "Could not send your pick. The server might need to wake up. Try again in a few moments.",
             });
          });
    }

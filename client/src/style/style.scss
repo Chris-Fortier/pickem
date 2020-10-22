@@ -278,3 +278,34 @@ table {
 .new-standings-rank {
    border-top: gray 1px solid;
 }
+
+// for the pop up message banners
+.message {
+   // background-color: $green;
+   // color: black;
+   font-weight: 600;
+   position: fixed;
+   bottom: 0px;
+   width: calc(100% - 30px);
+   z-index: 1000;
+   margin: 15px;
+   border-radius: 0;
+}
+
+.alert-danger {
+   background-color: $red;
+   color: $white;
+   border-color: $red;
+}
+
+.alert-warning {
+   background-color: $yellow;
+   color: $black;
+   border-color: $yellow;
+}
+
+.alert-success {
+   background-color: $green;
+   color: $black;
+   border-color: $green;
+}

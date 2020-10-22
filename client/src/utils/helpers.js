@@ -7,6 +7,8 @@ import actions from "../store/actions";
 export const MAX_USER_NAME_LENGTH = 24;
 export const MAX_TEAM_NAME_LENGTH = 24;
 export const MAX_USER_INITIALS_LENGTH = 3;
+// export const TIME_UNTIL_WARNING_SHOWN = 2000; // ms until the warning message pops up
+// export const TIME_UNTIL_SUCCESS_HIDDEN = 2000; // ms until a success message disappears
 
 // // returns a hashed version of a given password
 // export function toHash(myPlaintextPassword) {
@@ -40,6 +42,9 @@ export function logOutCurrentUser() {
    store.dispatch({
       type: actions.STORE_STANDINGS,
       payload: [], // empty
+   });
+   store.dispatch({
+      type: actions.CLEAR_MESSAGE,
    });
 }
 
