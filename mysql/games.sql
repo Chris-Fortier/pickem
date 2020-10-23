@@ -236,7 +236,34 @@ INSERT INTO `pickem_app`.`games` (`game_at`, `week`, `season`, `away_team`, `hom
 INSERT INTO `pickem_app`.`games` (`game_at`, `week`, `season`, `away_team`, `home_team`) VALUES ('1603671600000', '7', '2020', 'TB', 'LV');
 INSERT INTO `pickem_app`.`games` (`game_at`, `week`, `season`, `away_team`, `home_team`) VALUES ('1603757700000', '7', '2020', 'CHI', 'LAR');
 
+-- week 7 moves
+SELECT * FROM `games` WHERE ((`away_team` = 'TB' AND `home_team` = 'LV') OR (`away_team` = 'SEA' AND `home_team` = 'ARI')) AND `season` = 2020; -- select the games
+UPDATE `pickem_app`.`games` SET `game_at` = '1603656300000' WHERE (`id` = '1b927165-0e69-11eb-b134-06a4a2a4eb91'); -- flexed game
+UPDATE `pickem_app`.`games` SET `game_at` = '1603671600000' WHERE (`id` = '1b754fa2-0e69-11eb-b134-06a4a2a4eb91'); -- flexed game
 
+-- 2020 week 8
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(8,1604017200000,'ATL','CAR'),
+(8,1604250000000,'OAK','CLE'),
+(8,1604250000000,'TEN','CIN'),
+(8,1604250000000,'LAR','MIA'),
+(8,1604250000000,'MIN','GB'),
+(8,1604250000000,'NE','BUF'),
+(8,1604250000000,'NYJ','KC'),
+(8,1604250000000,'IND','DET'),
+(8,1604262300000,'SF','SEA'),
+(8,1604262300000,'NO','CHI'),
+(8,1604276400000,'DAL','PHI'),
+(8,1604250000000,'PIT','BAL'),
+(8,1604261100000,'LAC','DEN'),
+(8,1604362500000,'TB','NYG');
 
 -- future games
 SELECT
