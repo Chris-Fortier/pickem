@@ -251,7 +251,7 @@ INSERT INTO `games` (
 )
 VALUES
 (8,1604017200000,'ATL','CAR'),
-(8,1604250000000,'OAK','CLE'),
+(8,1604250000000,'LV','CLE'),
 (8,1604250000000,'TEN','CIN'),
 (8,1604250000000,'LAR','MIA'),
 (8,1604250000000,'MIN','GB'),
@@ -265,9 +265,35 @@ VALUES
 (8,1604261100000,'LAC','DEN'),
 (8,1604362500000,'TB','NYG');
 
+-- add an hour for standard time for games on or after Nov 1
+UPDATE `pickem_app`.`games` SET `game_at` = `game_at` + 3600000 WHERE (`game_at` > 1604214000000);
+
+-- 2020 week 9
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(9,1604625600000,'GB','SF'),
+(9,1604858400000,'HOU','JAX'),
+(9,1604858400000,'NYG','WSH'),
+(9,1604858400000,'CHI','TEN'),
+(9,1604858400000,'SEA','BUF'),
+(9,1604858400000,'DET','MIN'),
+(9,1604858400000,'CAR','KC'),
+(9,1604858400000,'BAL','IND'),
+(9,1604858400000,'DEN','ATL'),
+(9,1604869500000,'LV','LAC'),
+(9,1604870700000,'PIT','DAL'),
+(9,1604870700000,'MIA','ARI'),
+(9,1604884800000,'NO','TB'),
+(9,1604970900000,'NE','NYJ');
+
 -- future games
 SELECT
     id,`game_at`,FROM_UNIXTIME(`game_at`/1000-25200, '%Y-%m-%d %H:%i') as `game_at_formatted`,`season`,`week`,`away_team`,`home_team`
 FROM `games` WHERE `game_at` > (UNIX_TIMESTAMP() * 1000) order by `game_at` asc; -- select future games
 
--- check week 6 game times
