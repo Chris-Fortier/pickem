@@ -297,3 +297,26 @@ SELECT
     id,`game_at`,FROM_UNIXTIME(`game_at`/1000-25200, '%Y-%m-%d %H:%i') as `game_at_formatted`,`season`,`week`,`away_team`,`home_team`
 FROM `games` WHERE `game_at` > (UNIX_TIMESTAMP() * 1000) order by `game_at` asc; -- select future games
 
+-- 2020 week 10
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(10,1605230400000,'IND','TEN'),
+(10,1605474300000,'LAC','MIA'),
+(10,1605463200000,'TB','CAR'),
+(10,1605463200000,'HOU','CLE'),
+(10,1605463200000,'JAX','GB'),
+(10,1605475500000,'CIN','PIT'),
+(10,1605463200000,'PHI','NYG'),
+(10,1605463200000,'WAS','DET'),
+(10,1605474300000,'BUF','ARI'),
+(10,1605474300000,'DEN','LV'),
+(10,1605475500000,'SF','NO'),
+(10,1605475500000,'SEA','LAR'),
+(10,1605489600000,'BAL','NE'),
+(10,1605575700000,'MIN','CHI');

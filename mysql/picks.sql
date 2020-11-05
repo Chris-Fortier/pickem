@@ -116,3 +116,4 @@ WHERE
          GROUP BY `user_id` ORDER BY `num_correct` DESC;
 	
 -- see who got the most correct picks in a week
+
