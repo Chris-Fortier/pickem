@@ -48,7 +48,7 @@ SELECT
 FROM
     `games`
 WHERE
-    (`away_score` IS NULL OR `home_score` IS NULL) AND (`game_at` + 3600000 * 3) < (UNIX_TIMESTAMP() * 1000)
+    (`away_score` IS NULL OR `home_score` IS NULL) AND (`game_at` + 3600000 * 2) < (UNIX_TIMESTAMP() * 1000)
 ORDER BY `game_at` ASC;
     
 -- set winners from scores, run these after manually adding the scores using the query above
@@ -320,3 +320,51 @@ VALUES
 (10,1605475500000,'SEA','LAR'),
 (10,1605489600000,'BAL','NE'),
 (10,1605575700000,'MIN','CHI');
+
+-- 2020 week 11-12
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(11,1605835200000,'ARI','SEA'),
+(11,1606079100000,'MIA','DEN'),
+(11,1606079100000,'NYJ','LAC'),
+(11,1606068000000,'DET','CAR'),
+(11,1606080300000,'GB','IND'),
+(11,1606068000000,'NE','HOU'),
+(11,1606068000000,'ATL','NO'),
+(11,1606068000000,'PHI','CLE'),
+(11,1606068000000,'PIT','JAX'),
+(11,1606068000000,'TEN','BAL'),
+(11,1606068000000,'CIN','WAS'),
+(11,1606080300000,'DAL','MIN'),
+(11,1606094400000,'KC','LV'),
+(11,1606180500000,'LAR','TB'),
+(12,1606411800000,'HOU','DET'),
+(12,1606426200000,'WAS','DAL'),
+(12,1606440000000,'BAL','PIT'),
+(12,1606672800000,'LV','ATL'),
+(12,1606672800000,'NYG','CIN'),
+(12,1606672800000,'ARI','NE'),
+(12,1606672800000,'MIA','NYJ'),
+(12,1606672800000,'TEN','IND'),
+(12,1606672800000,'CLE','JAX'),
+(12,1606672800000,'LAC','BUF'),
+(12,1606672800000,'CAR','MIN'),
+(12,1606683900000,'SF','LAR'),
+(12,1606683900000,'NO','DEN'),
+(12,1606685100000,'KC','TB'),
+(12,1606699200000,'CHI','GB'),
+(12,1606785300000,'SEA','PHI');
+
+-- fixing week 11
+SELECT * FROM `games` WHERE `week` = 11 AND (`home_team` = 'DEN' or `home_team` = 'LAC');
+DELETE FROM `pickem_app`.`games` WHERE (`id` = 'f0f6cb39-293f-11eb-b134-06a4a2a4eb91');
+DELETE FROM `pickem_app`.`games` WHERE (`id` = 'f0f6cdac-293f-11eb-b134-06a4a2a4eb91');
+UPDATE `pickem_app`.`games` SET `game_at` = '1606079100000' WHERE (`id` = '54c63f8a-08e1-11eb-b134-06a4a2a4eb91');
+UPDATE `pickem_app`.`games` SET `game_at` = '1606079100000' WHERE (`id` = '54c6402c-08e1-11eb-b134-06a4a2a4eb91');
+
