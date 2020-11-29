@@ -368,3 +368,6 @@ DELETE FROM `pickem_app`.`games` WHERE (`id` = 'f0f6cdac-293f-11eb-b134-06a4a2a4
 UPDATE `pickem_app`.`games` SET `game_at` = '1606079100000' WHERE (`id` = '54c63f8a-08e1-11eb-b134-06a4a2a4eb91');
 UPDATE `pickem_app`.`games` SET `game_at` = '1606079100000' WHERE (`id` = '54c6402c-08e1-11eb-b134-06a4a2a4eb91');
 
+-- Thanksgiving game change
+SELECT * FROM `games` WHERE `week` = 12 AND (`away_team` = 'BAL' AND `home_team` = 'PIT');
+UPDATE `pickem_app`.`games` SET `game_at` = '1606673700000' WHERE (`id` = 'f0f718d6-293f-11eb-b134-06a4a2a4eb91');
