@@ -371,3 +371,29 @@ UPDATE `pickem_app`.`games` SET `game_at` = '1606079100000' WHERE (`id` = '54c64
 -- Thanksgiving game change
 SELECT * FROM `games` WHERE `week` = 12 AND (`away_team` = 'BAL' AND `home_team` = 'PIT');
 UPDATE `pickem_app`.`games` SET `game_at` = '1606673700000' WHERE (`id` = 'f0f718d6-293f-11eb-b134-06a4a2a4eb91');
+UPDATE `pickem_app`.`games` SET `game_at` = '1606870800000' WHERE (`id` = 'f0f718d6-293f-11eb-b134-06a4a2a4eb91');
+
+-- 2020 week 13
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(13,1607277600000,'CIN','MIA'),
+(13,1607277600000,'DET','CHI'),
+(13,1607277600000,'IND','HOU'),
+(13,1607277600000,'LV','NYJ'),
+(13,1607277600000,'NO','ATL'),
+(13,1607277600000,'JAX','MIN'),
+(13,1607277600000,'CLE','TEN'),
+(13,1607277600000,'WAS','PIT'),
+(13,1607288700000,'LAR','ARI'),
+(13,1607288700000,'NYG','SEA'),
+(13,1607289900000,'NE','LAC'),
+(13,1607289900000,'PHI','GB'),
+(13,1607304000000,'DEN','KC'),
+(13,1607378400000,'DAL','BAL'),
+(13,1607390100000,'BUF','SF');
