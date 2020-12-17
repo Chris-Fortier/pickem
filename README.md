@@ -1,4 +1,10 @@
-# Running the App Locally
+## Local Installation
+
+run `npm install` in the project root folder and in the client folder
+
+make `.env` in the project root folder with the proper values to access the database
+
+## Running the App Locally
 
 Open up separate consoles to run the server and client.
 Run these commands in each terminal from the project folder:
@@ -6,14 +12,14 @@ Run these commands in each terminal from the project folder:
 -  `npm run server` runs the server
 -  `npm run client` runs the client
 
-# Deployment
+## Deployment
 
 -  `git push heroku master` Push latest git commit to Heroku
 -  `heroku open` Open the heroku page in a browser
 
-# Development Checklists
+## Development Checklists
 
-## Making a new Page on the Client
+### Making a new Page on the Client
 
 1. new file `NewPage.js` in `client\src\components\pages`
 2. in `client\src\App.js`
@@ -21,7 +27,7 @@ Run these commands in each terminal from the project folder:
    2. `<Route exact path="/new-page" component={NewPage} />`
 3. add link to it in navigation
 
-## Add a new reducer to store
+### Add a new reducer to store
 
 1. `client\src\store\store.js`
    1. add it
@@ -33,7 +39,3 @@ Run these commands in each terminal from the project folder:
    2. add it to combineReducers
 5. clear it when logging out
    1. add to `client\src\utils\helpers.js` `logOutCurrentUser()`
-
-## To Do List
-
--  [x] Make it show all players with any picks for the week on the standings page for a given week.
