@@ -1,8 +1,10 @@
 ## Local Installation
 
-run `npm install` in the project root folder and in the client folder
-
-make `.env` in the project root folder with the proper values to access the database
+1. run `npm install` in the project root folder
+2. run `npm install` in the client folder
+3. make `.env` in the project root folder with the proper values to access the database
+4. add the heroku remote so you can push to it
+   `git remote add heroku <your heroku git url>`
 
 ## Running the App Locally
 
