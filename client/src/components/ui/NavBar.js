@@ -31,15 +31,18 @@ class NavBar extends React.Component {
       }
 
       // set the default groupSeasonWeek if there is no data there
-      if (isEmpty(this.props.groupSeasonWeek)) {
-         this.props.dispatch({
-            type: actions.SET_GROUP_SEASON_WEEK,
-            payload: defaultGroupSeasonWeek,
-         });
+      // do not run this if on account-settings tab
+      if (window.location.pathname !== "/account-settings") {
+         if (isEmpty(this.props.groupSeasonWeek)) {
+            this.props.dispatch({
+               type: actions.SET_GROUP_SEASON_WEEK,
+               payload: defaultGroupSeasonWeek,
+            });
 
-         this.getData(defaultGroupSeasonWeek);
-      } else {
-         this.getData(this.props.groupSeasonWeek);
+            this.getData(defaultGroupSeasonWeek);
+         } else {
+            this.getData(this.props.groupSeasonWeek);
+         }
       }
    }
 
