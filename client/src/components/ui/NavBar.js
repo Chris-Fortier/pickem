@@ -19,7 +19,7 @@ const defaultGroupSeasonWeek = {
    week: Math.floor((Date.now() - 1599634800000) / 604800000 + 1), // set the week to how many Wednesdays have started since 9/9/2020 in PDT (9/9 is 1599634800000)
 };
 
-const weeks = ["%", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // the weeks the user can select from
+const weeks = ["%", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]; // the weeks the user can select from
 // TODO: make this range based on the games data somehow
 
 class NavBar extends React.Component {
