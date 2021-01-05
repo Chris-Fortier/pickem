@@ -53,6 +53,14 @@ export function get_week_or_season_text(week) {
    let text = `Week ${week}`;
    if (week === "%") {
       text = "Season";
+   } else if (week === 18) {
+      text = "Wildcard Round";
+   } else if (week === 19) {
+      text = "Divisional Round";
+   } else if (week === 20) {
+      text = "Conference Championships";
+   } else if (week === 21) {
+      text = "The Big Game";
    }
    return text;
 }
