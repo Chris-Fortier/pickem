@@ -39,6 +39,7 @@ const weeks = [
    16,
    17,
    18,
+   19,
 ]; // the weeks the user can select from
 // TODO: make this range based on the games data somehow
 

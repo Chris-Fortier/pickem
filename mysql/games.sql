@@ -523,3 +523,18 @@ VALUES
 (18,1610301900000,'BAL','TEN'),
 (18,1610314800000,'CHI','NO'),
 (18,1610327700000,'CLE','PIT');
+
+
+-- 2020 DV round
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(19,1610832900000,'LAR','GB'),
+(19,1610846100000,'BAL','BUF'),
+(19,1610913900000,'CLE','KC'),
+(19,1610926800000,'NO','TB');
