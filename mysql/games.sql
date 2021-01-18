@@ -537,4 +537,28 @@ VALUES
 (19,1610832900000,'LAR','GB'),
 (19,1610846100000,'BAL','BUF'),
 (19,1610913900000,'CLE','KC'),
-(19,1610926800000,'NO','TB');
+(19,1610926800000,'TB','NO');
+
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(19,1610926800000,'TB','NO');
+
+
+-- 2020 conf championships
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(20,1611518700000,'TB','GB'),
+(20,1611531600000,'BUF','KC');
+
+SELECT * FROM `games` WHERE `week` = 20;
