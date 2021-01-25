@@ -562,3 +562,14 @@ VALUES
 (20,1611531600000,'BUF','KC');
 
 SELECT * FROM `games` WHERE `week` = 20;
+
+-- 2020 superbowl
+USE `pickem_app`;
+INSERT INTO `games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`
+)
+VALUES
+(21,1612744200000,'KC','TB');

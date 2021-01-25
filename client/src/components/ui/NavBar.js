@@ -16,7 +16,7 @@ import {
 const defaultGroupSeasonWeek = {
    group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
    season: 2020,
-   week: 20, // Math.floor((Date.now() - 1599634800000) / 604800000 + 1), // set the week to how many Wednesdays have started since 9/9/2020 in PDT (9/9 is 1599634800000)
+   week: 21, // Math.floor((Date.now() - 1599634800000) / 604800000 + 1), // set the week to how many Wednesdays have started since 9/9/2020 in PDT (9/9 is 1599634800000)
 };
 
 const weeks = [
@@ -41,6 +41,7 @@ const weeks = [
    18,
    19,
    20,
+   21,
 ]; // the weeks the user can select from
 // TODO: make this range based on the games data somehow
 
