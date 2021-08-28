@@ -371,9 +371,7 @@ class NavBar extends React.Component {
                variant="dark"
                // expanded // I adding this so the menu is always expanded, even with a smaller screen size
             >
-               <Navbar.Brand href="#home">
-                  Hawk Nation NFL Pick 'em
-               </Navbar.Brand>
+               <Navbar.Brand href="/">Hawk Nation NFL Pick 'em</Navbar.Brand>
                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                <Navbar.Collapse id="responsive-navbar-nav">
                   <Nav className="mr-auto">
