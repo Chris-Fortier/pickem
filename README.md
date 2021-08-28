@@ -21,7 +21,7 @@ Updates should appear locally in your browser once you save a file.
 
 -  Update master with the version you want to deploy either directly or my merging a pull request.
 -  `git push heroku master` Push latest git commit to Heroku
--  `heroku open` Open the heroku page in a browser
+-  `heroku open` Open the [heroku page](https://hawknation.herokuapp.com) in a browser
 
 ## Development Checklists
 
