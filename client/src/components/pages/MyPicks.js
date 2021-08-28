@@ -7,6 +7,7 @@ import toDisplayDate from "date-fns/format";
 import Pick from "../ui/Pick";
 // import isEmpty from "lodash/isEmpty";
 import { get_week_or_season_text } from "../../utils/helpers";
+import uuid from "uuid";
 
 // const group_id = "3fd8d78c-8151-4145-b276-aea3559deb76";
 // const season = 2020;
@@ -48,7 +49,8 @@ class MyPicks extends React.Component {
                               {this.props.groupSeasonWeek.season}
                               &nbsp;
                               {get_week_or_season_text(
-                                 this.props.groupSeasonWeek.week
+                                 this.props.groupSeasonWeek.week,
+                                 this.props.groupSeasonWeek.season
                               )}
                            </h2>
                         </div>
@@ -71,7 +73,7 @@ class MyPicks extends React.Component {
                               }
                               rollingDate = pick.game_at;
                               return (
-                                 <>
+                                 <span key={uuid.v4()}>
                                     {renderTime && <br />}
                                     {renderDate && (
                                        <h5 align="center">
@@ -87,7 +89,7 @@ class MyPicks extends React.Component {
                                        </h6>
                                     )}
                                     <Pick pick={pick} />
-                                 </>
+                                 </span>
                               );
                            })}
                         </div>
