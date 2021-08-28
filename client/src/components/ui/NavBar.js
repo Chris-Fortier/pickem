@@ -377,73 +377,78 @@ class NavBar extends React.Component {
                <Navbar.Collapse id="responsive-navbar-nav">
                   <Nav className="mr-auto">
                      {/* Season dropdown */}
-                     <NavDropdown
-                        title={`Season ${this.props.groupSeasonWeek.season}`}
-                     >
-                        {seasons.map((season) => {
-                           return (
-                              <NavDropdown.Item
-                                 onClick={() => {
-                                    this.changeGroupSeasonWeek({
-                                       season: season,
-                                    });
-                                    // TODO: if they are viewing the entire season, don't change the week
-                                    if (
-                                       season === defaultGroupSeasonWeek.season
-                                    ) {
-                                       // if changing to the default season, also change the week to the default week
-                                       this.changeGroupSeasonWeek({
-                                          week: defaultGroupSeasonWeek.week,
-                                       });
-                                    } else {
-                                       // // if changing to a different season, set the week to 1
-                                       // this.changeGroupSeasonWeek({week: 1})
-                                       // if changing to a different season, set the week to "entire season"
-                                       this.changeGroupSeasonWeek({
-                                          week: "%",
-                                       });
-                                    }
-                                 }}
-                              >
-                                 {season}
-                              </NavDropdown.Item>
-                           );
-                        })}
-                     </NavDropdown>
+                     {window.location.pathname !== "/account-settings" && (
+                        <>
+                           <NavDropdown
+                              title={`Season ${this.props.groupSeasonWeek.season}`}
+                           >
+                              {seasons.map((season) => {
+                                 return (
+                                    <NavDropdown.Item
+                                       onClick={() => {
+                                          this.changeGroupSeasonWeek({
+                                             season: season,
+                                          });
+                                          // TODO: if they are viewing the entire season, don't change the week
+                                          if (
+                                             season ===
+                                             defaultGroupSeasonWeek.season
+                                          ) {
+                                             // if changing to the default season, also change the week to the default week
+                                             this.changeGroupSeasonWeek({
+                                                week: defaultGroupSeasonWeek.week,
+                                             });
+                                          } else {
+                                             // // if changing to a different season, set the week to 1
+                                             // this.changeGroupSeasonWeek({week: 1})
+                                             // if changing to a different season, set the week to "entire season"
+                                             this.changeGroupSeasonWeek({
+                                                week: "%",
+                                             });
+                                          }
+                                       }}
+                                    >
+                                       {season}
+                                    </NavDropdown.Item>
+                                 );
+                              })}
+                           </NavDropdown>
+                           {/* Week dropdown */}
+                           <NavDropdown
+                              title={get_week_or_season_text(
+                                 this.props.groupSeasonWeek.week
+                              )}
+                           >
+                              {weeks
+                                 .filter(
+                                    (week) =>
+                                       week === "%" ||
+                                       week <=
+                                          get_num_regular_season_weeks(
+                                             this.props.groupSeasonWeek.season
+                                          ) +
+                                             4
+                                 ) // the menu only shows the number of weeks in the season + 4 playoff weeks
+                                 .map((week) => {
+                                    return (
+                                       <NavDropdown.Item
+                                          onClick={() => {
+                                             this.changeGroupSeasonWeek({
+                                                week: week,
+                                             });
+                                          }}
+                                       >
+                                          {get_week_or_season_text(
+                                             week,
+                                             this.props.groupSeasonWeek.season
+                                          )}
+                                       </NavDropdown.Item>
+                                    );
+                                 })}
+                           </NavDropdown>
+                        </>
+                     )}
 
-                     {/* Week dropdown */}
-                     <NavDropdown
-                        title={get_week_or_season_text(
-                           this.props.groupSeasonWeek.week
-                        )}
-                     >
-                        {weeks
-                           .filter(
-                              (week) =>
-                                 week === "%" ||
-                                 week <=
-                                    get_num_regular_season_weeks(
-                                       this.props.groupSeasonWeek.season
-                                    ) +
-                                       4
-                           ) // the menu only shows the number of weeks in the season + 4 playoff weeks
-                           .map((week) => {
-                              return (
-                                 <NavDropdown.Item
-                                    onClick={() => {
-                                       this.changeGroupSeasonWeek({
-                                          week: week,
-                                       });
-                                    }}
-                                 >
-                                    {get_week_or_season_text(
-                                       week,
-                                       this.props.groupSeasonWeek.season
-                                    )}
-                                 </NavDropdown.Item>
-                              );
-                           })}
-                     </NavDropdown>
                      <NavDropdown
                         title={page_nav_title}
                         // id="collapsible-nav-dropdown"
