@@ -72,7 +72,7 @@ class GroupPicks extends React.Component {
                                                 match_up.picks[team.user_id]
                                                    .pick_result === false,
                                           })}
-                                          style={{ "text-align": "center" }}
+                                          style={{ textAlign: "center" }}
                                        >
                                           {
                                              match_up.picks[team.user_id]

@@ -13,6 +13,7 @@ import {
    get_week_or_season_text,
    get_num_regular_season_weeks,
 } from "../../utils/helpers";
+import uuid from "uuid";
 
 // sets the users position when they refresh the page
 const defaultGroupSeasonWeek = {
@@ -385,6 +386,7 @@ class NavBar extends React.Component {
                               {seasons.map((season) => {
                                  return (
                                     <NavDropdown.Item
+                                       key={uuid.v4()}
                                        onClick={() => {
                                           this.changeGroupSeasonWeek({
                                              season: season,
@@ -432,6 +434,7 @@ class NavBar extends React.Component {
                                  .map((week) => {
                                     return (
                                        <NavDropdown.Item
+                                          key={uuid.v4()}
                                           onClick={() => {
                                              this.changeGroupSeasonWeek({
                                                 week: week,
