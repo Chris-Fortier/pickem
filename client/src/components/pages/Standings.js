@@ -3,6 +3,7 @@ import NavBar from "../ui/NavBar";
 import { connect } from "react-redux";
 import classnames from "classnames";
 import { get_week_or_season_text } from "../../utils/helpers";
+import Medal2020 from "../svg/Medal2020";
 
 class Standings extends React.Component {
    constructor(props) {
@@ -62,7 +63,26 @@ class Standings extends React.Component {
                                        })}
                                     >
                                        <td>{user.rank}</td>
-                                       <td>{user.team_name}</td>
+                                       <td>
+                                          {user.team_name}
+                                          {/* TODO: need a better way to determine medals than hard-coding */}
+                                          {user.team_name ===
+                                             "Andrew Luck’s Neckbeard" && (
+                                             <>
+                                                {" "}
+                                                <span>
+                                                   <Medal2020
+                                                      style={{
+                                                         width: "20px",
+                                                         height: "20px",
+                                                         position: "relative",
+                                                         top: "-2px",
+                                                      }}
+                                                   />
+                                                </span>
+                                             </>
+                                          )}
+                                       </td>
                                        <td>{initials}</td>
                                        <td style={{ textAlign: "right" }}>
                                           {user.num_correct}
