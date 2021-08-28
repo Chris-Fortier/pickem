@@ -48,7 +48,8 @@ class MyPicks extends React.Component {
                               {this.props.groupSeasonWeek.season}
                               &nbsp;
                               {get_week_or_season_text(
-                                 this.props.groupSeasonWeek.week
+                                 this.props.groupSeasonWeek.week,
+                                 this.props.groupSeasonWeek.season
                               )}
                            </h2>
                         </div>

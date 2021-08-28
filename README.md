@@ -14,8 +14,12 @@ Run these commands in each terminal from the project folder:
 -  `npm run server` runs the server
 -  `npm run client` runs the client
 
+One you run the client, it should automatically open in a browser window [here](http://localhost:3000).
+Updates should appear locally in your browser once you save a file.
+
 ## Deployment
 
+-  Update master with the version you want to deploy either directly or my merging a pull request.
 -  `git push heroku master` Push latest git commit to Heroku
 -  `heroku open` Open the heroku page in a browser
 

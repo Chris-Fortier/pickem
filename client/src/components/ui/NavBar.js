@@ -11,13 +11,17 @@ import axios from "axios";
 import {
    logOutCurrentUser,
    get_week_or_season_text,
+   get_num_regular_season_weeks,
 } from "../../utils/helpers";
 
+// sets the users position when they refresh the page
 const defaultGroupSeasonWeek = {
    group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
-   season: 2020,
-   week: 21, // Math.floor((Date.now() - 1599634800000) / 604800000 + 1), // set the week to how many Wednesdays have started since 9/9/2020 in PDT (9/9 is 1599634800000)
+   season: 2021,
+   week: 1, // Math.floor((Date.now() - 1599634800000) / 604800000 + 1), // set the week to how many Wednesdays have started since 9/9/2020 in PDT (9/9 is 1599634800000)
 };
+
+const seasons = [2020, 2021];
 
 const weeks = [
    "%",
@@ -42,6 +46,7 @@ const weeks = [
    19,
    20,
    21,
+   22,
 ]; // the weeks the user can select from
 // TODO: make this range based on the games data somehow
 
@@ -246,7 +251,7 @@ class NavBar extends React.Component {
                this.props.dispatch({
                   type: actions.STORE_DANGER_MESSAGE,
                   payload:
-                     "Could not connect. The server might need to wake up. Try again in a few moments.",
+                     "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
                });
             });
       } else if (window.location.pathname === "/my-picks") {
@@ -275,7 +280,7 @@ class NavBar extends React.Component {
                this.props.dispatch({
                   type: actions.STORE_DANGER_MESSAGE,
                   payload:
-                     "Could not connect. The server might need to wake up. Try again in a few moments.",
+                     "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
                });
             });
       } else if (window.location.pathname === "/standings") {
@@ -335,7 +340,7 @@ class NavBar extends React.Component {
                this.props.dispatch({
                   type: actions.STORE_DANGER_MESSAGE,
                   payload:
-                     "Could not connect. The server might need to wake up. Try again in a few moments.",
+                     "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
                });
             });
       }
@@ -371,58 +376,74 @@ class NavBar extends React.Component {
                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                <Navbar.Collapse id="responsive-navbar-nav">
                   <Nav className="mr-auto">
+                     {/* Season dropdown */}
                      <NavDropdown
-                        title={get_week_or_season_text(
-                           this.props.groupSeasonWeek.week
-                        )}
-                        // id="collapsible-nav-dropdown"
-                        // alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
+                        title={`Season ${this.props.groupSeasonWeek.season}`}
                      >
-                        {weeks.map((week) => {
+                        {seasons.map((season) => {
                            return (
                               <NavDropdown.Item
                                  onClick={() => {
-                                    this.changeGroupSeasonWeek({ week: week });
+                                    this.changeGroupSeasonWeek({
+                                       season: season,
+                                    });
+                                    // TODO: if they are viewing the entire season, don't change the week
+                                    if (
+                                       season === defaultGroupSeasonWeek.season
+                                    ) {
+                                       // if changing to the default season, also change the week to the default week
+                                       this.changeGroupSeasonWeek({
+                                          week: defaultGroupSeasonWeek.week,
+                                       });
+                                    } else {
+                                       // // if changing to a different season, set the week to 1
+                                       // this.changeGroupSeasonWeek({week: 1})
+                                       // if changing to a different season, set the week to "entire season"
+                                       this.changeGroupSeasonWeek({
+                                          week: "%",
+                                       });
+                                    }
                                  }}
                               >
-                                 {get_week_or_season_text(week)}
+                                 {season}
                               </NavDropdown.Item>
                            );
                         })}
                      </NavDropdown>
-                     {/* <Nav.Link href="/my-picks">My Picks</Nav.Link>
-                     <Nav.Link href="/group-picks">Group Picks</Nav.Link> */}
-                     {/* using standard react-router Link makes it not refresh the page when loading */}
-                     {/* <Link
-                        to="/my-picks"
-                        className={classnames({
-                           "nav-link": true,
-                           "selected-nav-page":
-                              window.location.pathname === "/my-picks",
-                        })}
+
+                     {/* Week dropdown */}
+                     <NavDropdown
+                        title={get_week_or_season_text(
+                           this.props.groupSeasonWeek.week
+                        )}
                      >
-                        My Picks
-                     </Link>
-                     <Link
-                        to="/group-picks"
-                        className={classnames({
-                           "nav-link": true,
-                           "selected-nav-page":
-                              window.location.pathname === "/group-picks",
-                        })}
-                     >
-                        Group Picks
-                     </Link>
-                     <Link
-                        to="/standings"
-                        className={classnames({
-                           "nav-link": true,
-                           "selected-nav-page":
-                              window.location.pathname === "/standings",
-                        })}
-                     >
-                        Standings
-                     </Link> */}
+                        {weeks
+                           .filter(
+                              (week) =>
+                                 week === "%" ||
+                                 week <=
+                                    get_num_regular_season_weeks(
+                                       this.props.groupSeasonWeek.season
+                                    ) +
+                                       4
+                           ) // the menu only shows the number of weeks in the season + 4 playoff weeks
+                           .map((week) => {
+                              return (
+                                 <NavDropdown.Item
+                                    onClick={() => {
+                                       this.changeGroupSeasonWeek({
+                                          week: week,
+                                       });
+                                    }}
+                                 >
+                                    {get_week_or_season_text(
+                                       week,
+                                       this.props.groupSeasonWeek.season
+                                    )}
+                                 </NavDropdown.Item>
+                              );
+                           })}
+                     </NavDropdown>
                      <NavDropdown
                         title={page_nav_title}
                         // id="collapsible-nav-dropdown"

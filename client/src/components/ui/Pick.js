@@ -56,7 +56,7 @@ class Pick extends React.Component {
             this.props.dispatch({
                type: actions.STORE_DANGER_MESSAGE,
                payload:
-                  "Could not send your pick. The server might need to wake up. Try again in a few moments.",
+                  "Could not send your pick. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
             });
          });
    }

@@ -48,18 +48,27 @@ export function logOutCurrentUser() {
    });
 }
 
-// input a week number or '%' and return 'Week X' or 'Season'
-export function get_week_or_season_text(week) {
+export function get_num_regular_season_weeks(season) {
+   if (season <= 2020) {
+      return 17;
+   }
+   return 18;
+}
+
+// input a week number or '%' and return 'Week X' or 'Entire Season'
+export function get_week_or_season_text(week, season) {
+   const num_regular_season_weeks = get_num_regular_season_weeks(season);
+
    let text = `Week ${week}`;
    if (week === "%") {
-      text = "Season";
-   } else if (week === 18) {
+      text = "Entire Season";
+   } else if (week === num_regular_season_weeks + 1) {
       text = "Wildcard Round";
-   } else if (week === 19) {
+   } else if (week === num_regular_season_weeks + 2) {
       text = "Divisional Round";
-   } else if (week === 20) {
+   } else if (week === num_regular_season_weeks + 3) {
       text = "Conference Championships";
-   } else if (week === 21) {
+   } else if (week === num_regular_season_weeks + 4) {
       text = "The Big Game";
    }
    return text;
