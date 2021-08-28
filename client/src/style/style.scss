@@ -309,3 +309,42 @@ table {
    color: $black;
    border-color: $green;
 }
+
+.nav-row {
+   border-bottom: 1px solid $navy;
+   background: darken($gray, 15);
+}
+
+.nav-row-title {
+   padding-left: 7px;
+   padding-right: 7px;
+   color: darken($gray, 50);
+}
+
+.nav-tab {
+   font-weight: bold;
+   padding-left: 7px;
+   padding-right: 7px;
+   color: $navy;
+   cursor: pointer;
+   display: inline-block;
+}
+
+.nav-tab:hover {
+   color: $green;
+   text-decoration: underline;
+   background: darken($gray, 20);
+}
+
+.nav-tab:active {
+   color: darken($green, 5);
+}
+
+.nav-tab-current {
+   background: $navy;
+   color: $gray;
+}
+
+.nav-tab-current:hover {
+   background: $navy;
+}

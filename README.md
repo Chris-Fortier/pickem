@@ -8,20 +8,19 @@
 
 ## Running the App Locally
 
-Open up separate consoles to run the server and client.
-Run these commands in each terminal from the project folder:
+1. Open up separate consoles to run the server and client.
+2. Run these commands in each terminal from the project folder:
+   1. `npm run server` runs the server
+   2. `npm run client` runs the client
 
--  `npm run server` runs the server
--  `npm run client` runs the client
-
-One you run the client, it should automatically open in a browser window [here](http://localhost:3000).
-Updates should appear locally in your browser once you save a file.
+-  One you run the client, it should automatically open in a browser window [here](http://localhost:3000).
+-  Updates should appear locally in your browser whenever you save a file.
 
 ## Deployment
 
--  Update master with the version you want to deploy either directly or my merging a pull request.
--  `git push heroku master` Push latest git commit to Heroku
--  `heroku open` Open the [heroku page](https://hawknation.herokuapp.com) in a browser
+1. Update master with the version you want to deploy either directly or my merging a pull request.
+2. `git push heroku master` Push latest git commit to Heroku
+3. `heroku open` to open the [heroku page](https://hawknation.herokuapp.com) in a browser.
 
 ## Development Checklists
 

@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
 import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
 import Alert from "react-bootstrap/Alert";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
 import {
@@ -348,18 +346,6 @@ class NavBar extends React.Component {
    }
 
    render() {
-      // get the title for the page nav drop down menu
-      let page_nav_title;
-      if (window.location.pathname === "/my-picks") {
-         page_nav_title = "My Picks";
-      } else if (window.location.pathname === "/group-picks") {
-         page_nav_title = "Group Picks";
-      } else if (window.location.pathname === "/standings") {
-         page_nav_title = "Standings";
-      } else if (window.location.pathname === "/account-settings") {
-         page_nav_title = "Picks/Standings";
-      }
-
       return (
          <>
             {/* React-Bootstrap navbar */}
@@ -372,125 +358,130 @@ class NavBar extends React.Component {
                // expanded // I adding this so the menu is always expanded, even with a smaller screen size
             >
                <Navbar.Brand href="/">Hawk Nation NFL Pick 'em</Navbar.Brand>
-               <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-               <Navbar.Collapse id="responsive-navbar-nav">
-                  <Nav className="mr-auto">
-                     {/* Season dropdown */}
-                     {window.location.pathname !== "/account-settings" && (
-                        <>
-                           <NavDropdown
-                              title={`Season ${this.props.groupSeasonWeek.season}`}
-                           >
-                              {seasons.map((season) => {
-                                 return (
-                                    <NavDropdown.Item
-                                       key={uuid.v4()}
-                                       onClick={() => {
-                                          this.changeGroupSeasonWeek({
-                                             season: season,
-                                          });
-                                          // TODO: if they are viewing the entire season, don't change the week
-                                          if (
-                                             season ===
-                                             defaultGroupSeasonWeek.season
-                                          ) {
-                                             // if changing to the default season, also change the week to the default week
-                                             this.changeGroupSeasonWeek({
-                                                week: defaultGroupSeasonWeek.week,
-                                             });
-                                          } else {
-                                             // // if changing to a different season, set the week to 1
-                                             // this.changeGroupSeasonWeek({week: 1})
-                                             // if changing to a different season, set the week to "entire season"
-                                             this.changeGroupSeasonWeek({
-                                                week: "%",
-                                             });
-                                          }
-                                       }}
-                                    >
-                                       {season}
-                                    </NavDropdown.Item>
-                                 );
-                              })}
-                           </NavDropdown>
-                           {/* Week dropdown */}
-                           <NavDropdown
-                              title={get_week_or_season_text(
-                                 this.props.groupSeasonWeek.week
-                              )}
-                           >
-                              {weeks
-                                 .filter(
-                                    (week) =>
-                                       week === "%" ||
-                                       week <=
-                                          get_num_regular_season_weeks(
-                                             this.props.groupSeasonWeek.season
-                                          ) +
-                                             4
-                                 ) // the menu only shows the number of weeks in the season + 4 playoff weeks
-                                 .map((week) => {
-                                    return (
-                                       <NavDropdown.Item
-                                          key={uuid.v4()}
-                                          onClick={() => {
-                                             this.changeGroupSeasonWeek({
-                                                week: week,
-                                             });
-                                          }}
-                                       >
-                                          {get_week_or_season_text(
-                                             week,
-                                             this.props.groupSeasonWeek.season
-                                          )}
-                                       </NavDropdown.Item>
-                                    );
-                                 })}
-                           </NavDropdown>
-                        </>
-                     )}
-
-                     <NavDropdown
-                        title={page_nav_title}
-                        // id="collapsible-nav-dropdown"
-                     >
-                        <Link to="/my-picks" className="dropdown-item">
-                           My Picks
-                        </Link>
-                        <Link className="dropdown-item" to="/group-picks">
-                           Group Picks
-                        </Link>
-                        <Link to="/standings" className="dropdown-item">
-                           Standings
-                        </Link>
-                     </NavDropdown>
-                  </Nav>
-                  <Nav>
-                     <NavDropdown
-                        title={this.props.currentUser.user_name}
-                        // id="collapsible-nav-dropdown"
-                        alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
-                        // className={classnames({
-                        //    "selected-nav-page":
-                        //       window.location.pathname === "/account-settings",
-                        // })}
-                     >
-                        <Link to="/account-settings" className="dropdown-item">
-                           Account Settings
-                        </Link>
-                        <Link
-                           className="dropdown-item"
-                           to="/"
+            </Navbar>
+            {window.location.pathname !== "/account-settings" && (
+               <>
+                  {/* season tabs */}
+                  <div className="nav-row">
+                     <span className="nav-row-title">Season:</span>
+                     {seasons.map((season) => (
+                        <div
+                           key={uuid.v4()}
+                           className={`nav-tab ${
+                              season === this.props.groupSeasonWeek.season &&
+                              "nav-tab-current"
+                           }`}
                            onClick={() => {
-                              logOutCurrentUser();
+                              this.changeGroupSeasonWeek({
+                                 season: season,
+                              });
+                              // TODO: if they are viewing the entire season, don't change the week
+                              if (season === defaultGroupSeasonWeek.season) {
+                                 // if changing to the default season, also change the week to the default week
+                                 this.changeGroupSeasonWeek({
+                                    week: defaultGroupSeasonWeek.week,
+                                 });
+                              } else {
+                                 // // if changing to a different season, set the week to 1
+                                 // this.changeGroupSeasonWeek({week: 1})
+                                 // if changing to a different season, set the week to "entire season"
+                                 this.changeGroupSeasonWeek({
+                                    week: "%",
+                                 });
+                              }
                            }}
                         >
-                           Log Out
-                        </Link>
-                     </NavDropdown>
-                  </Nav>
-               </Navbar.Collapse>
-            </Navbar>
+                           {season}
+                        </div>
+                     ))}
+                  </div>
+                  {/* week tabs */}
+                  <div className="nav-row">
+                     <span className="nav-row-title">Week:</span>
+                     {weeks
+                        .filter(
+                           (week) =>
+                              week === "%" ||
+                              week <=
+                                 get_num_regular_season_weeks(
+                                    this.props.groupSeasonWeek.season
+                                 ) +
+                                    4
+                        ) // the menu only shows the number of weeks in the season + 4 playoff weeks
+                        .map((week) => (
+                           <div
+                              key={uuid.v4()}
+                              className={`nav-tab ${
+                                 week === this.props.groupSeasonWeek.week &&
+                                 "nav-tab-current"
+                              }`}
+                              onClick={() => {
+                                 this.changeGroupSeasonWeek({
+                                    week: week,
+                                 });
+                              }}
+                           >
+                              {get_week_or_season_text(
+                                 week,
+                                 this.props.groupSeasonWeek.season,
+                                 true
+                              )}
+                           </div>
+                        ))}
+                  </div>
+               </>
+            )}
+
+            {/* view tabs */}
+            <div className="nav-row">
+               <span className="nav-row-title">View:</span>
+               <Link
+                  to="/my-picks"
+                  className={`nav-tab ${
+                     window.location.pathname === "/my-picks" &&
+                     "nav-tab-current"
+                  }`}
+               >
+                  My Picks
+               </Link>
+               <Link
+                  to="/group-picks"
+                  className={`nav-tab ${
+                     window.location.pathname === "/group-picks" &&
+                     "nav-tab-current"
+                  }`}
+               >
+                  Group Picks
+               </Link>
+               <Link
+                  to="/standings"
+                  className={`nav-tab ${
+                     window.location.pathname === "/standings" &&
+                     "nav-tab-current"
+                  }`}
+               >
+                  Standings
+               </Link>
+               <Link
+                  to="/account-settings"
+                  className={`nav-tab ${
+                     window.location.pathname === "/account-settings" &&
+                     "nav-tab-current"
+                  }`}
+               >
+                  Account Settings
+               </Link>
+               <Link
+                  to="/"
+                  onClick={() => {
+                     logOutCurrentUser();
+                  }}
+                  className={`nav-tab`}
+               >
+                  Log Out
+               </Link>
+            </div>
+
             {/* message pop up */}
             {!isEmpty(this.props.message) && (
                <Alert variant={this.props.message.variant} className="message">

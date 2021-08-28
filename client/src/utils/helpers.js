@@ -56,20 +56,34 @@ export function get_num_regular_season_weeks(season) {
 }
 
 // input a week number or '%' and return 'Week X' or 'Entire Season'
-export function get_week_or_season_text(week, season) {
+export function get_week_or_season_text(week, season, is_abbr = false) {
    const num_regular_season_weeks = get_num_regular_season_weeks(season);
 
-   let text = `Week ${week}`;
-   if (week === "%") {
-      text = "Entire Season";
-   } else if (week === num_regular_season_weeks + 1) {
-      text = "Wildcard Round";
-   } else if (week === num_regular_season_weeks + 2) {
-      text = "Divisional Round";
-   } else if (week === num_regular_season_weeks + 3) {
-      text = "Conference Championships";
-   } else if (week === num_regular_season_weeks + 4) {
-      text = "The Big Game";
+   if (!is_abbr) {
+      if (week === "%") {
+         return "Entire Season";
+      } else if (week === num_regular_season_weeks + 1) {
+         return "Wildcard Round";
+      } else if (week === num_regular_season_weeks + 2) {
+         return "Divisional Round";
+      } else if (week === num_regular_season_weeks + 3) {
+         return "Conference Championships";
+      } else if (week === num_regular_season_weeks + 4) {
+         return "The Big Game";
+      }
+      return `Week ${week}`;
+   } else {
+      if (week === "%") {
+         return "Entire Season";
+      } else if (week === num_regular_season_weeks + 1) {
+         return "WR";
+      } else if (week === num_regular_season_weeks + 2) {
+         return "DR";
+      } else if (week === num_regular_season_weeks + 3) {
+         return "CC";
+      } else if (week === num_regular_season_weeks + 4) {
+         return "SB";
+      }
+      return String(week);
    }
-   return text;
 }
