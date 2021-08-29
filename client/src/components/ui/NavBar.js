@@ -53,8 +53,8 @@ class NavBar extends React.Component {
    // this is a "lifecycle" method like render(), we don't need to call it manually
    componentDidMount() {
       if (isEmpty(this.props.currentUser)) {
-         // send the parent page to landing page
-         this.props.parentProps.history.push("/");
+         // if there is no user, send to landing page
+         window.location.href = "/";
       }
 
       // set the default groupSeasonWeek if there is no data there
