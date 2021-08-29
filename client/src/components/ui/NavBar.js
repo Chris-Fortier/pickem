@@ -71,6 +71,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
             getData(groupSeasonWeek);
          }
       }
+      // eslint-disable-next-line
    }, []);
    // TODO: React Hook useEffect has missing dependencies: 'currentUser', 'dispatch', 'getData', and 'groupSeasonWeek'. Either include them or remove the dependency array. If 'dispatch' changes too often, find the parent component that defines it and wrap that definition in useCallback
 
