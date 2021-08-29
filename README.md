@@ -19,8 +19,9 @@
 ## Deployment
 
 1. Update master with the version you want to deploy either directly or my merging a pull request.
-2. `git push heroku master` Push latest git commit to Heroku
-3. `heroku open` to open the [heroku page](https://hawknation.herokuapp.com) in a browser.
+2. Make sure you are on master and have pulled the latest.
+3. Run `git push heroku master` to push latest git commit to Heroku.
+4. `heroku open` to open the [heroku page](https://hawknation.herokuapp.com) in a browser.
 
 ## Development Checklists
 
