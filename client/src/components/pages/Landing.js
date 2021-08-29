@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -9,35 +9,27 @@ import {
    MAX_USER_INITIALS_LENGTH,
 } from "../../utils/helpers";
 
-class Landing extends React.Component {
-   constructor(props) {
-      super(props); // boilerplate line that needs to be in the constructor
+function Landing({ dispatch, history }) {
+   const [mode, set_mode] = useState("log-in");
+   const [newUserNameError, set_newUserNameError] = useState("");
+   const [newInitialsError, set_newInitialsError] = useState("");
+   const [newTeamNameError, set_newTeamNameError] = useState("");
+   const [newPasswordError, set_newPasswordError] = useState("");
+   const [currentUserNameError, set_currentUserNameError] = useState("");
+   const [currentPasswordError, set_currentPasswordError] = useState("");
 
-      this.state = {
-         mode: "log-in", // dictates what is rendered
-
-         // errors
-         newUserNameError: "",
-         newInitialsError: "",
-         newPasswordError: "",
-         currentUserNameError: "",
-         currentPasswordError: "",
-      };
-   }
-
-   clearErrors() {
-      this.setState({
-         newUserNameError: "",
-         newInitialsError: "",
-         newPasswordError: "",
-         currentUserNameError: "",
-         currentPasswordError: "",
-      });
+   function clearErrors() {
+      set_newUserNameError("");
+      set_newInitialsError("");
+      set_newTeamNameError("");
+      set_newPasswordError("");
+      set_currentUserNameError("");
+      set_currentPasswordError("");
    }
 
    // sends an API call to make a new user and if successful, pushes to new page depending on the type of user
    // works with any user type
-   postNewUserAndPush(user) {
+   function postNewUserAndPush(user) {
       // post to API
       axios
          .post("/api/v1/users", user) // post to this endpoint the user object we just made
@@ -52,7 +44,7 @@ class Landing extends React.Component {
             const user = jwtDecode(authToken); // decode the user from the access token
 
             // send the user to Redux
-            this.props.dispatch({
+            dispatch({
                type: actions.UPDATE_CURRENT_USER,
                payload: user,
             });
@@ -61,31 +53,23 @@ class Landing extends React.Component {
             axios.defaults.headers.common["x-auth-token"] = authToken;
 
             // go to home page
-            this.props.history.push("/my-picks");
+            history.push("/my-picks");
             window.scrollTo(0, 0); // sets focus to the top of the page
          })
          .catch((err) => {
             const data = err.response.data;
             console.log("err", data);
-            const {
-               newUserNameError,
-               newTeamNameError,
-               newInitialsError,
-               newPasswordError,
-            } = data;
 
             // push errors or lack thereof to state
-            this.setState({
-               newUserNameError,
-               newTeamNameError,
-               newInitialsError,
-               newPasswordError,
-            });
+            set_newUserNameError(data.newUserNameError);
+            set_newTeamNameError(data.newTeamNameError);
+            set_newInitialsError(data.newInitialsError);
+            set_newPasswordError(data.newPasswordError);
          });
    }
 
    // tests if the user_name and password are valid and if so creates the user
-   async validateAndCreateUser(
+   async function validateAndCreateUser(
       userNameInput,
       teamNameInput,
       initialsInput,
@@ -99,12 +83,12 @@ class Landing extends React.Component {
          password: passwordInput, // send the plain text password over secure connection, the server will hash it
       };
 
-      this.postNewUserAndPush(user);
+      postNewUserAndPush(user);
    }
 
    // tests if the user_name and password are valid and if so logs in
    // works with any user type
-   async validateAndLogInUser(userNameInput, passwordInput) {
+   async function validateAndLogInUser(userNameInput, passwordInput) {
       const user = {
          user_name: userNameInput,
          password: passwordInput, // send the plain text password over secure connection, the server will hash it
@@ -122,7 +106,7 @@ class Landing extends React.Component {
             const user = jwtDecode(authToken); // decode the user from the access token
 
             // send the user to Redux
-            this.props.dispatch({
+            dispatch({
                type: actions.UPDATE_CURRENT_USER,
                payload: user,
             });
@@ -131,24 +115,21 @@ class Landing extends React.Component {
             axios.defaults.headers.common["x-auth-token"] = authToken;
 
             // go to home page
-            this.props.history.push("/my-picks");
+            history.push("/my-picks");
             window.scrollTo(0, 0); // sets focus to the top of the page
          })
          .catch((err) => {
             console.log("err", err);
             const { data } = err.response;
             console.log("data", data);
-            const { currentUserNameError, currentPasswordError } = data;
 
             // push errors or lack thereof to state
-            this.setState({
-               currentUserNameError,
-               currentPasswordError,
-            });
+            set_currentUserNameError(data.currentUserNameError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
-   renderLogin() {
+   function renderLogin() {
       return (
          <div className="card mb-5">
             <div className="card-header">
@@ -165,9 +146,9 @@ class Landing extends React.Component {
                         placeholder="Enter your user name."
                         // maxLength={MAX_USER_NAME_LENGTH} no max length for existing users
                      />
-                     {this.state.currentUserNameError && (
+                     {currentUserNameError && (
                         <div className="text-danger">
-                           {this.state.currentUserNameError}
+                           {currentUserNameError}
                         </div>
                      )}
                   </div>
@@ -179,9 +160,9 @@ class Landing extends React.Component {
                         id="password-input"
                         placeholder="Enter your password."
                      />
-                     {this.state.currentPasswordError && (
+                     {currentPasswordError && (
                         <div className="text-danger" id="password-error">
-                           {this.state.currentPasswordError}
+                           {currentPasswordError}
                         </div>
                      )}
                   </div>
@@ -189,7 +170,7 @@ class Landing extends React.Component {
                      // type="submit"
                      className="btn btn-primary btn-block"
                      onClick={() =>
-                        this.validateAndLogInUser(
+                        validateAndLogInUser(
                            document.getElementById("user-name-input").value,
                            document.getElementById("password-input").value
                         )
@@ -200,8 +181,8 @@ class Landing extends React.Component {
                   <div
                      className="btn btn-secondary mt-3"
                      onClick={() => {
-                        this.clearErrors();
-                        this.setState({ mode: "sign-up" });
+                        clearErrors();
+                        set_mode("sign-up");
                         window.scrollTo(0, 0); // sets focus to the top of the page
                      }}
                   >
@@ -213,7 +194,7 @@ class Landing extends React.Component {
       );
    }
 
-   renderSignup() {
+   function renderSignup() {
       return (
          <div className="card mb-5">
             <div className="card-header">
@@ -230,10 +211,8 @@ class Landing extends React.Component {
                         placeholder="Name for logging in"
                         maxLength={MAX_USER_NAME_LENGTH}
                      />
-                     {this.state.newUserNameError && (
-                        <div className="text-danger">
-                           {this.state.newUserNameError}
-                        </div>
+                     {newUserNameError && (
+                        <div className="text-danger">{newUserNameError}</div>
                      )}
                   </div>
                   <div className="form-group">
@@ -245,10 +224,8 @@ class Landing extends React.Component {
                         placeholder="Public team name"
                         maxLength={MAX_TEAM_NAME_LENGTH}
                      />
-                     {this.state.newTeamNameError && (
-                        <div className="text-danger">
-                           {this.state.newTeamNameError}
-                        </div>
+                     {newTeamNameError && (
+                        <div className="text-danger">{newTeamNameError}</div>
                      )}
                   </div>
                   <div className="form-group">
@@ -261,10 +238,8 @@ class Landing extends React.Component {
                         maxLength={MAX_USER_INITIALS_LENGTH}
                         style={{ textTransform: "uppercase" }}
                      />
-                     {this.state.newInitialsError && (
-                        <div className="text-danger">
-                           {this.state.newInitialsError}
-                        </div>
+                     {newInitialsError && (
+                        <div className="text-danger">{newInitialsError}</div>
                      )}
                   </div>
                   <div className="form-group">
@@ -275,17 +250,15 @@ class Landing extends React.Component {
                         id="password-input"
                         placeholder="Enter a password."
                      />
-                     {this.state.newPasswordError && (
-                        <div className="text-danger">
-                           {this.state.newPasswordError}
-                        </div>
+                     {newPasswordError && (
+                        <div className="text-danger">{newPasswordError}</div>
                      )}
                   </div>
                   <div
                      // type="submit"
                      className="btn btn-primary btn-block"
                      onClick={() => {
-                        this.validateAndCreateUser(
+                        validateAndCreateUser(
                            document.getElementById("user-name-input").value,
                            document.getElementById("team-name-input").value,
                            document
@@ -300,8 +273,8 @@ class Landing extends React.Component {
                   <div
                      className="btn btn-secondary mt-3"
                      onClick={() => {
-                        this.clearErrors();
-                        this.setState({ mode: "log-in" });
+                        clearErrors();
+                        set_mode("log-in");
                         window.scrollTo(0, 0); // sets focus to the top of the page
                      }}
                   >
@@ -313,24 +286,22 @@ class Landing extends React.Component {
       );
    }
 
-   render() {
-      return (
-         <div className="container">
-            <div className="row">
-               <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
-                  <h1>
-                     Hawk Nation
-                     <br />
-                     NFL Pick 'em
-                  </h1>
-                  {/* render component based on what mode we are in */}
-                  {this.state.mode === "log-in" && this.renderLogin()}
-                  {this.state.mode === "sign-up" && this.renderSignup()}
-               </div>
+   return (
+      <div className="container">
+         <div className="row">
+            <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
+               <h1>
+                  Hawk Nation
+                  <br />
+                  NFL Pick 'em
+               </h1>
+               {/* render component based on what mode we are in */}
+               {mode === "log-in" && renderLogin()}
+               {mode === "sign-up" && renderSignup()}
             </div>
          </div>
-      );
-   }
+      </div>
+   );
 }
 
 // maps the Redux store/state to props
