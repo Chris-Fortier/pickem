@@ -21,61 +21,54 @@ function MyPicks({ groupSeasonWeek, myPicks }) {
    return (
       <>
          <NavBar />
-         <div className="container">
-            <div className="row">
-               <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
-                  <div className="card mt-5 mb-5">
-                     <div className="card-header">
-                        <h2>
-                           My Picks For&nbsp;
-                           {groupSeasonWeek.season}
-                           &nbsp;
-                           {get_week_or_season_text(
-                              groupSeasonWeek.week,
-                              groupSeasonWeek.season
+         <div className="my-container">
+            <div className="my-card">
+               <div className="card-header">
+                  <h2>
+                     My Picks For&nbsp;
+                     {groupSeasonWeek.season}
+                     &nbsp;
+                     {get_week_or_season_text(
+                        groupSeasonWeek.week,
+                        groupSeasonWeek.season
+                     )}
+                  </h2>
+               </div>
+               <div className="card-body">
+                  <p>
+                     Each pick is saved as soon as it is selected. You can
+                     change your pick for a game as many times as you want until
+                     the game starts.
+                  </p>
+                  {myPicks.map((pick) => {
+                     if (pick.game_at > rollingDate + 43200000) {
+                        renderDate = true;
+                        renderTime = true;
+                     } else if (pick.game_at > rollingDate) {
+                        renderDate = false;
+                        renderTime = true;
+                     } else {
+                        renderDate = false;
+                        renderTime = false;
+                     }
+                     rollingDate = pick.game_at;
+                     return (
+                        <span key={uuid.v4()}>
+                           {renderTime && <br />}
+                           {renderDate && (
+                              <h5 align="center">
+                                 {toDisplayDate(pick.game_at, "EEE MMM dd")}
+                              </h5>
                            )}
-                        </h2>
-                     </div>
-                     <div className="card-body">
-                        <p>
-                           Each pick is saved as soon as it is selected. You can
-                           change your pick for a game as many times as you want
-                           until the game starts.
-                        </p>
-                        {myPicks.map((pick) => {
-                           if (pick.game_at > rollingDate + 43200000) {
-                              renderDate = true;
-                              renderTime = true;
-                           } else if (pick.game_at > rollingDate) {
-                              renderDate = false;
-                              renderTime = true;
-                           } else {
-                              renderDate = false;
-                              renderTime = false;
-                           }
-                           rollingDate = pick.game_at;
-                           return (
-                              <span key={uuid.v4()}>
-                                 {renderTime && <br />}
-                                 {renderDate && (
-                                    <h5 align="center">
-                                       {toDisplayDate(
-                                          pick.game_at,
-                                          "EEE MMM dd"
-                                       )}
-                                    </h5>
-                                 )}
-                                 {renderTime && (
-                                    <h6 align="center">
-                                       {toDisplayDate(pick.game_at, "p")}
-                                    </h6>
-                                 )}
-                                 <Pick pick={pick} />
-                              </span>
-                           );
-                        })}
-                     </div>
-                  </div>
+                           {renderTime && (
+                              <h6 align="center">
+                                 {toDisplayDate(pick.game_at, "p")}
+                              </h6>
+                           )}
+                           <Pick pick={pick} />
+                        </span>
+                     );
+                  })}
                </div>
             </div>
          </div>

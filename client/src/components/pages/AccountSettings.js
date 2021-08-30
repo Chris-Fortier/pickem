@@ -578,29 +578,25 @@ function AccountSettings({ currentUser, history, dispatch }) {
    return (
       <>
          <NavBar />
-         <div className="container">
-            <div className="row">
-               <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
-                  <div className="card mt-5 mb-5">
-                     <div className="card-header">
-                        <h2>
-                           Account Settings
-                           {/* &nbsp;for&nbsp;
+         <div className="my-container">
+            <div className="my-card">
+               <div className="card-header">
+                  <h2>
+                     Account Settings
+                     {/* &nbsp;for&nbsp;
                            {currentUser.user_name} */}
-                        </h2>
-                     </div>
-                     <div className="card-body">
-                        {messageFromServer && <p>{messageFromServer}</p>}
-                        {/* render component based on what mode we are in */}
-                        {mode === "account-settings-menu" &&
-                           renderAccountSettingsMenu()}
-                        {mode === "change-user-name" && renderChangeUserName()}
-                        {mode === "change-team-name" && renderChangeTeamName()}
-                        {mode === "change-initials" && renderChangeInitials()}
-                        {mode === "change-password" && renderChangePassword()}
-                        {mode === "delete-account" && renderDeleteAccount()}
-                     </div>
-                  </div>
+                  </h2>
+               </div>
+               <div className="card-body">
+                  {messageFromServer && <p>{messageFromServer}</p>}
+                  {/* render component based on what mode we are in */}
+                  {mode === "account-settings-menu" &&
+                     renderAccountSettingsMenu()}
+                  {mode === "change-user-name" && renderChangeUserName()}
+                  {mode === "change-team-name" && renderChangeTeamName()}
+                  {mode === "change-initials" && renderChangeInitials()}
+                  {mode === "change-password" && renderChangePassword()}
+                  {mode === "delete-account" && renderDeleteAccount()}
                </div>
             </div>
          </div>

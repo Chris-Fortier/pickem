@@ -131,7 +131,7 @@ function Landing({ dispatch, history }) {
 
    function renderLogin() {
       return (
-         <div className="card mb-5">
+         <div className="my-card">
             <div className="card-header">
                <h5>Log In</h5>
             </div>
@@ -196,7 +196,7 @@ function Landing({ dispatch, history }) {
 
    function renderSignup() {
       return (
-         <div className="card mb-5">
+         <div className="my-card">
             <div className="card-header">
                <h5>Sign Up</h5>
             </div>
@@ -287,19 +287,15 @@ function Landing({ dispatch, history }) {
    }
 
    return (
-      <div className="container">
-         <div className="row">
-            <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
-               <h1>
-                  Hawk Nation
-                  <br />
-                  NFL Pick 'em
-               </h1>
-               {/* render component based on what mode we are in */}
-               {mode === "log-in" && renderLogin()}
-               {mode === "sign-up" && renderSignup()}
-            </div>
-         </div>
+      <div className="my-container">
+         <h1>
+            Hawk Nation
+            <br />
+            NFL Pick 'em
+         </h1>
+         {/* render component based on what mode we are in */}
+         {mode === "log-in" && renderLogin()}
+         {mode === "sign-up" && renderSignup()}
       </div>
    );
 }
