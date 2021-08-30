@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
@@ -49,59 +49,61 @@ const weeks = [
 ]; // the weeks the user can select from
 // TODO: make this range based on the games data somehow
 
-class NavBar extends React.Component {
-   // this is a "lifecycle" method like render(), we don't need to call it manually
-   componentDidMount() {
-      if (isEmpty(this.props.currentUser)) {
-         // send the parent page to landing page
-         this.props.parentProps.history.push("/");
+function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
+   // NOTE this stuff used to be in componentDidMount() when it was a class component
+   useEffect(() => {
+      if (isEmpty(currentUser)) {
+         // if there is no user, send to landing page
+         window.location.href = "/";
       }
 
       // set the default groupSeasonWeek if there is no data there
       // do not run this if on account-settings tab
       if (window.location.pathname !== "/account-settings") {
-         if (isEmpty(this.props.groupSeasonWeek)) {
-            this.props.dispatch({
+         if (isEmpty(groupSeasonWeek)) {
+            dispatch({
                type: actions.SET_GROUP_SEASON_WEEK,
                payload: defaultGroupSeasonWeek,
             });
 
-            this.getData(defaultGroupSeasonWeek);
+            getData(defaultGroupSeasonWeek);
          } else {
-            this.getData(this.props.groupSeasonWeek);
+            getData(groupSeasonWeek);
          }
       }
-   }
+      // eslint-disable-next-line
+   }, []);
+   // TODO: React Hook useEffect has missing dependencies: 'currentUser', 'dispatch', 'getData', and 'groupSeasonWeek'. Either include them or remove the dependency array. If 'dispatch' changes too often, find the parent component that defines it and wrap that definition in useCallback
 
    // change any property in the groupSeasonWeek
    // pass it an object with any of these properties: group_id, season and/or week
    // any values it has will be pushed to groupSeasonWeek in Redux
-   changeGroupSeasonWeek(new_values = {}) {
+   function changeGroupSeasonWeek(new_values = {}) {
       // if there is a group_id value, change the group_id
       if (new_values.group_id !== undefined) {
-         this.props.groupSeasonWeek.group_id = new_values.group_id;
+         groupSeasonWeek.group_id = new_values.group_id;
       }
       // if there is a season value, change the season
       if (new_values.season !== undefined) {
-         this.props.groupSeasonWeek.season = new_values.season;
+         groupSeasonWeek.season = new_values.season;
       }
       // if there is a week value, change the week
       if (new_values.week !== undefined) {
-         this.props.groupSeasonWeek.week = new_values.week;
+         groupSeasonWeek.week = new_values.week;
       }
       // push changes to the Redux store
-      this.props.dispatch({
+      dispatch({
          type: actions.SET_GROUP_SEASON_WEEK,
-         payload: this.props.groupSeasonWeek,
+         payload: groupSeasonWeek,
       });
       // get new data based on the new groupSeasonWeek
-      this.getData(this.props.groupSeasonWeek);
+      getData(groupSeasonWeek);
    }
 
    // gets the data based on the group, season and week being viewed and also what page the user is on
-   getData(groupSeasonWeek) {
+   function getData(groupSeasonWeek) {
       // display a message until we get data back from the server
-      this.props.dispatch({
+      dispatch({
          type: actions.STORE_WARNING_MESSAGE,
          payload:
             "Getting data from the server... If this takes awhile the server might be waking up.",
@@ -109,7 +111,6 @@ class NavBar extends React.Component {
 
       // get the group picks if on that page
       if (window.location.pathname === "/group-picks") {
-         console.log(this.props);
          axios
             .get(
                `/api/v1/picks/group-week?group_id=${groupSeasonWeek.group_id}&season=${groupSeasonWeek.season}&week=${groupSeasonWeek.week}`
@@ -127,8 +128,8 @@ class NavBar extends React.Component {
                // an array of teams that stores user id as well as initials
                let teams = [
                   {
-                     user_id: this.props.currentUser.id,
-                     initials: this.props.currentUser.initials,
+                     user_id: currentUser.id,
+                     initials: currentUser.initials,
                      num_picks: 0, // stores the number of picks for this team in the week
                   }, // initialize with the current user so they are the first column when group picks are displayed
                ];
@@ -208,10 +209,7 @@ class NavBar extends React.Component {
 
                // filter out teams that have no picks and are not the current user
                teams = teams.filter((team) => {
-                  return (
-                     team.user_id === this.props.currentUser.id ||
-                     team.num_picks > 0
-                  );
+                  return team.user_id === currentUser.id || team.num_picks > 0;
                });
 
                // go through each matchup and flag the ones that are on new dates
@@ -228,7 +226,7 @@ class NavBar extends React.Component {
                   }
                }
 
-               this.props.dispatch({
+               dispatch({
                   type: actions.STORE_GROUP_PICKS,
                   payload: {
                      teams,
@@ -238,7 +236,7 @@ class NavBar extends React.Component {
                });
 
                // clear the server message
-               this.props.dispatch({
+               dispatch({
                   type: actions.CLEAR_MESSAGE,
                });
             })
@@ -247,7 +245,7 @@ class NavBar extends React.Component {
                console.log("err", data);
 
                // post an error message
-               this.props.dispatch({
+               dispatch({
                   type: actions.STORE_DANGER_MESSAGE,
                   payload:
                      "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
@@ -261,13 +259,13 @@ class NavBar extends React.Component {
             )
             .then((res) => {
                // send the data to Redux
-               this.props.dispatch({
+               dispatch({
                   type: actions.STORE_MY_PICKS,
                   payload: res.data,
                });
 
                // clear the server message
-               this.props.dispatch({
+               dispatch({
                   type: actions.CLEAR_MESSAGE,
                });
             })
@@ -276,7 +274,7 @@ class NavBar extends React.Component {
                console.log("err", data);
 
                // post an error message
-               this.props.dispatch({
+               dispatch({
                   type: actions.STORE_DANGER_MESSAGE,
                   payload:
                      "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
@@ -323,20 +321,20 @@ class NavBar extends React.Component {
                   }
                }
                // send the data to Redux
-               this.props.dispatch({
+               dispatch({
                   type: actions.STORE_STANDINGS,
                   payload: res.data,
                });
 
                // clear the server message
-               this.props.dispatch({
+               dispatch({
                   type: actions.CLEAR_MESSAGE,
                });
             })
             .catch((err) => {
                console.log(err);
                // post an error message
-               this.props.dispatch({
+               dispatch({
                   type: actions.STORE_DANGER_MESSAGE,
                   payload:
                      "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
@@ -345,152 +343,147 @@ class NavBar extends React.Component {
       }
    }
 
-   render() {
-      return (
-         <>
-            {/* React-Bootstrap navbar */}
-            {/* changed expand from lg to md */}
-            <Navbar
-               collapseOnSelect
-               expand="sm"
-               bg="dark"
-               variant="dark"
-               // expanded // I adding this so the menu is always expanded, even with a smaller screen size
-            >
-               <Navbar.Brand href="/">Hawk Nation NFL Pick 'em</Navbar.Brand>
-            </Navbar>
-            {window.location.pathname !== "/account-settings" && (
-               <>
-                  {/* season tabs */}
-                  <div className="nav-row">
-                     <span className="nav-row-title">Season:</span>
-                     {seasons.map((season) => (
+   return (
+      <>
+         {/* React-Bootstrap navbar */}
+         {/* changed expand from lg to md */}
+         <Navbar
+            collapseOnSelect
+            expand="sm"
+            bg="dark"
+            variant="dark"
+            // expanded // I adding this so the menu is always expanded, even with a smaller screen size
+         >
+            <Navbar.Brand href="/">Hawk Nation NFL Pick 'em</Navbar.Brand>
+         </Navbar>
+         {window.location.pathname !== "/account-settings" && (
+            <>
+               {/* season tabs */}
+               <div className="nav-row">
+                  <span className="nav-row-title">Season:</span>
+                  {seasons.map((season) => (
+                     <div
+                        key={uuid.v4()}
+                        className={`nav-tab ${
+                           season === groupSeasonWeek.season &&
+                           "nav-tab-current"
+                        }`}
+                        onClick={() => {
+                           changeGroupSeasonWeek({
+                              season: season,
+                           });
+                           // TODO: if they are viewing the entire season, don't change the week
+                           if (season === defaultGroupSeasonWeek.season) {
+                              // if changing to the default season, also change the week to the default week
+                              changeGroupSeasonWeek({
+                                 week: defaultGroupSeasonWeek.week,
+                              });
+                           } else {
+                              // // if changing to a different season, set the week to 1
+                              // changeGroupSeasonWeek({week: 1})
+                              // if changing to a different season, set the week to "entire season"
+                              changeGroupSeasonWeek({
+                                 week: "%",
+                              });
+                           }
+                        }}
+                     >
+                        {season}
+                     </div>
+                  ))}
+               </div>
+               {/* week tabs */}
+               <div className="nav-row">
+                  <span className="nav-row-title">Week:</span>
+                  {weeks
+                     .filter(
+                        (week) =>
+                           week === "%" ||
+                           week <=
+                              get_num_regular_season_weeks(
+                                 groupSeasonWeek.season
+                              ) +
+                                 4
+                     ) // the menu only shows the number of weeks in the season + 4 playoff weeks
+                     .map((week) => (
                         <div
                            key={uuid.v4()}
                            className={`nav-tab ${
-                              season === this.props.groupSeasonWeek.season &&
-                              "nav-tab-current"
+                              week === groupSeasonWeek.week && "nav-tab-current"
                            }`}
                            onClick={() => {
-                              this.changeGroupSeasonWeek({
-                                 season: season,
+                              changeGroupSeasonWeek({
+                                 week: week,
                               });
-                              // TODO: if they are viewing the entire season, don't change the week
-                              if (season === defaultGroupSeasonWeek.season) {
-                                 // if changing to the default season, also change the week to the default week
-                                 this.changeGroupSeasonWeek({
-                                    week: defaultGroupSeasonWeek.week,
-                                 });
-                              } else {
-                                 // // if changing to a different season, set the week to 1
-                                 // this.changeGroupSeasonWeek({week: 1})
-                                 // if changing to a different season, set the week to "entire season"
-                                 this.changeGroupSeasonWeek({
-                                    week: "%",
-                                 });
-                              }
                            }}
                         >
-                           {season}
+                           {get_week_or_season_text(
+                              week,
+                              groupSeasonWeek.season,
+                              true
+                           )}
                         </div>
                      ))}
-                  </div>
-                  {/* week tabs */}
-                  <div className="nav-row">
-                     <span className="nav-row-title">Week:</span>
-                     {weeks
-                        .filter(
-                           (week) =>
-                              week === "%" ||
-                              week <=
-                                 get_num_regular_season_weeks(
-                                    this.props.groupSeasonWeek.season
-                                 ) +
-                                    4
-                        ) // the menu only shows the number of weeks in the season + 4 playoff weeks
-                        .map((week) => (
-                           <div
-                              key={uuid.v4()}
-                              className={`nav-tab ${
-                                 week === this.props.groupSeasonWeek.week &&
-                                 "nav-tab-current"
-                              }`}
-                              onClick={() => {
-                                 this.changeGroupSeasonWeek({
-                                    week: week,
-                                 });
-                              }}
-                           >
-                              {get_week_or_season_text(
-                                 week,
-                                 this.props.groupSeasonWeek.season,
-                                 true
-                              )}
-                           </div>
-                        ))}
-                  </div>
-               </>
-            )}
+               </div>
+            </>
+         )}
 
-            {/* view tabs */}
-            <div className="nav-row">
-               <span className="nav-row-title">View:</span>
-               <Link
-                  to="/my-picks"
-                  className={`nav-tab ${
-                     window.location.pathname === "/my-picks" &&
-                     "nav-tab-current"
-                  }`}
-               >
-                  My Picks
-               </Link>
-               <Link
-                  to="/group-picks"
-                  className={`nav-tab ${
-                     window.location.pathname === "/group-picks" &&
-                     "nav-tab-current"
-                  }`}
-               >
-                  Group Picks
-               </Link>
-               <Link
-                  to="/standings"
-                  className={`nav-tab ${
-                     window.location.pathname === "/standings" &&
-                     "nav-tab-current"
-                  }`}
-               >
-                  Standings
-               </Link>
-               <Link
-                  to="/account-settings"
-                  className={`nav-tab ${
-                     window.location.pathname === "/account-settings" &&
-                     "nav-tab-current"
-                  }`}
-               >
-                  Account Settings
-               </Link>
-               <Link
-                  to="/"
-                  onClick={() => {
-                     logOutCurrentUser();
-                  }}
-                  className={`nav-tab`}
-               >
-                  Log Out
-               </Link>
-            </div>
+         {/* view tabs */}
+         <div className="nav-row">
+            <span className="nav-row-title">View:</span>
+            <Link
+               to="/my-picks"
+               className={`nav-tab ${
+                  window.location.pathname === "/my-picks" && "nav-tab-current"
+               }`}
+            >
+               My Picks
+            </Link>
+            <Link
+               to="/group-picks"
+               className={`nav-tab ${
+                  window.location.pathname === "/group-picks" &&
+                  "nav-tab-current"
+               }`}
+            >
+               Group Picks
+            </Link>
+            <Link
+               to="/standings"
+               className={`nav-tab ${
+                  window.location.pathname === "/standings" && "nav-tab-current"
+               }`}
+            >
+               Standings
+            </Link>
+            <Link
+               to="/account-settings"
+               className={`nav-tab ${
+                  window.location.pathname === "/account-settings" &&
+                  "nav-tab-current"
+               }`}
+            >
+               Account Settings
+            </Link>
+            <Link
+               to="/"
+               onClick={() => {
+                  logOutCurrentUser();
+               }}
+               className={`nav-tab`}
+            >
+               Log Out
+            </Link>
+         </div>
 
-            {/* message pop up */}
-            {!isEmpty(this.props.message) && (
-               <Alert variant={this.props.message.variant} className="message">
-                  {this.props.message.message}
-               </Alert>
-            )}
-         </>
-      );
-   }
+         {/* message pop up */}
+         {!isEmpty(message) && (
+            <Alert variant={message.variant} className="message">
+               {message.message}
+            </Alert>
+         )}
+      </>
+   );
 }
 
 // maps the Redux store/state to props

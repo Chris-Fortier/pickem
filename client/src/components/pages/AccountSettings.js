@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import NavBar from "../ui/NavBar";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
@@ -12,45 +12,66 @@ import {
    logOutCurrentUser,
 } from "../../utils/helpers";
 
-class AccountSettings extends React.Component {
-   constructor(props) {
-      super(props); // boilerplate line that needs to be in the constructor
+function AccountSettings({ currentUser, history, dispatch }) {
+   const [mode, set_mode] = useState("account-settings-menu");
+   const [messageFromServer, set_messageFromServer] = useState("");
+   const [currentPasswordError, set_currentPasswordError] = useState("");
+   const [newUserNameError, set_newUserNameError] = useState("");
+   const [newTeamNameError, set_newTeamNameError] = useState("");
+   const [newInitialsError, set_newInitialsError] = useState("");
+   const [newPasswordError, set_newPasswordError] = useState("");
 
-      this.state = {
-         mode: "account-settings-menu", // dictates what is rendered
-         messageFromServer: "",
-
-         // errors
-         currentPasswordError: "",
-         newUserNameError: "",
-         newInitialsError: "",
-         newPasswordError: "",
-      };
-   }
-
-   // this is a "lifecycle" method like render(), we don't need to call it manually
-   componentDidMount() {
+   useEffect(() => {
       // if there is not user logged in
-      if (isEmpty(this.props.currentUser)) {
+      if (isEmpty(currentUser)) {
          // send to landing page
-         this.props.history.push("/");
+         history.push("/");
       } else {
       }
+   }, [currentUser, history]);
+
+   function clearMessageAndErrors() {
+      set_messageFromServer("");
+      set_mode(mode);
+      set_currentPasswordError("");
+      set_newUserNameError("");
+      set_newTeamNameError("");
+      set_newInitialsError("");
+      set_newPasswordError("");
    }
 
-   clearMessageAndErrors() {
-      this.setState({
-         messageFromServer: "",
-         currentPasswordError: "",
-         newUserNameError: "",
-         newTeamNameError: "",
-         newInitialsError: "",
-         newPasswordError: "",
-      });
-   }
+   const cancelSubMenu = () => {
+      set_messageFromServer("");
+      set_mode("account-settings-menu");
+      set_currentPasswordError("");
+      set_newUserNameError("");
+      set_newTeamNameError("");
+      set_newInitialsError("");
+      set_newPasswordError("");
+   };
+
+   const updateMessageAndReturn = (new_message) => {
+      set_messageFromServer(new_message);
+      set_mode("account-settings-menu");
+      set_currentPasswordError("");
+      set_newUserNameError("");
+      set_newTeamNameError("");
+      set_newInitialsError("");
+      set_newPasswordError("");
+   };
+
+   const enterSubMenu = (sub_menu) => {
+      set_messageFromServer("");
+      set_mode(sub_menu);
+      set_currentPasswordError("");
+      set_newUserNameError("");
+      set_newTeamNameError("");
+      set_newInitialsError("");
+      set_newPasswordError("");
+   };
 
    // tests if the new user_name and password are valid and if so changes user_name
-   async validateAndChangeUserName(userNameInput, passwordInput) {
+   async function validateAndChangeUserName(userNameInput, passwordInput) {
       // create the object that will be the body that is sent
       const submission = {
          newUserName: userNameInput,
@@ -61,38 +82,35 @@ class AccountSettings extends React.Component {
       axios
          .put("api/v1/users/set-user-name", submission)
          .then((res) => {
-            const oldUserName = this.props.currentUser.user_name; // storing old name so I can put it in the message
+            const oldUserName = currentUser.user_name; // storing old name so I can put it in the message
             // send the user with new name to Redux
-            this.props.currentUser.user_name = userNameInput;
-            this.props.dispatch({
+            currentUser.user_name = userNameInput;
+            dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: this.props.currentUser,
+               payload: currentUser,
             });
 
             // TODO: local token is not updated with the new user_name, but I don't think I am using that user_name for anything
             // if they refresh it will put the user_name from token in currentUser
 
-            this.clearMessageAndErrors();
-            this.setState({
-               messageFromServer: `User name changed from "${oldUserName}" to "${userNameInput}"`,
-               mode: "account-settings-menu",
-            });
+            updateMessageAndReturn(
+               `User name changed from "${oldUserName}" to "${userNameInput}"`
+            );
          })
          .catch((err) => {
             const data = err.response.data;
             console.log("err", data);
-            const { newUserNameError, currentPasswordError } = data;
 
             // push errors or lack thereof to state
-            this.setState({
-               newUserNameError,
-               currentPasswordError,
-            });
+            set_newUserNameError(data.newUserNameError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
    // tests if the new initials and password are valid and if so changes initials
-   async validateAndChangeInitials(initialsInput, passwordInput) {
+   async function validateAndChangeInitials(initialsInput, passwordInput) {
+      // TODO: do not allow initials that are already in use
+
       // create the object that will be the body that is sent
       const submission = {
          newInitials: initialsInput,
@@ -103,38 +121,33 @@ class AccountSettings extends React.Component {
       axios
          .put("api/v1/users/set-initials", submission)
          .then((res) => {
-            const oldInitials = this.props.currentUser.initials; // storing old name so I can put it in the message
+            const oldInitials = currentUser.initials; // storing old name so I can put it in the message
             // send the user with new name to Redux
-            this.props.currentUser.initials = initialsInput;
-            this.props.dispatch({
+            currentUser.initials = initialsInput;
+            dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: this.props.currentUser,
+               payload: currentUser,
             });
 
             // TODO: local token is not updated with the new initials, but I don't think I am using that initials for anything
             // if they refresh it will put the initials from token in currentUser
 
-            this.clearMessageAndErrors();
-            this.setState({
-               messageFromServer: `User initials changed from "${oldInitials}" to "${initialsInput}"`,
-               mode: "account-settings-menu",
-            });
+            updateMessageAndReturn(
+               `User initials changed from "${oldInitials}" to "${initialsInput}"`
+            );
          })
          .catch((err) => {
             const data = err.response.data;
             console.log("err", data);
-            const { newInitialsError, currentPasswordError } = data;
 
             // push errors or lack thereof to state
-            this.setState({
-               newInitialsError,
-               currentPasswordError,
-            });
+            set_newInitialsError(data.newInitialsError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
    // tests if the new team name and password are valid and if so changes team name
-   async validateAndChangeTeamName(teamNameInput, passwordInput) {
+   async function validateAndChangeTeamName(teamNameInput, passwordInput) {
       // create the object that will be the body that is sent
       const submission = {
          newTeamName: teamNameInput,
@@ -145,38 +158,36 @@ class AccountSettings extends React.Component {
       axios
          .put("api/v1/users/set-team-name", submission)
          .then((res) => {
-            const oldTeamName = this.props.currentUser.team_name; // storing old name so I can put it in the message
+            const oldTeamName = currentUser.team_name; // storing old name so I can put it in the message
             // send the user with new name to Redux
-            this.props.currentUser.team_name = teamNameInput;
-            this.props.dispatch({
+            currentUser.team_name = teamNameInput;
+            dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: this.props.currentUser,
+               payload: currentUser,
             });
 
             // TODO: local token is not updated with the new team name, but I don't think I am using that team name for anything
             // if they refresh it will put the team name from token in currentUser
 
-            this.clearMessageAndErrors();
-            this.setState({
-               messageFromServer: `Team name changed from "${oldTeamName}" to "${teamNameInput}"`,
-               mode: "account-settings-menu",
-            });
+            updateMessageAndReturn(
+               `Team name changed from "${oldTeamName}" to "${teamNameInput}"`
+            );
          })
          .catch((err) => {
             const data = err.response.data;
             console.log("err", data);
-            const { newTeamNameError, currentPasswordError } = data;
 
             // push errors or lack thereof to state
-            this.setState({
-               newTeamNameError,
-               currentPasswordError,
-            });
+            set_newTeamNameError(data.newTeamNameError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
    // tests if the old password is valid and if so changes password to new one
-   async validateAndChangePassword(currentPasswordInput, newPasswordInput) {
+   async function validateAndChangePassword(
+      currentPasswordInput,
+      newPasswordInput
+   ) {
       // create the object that will be the body that is sent
       const submission = {
          currentPassword: currentPasswordInput, // send the plain text password over secure connection, the server will hash it
@@ -187,22 +198,21 @@ class AccountSettings extends React.Component {
       axios
          .put("api/v1/users/set-password", submission)
          .then((res) => {
-            const data = res.data;
+            updateMessageAndReturn("Password changed.");
 
-            this.clearMessageAndErrors();
-            this.setState(data); // the data received from server has the same keywords as state variables
-            this.setState({ mode: "account-settings-menu" });
+            // updateState(data); // the data received from server has the same keywords as state variables
          })
          .catch((err) => {
             const data = err.response.data;
 
-            this.clearMessageAndErrors();
-            this.setState(data); // the data received from server has the same keywords as state variables
+            // push errors or lack thereof to state
+            set_newPasswordError(data.newPasswordError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
    // tests if the password is valid and if so deletes the account
-   async validateAndDeleteAccount(currentPasswordInput) {
+   async function validateAndDeleteAccount(currentPasswordInput) {
       // create the object that will be the body that is sent
       const submission = {
          currentPassword: currentPasswordInput, // send the plain text password over secure connection, the server will hash it
@@ -212,34 +222,29 @@ class AccountSettings extends React.Component {
       axios
          .put("api/v1/users/delete", submission)
          .then((res) => {
-            // const data = res.data;
-            this.clearMessageAndErrors();
-            // this.setState(data); // the data received from server has the same keywords as state variables
-            this.setState({
-               messageFromServer: "This account has been deleted",
-               mode: "account-settings-menu",
-            });
+            clearMessageAndErrors();
+            set_messageFromServer("This account has been deleted");
+            set_mode("account-settings-menu");
             logOutCurrentUser();
-            this.props.history.push("/");
+            history.push("/");
          })
          .catch((err) => {
             const data = err.response.data;
 
-            this.clearMessageAndErrors();
-            this.setState(data); // the data received from server has the same keywords as state variables
+            // push errors or lack thereof to state
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
    // renders the account settings menu buttons
-   renderAccountSettingsMenu() {
+   function renderAccountSettingsMenu() {
       return (
          <>
             <button
                type="button"
                className="btn btn-primary btn-block"
                onClick={() => {
-                  this.clearMessageAndErrors();
-                  this.setState({ mode: "change-password" });
+                  enterSubMenu("change-password");
                }}
             >
                Change Password...
@@ -248,8 +253,7 @@ class AccountSettings extends React.Component {
                type="button"
                className="btn btn-secondary btn-block"
                onClick={() => {
-                  this.clearMessageAndErrors();
-                  this.setState({ mode: "change-user-name" });
+                  enterSubMenu("change-user-name");
                }}
             >
                Change User Name...
@@ -258,8 +262,7 @@ class AccountSettings extends React.Component {
                type="button"
                className="btn btn-secondary btn-block"
                onClick={() => {
-                  this.clearMessageAndErrors();
-                  this.setState({ mode: "change-team-name" });
+                  enterSubMenu("change-team-name");
                }}
             >
                Change Team Name...
@@ -268,8 +271,7 @@ class AccountSettings extends React.Component {
                type="button"
                className="btn btn-secondary btn-block"
                onClick={() => {
-                  this.clearMessageAndErrors();
-                  this.setState({ mode: "change-initials" });
+                  enterSubMenu("change-initials");
                }}
             >
                Change Initials...
@@ -278,8 +280,7 @@ class AccountSettings extends React.Component {
                type="button"
                className="btn btn-secondary text-danger btn-block"
                onClick={() => {
-                  this.clearMessageAndErrors();
-                  this.setState({ mode: "delete-account" });
+                  enterSubMenu("delete-account");
                }}
             >
                Delete Account...
@@ -289,7 +290,7 @@ class AccountSettings extends React.Component {
                className="btn btn-secondary mt-2"
                onClick={() => {
                   logOutCurrentUser();
-                  this.props.history.push("/");
+                  history.push("/");
                }}
             >
                Log out
@@ -298,7 +299,7 @@ class AccountSettings extends React.Component {
       );
    }
 
-   renderChangeUserName() {
+   function renderChangeUserName() {
       return (
          <>
             <h5>Change User Name</h5>
@@ -309,13 +310,11 @@ class AccountSettings extends React.Component {
                      type="text"
                      className="form-control"
                      id="new-user-name-input"
-                     placeholder={this.props.currentUser.user_name}
+                     placeholder={currentUser.user_name}
                      maxLength={MAX_USER_NAME_LENGTH}
                   />
-                  {this.state.newUserNameError && (
-                     <div className="text-danger">
-                        {this.state.newUserNameError}
-                     </div>
+                  {newUserNameError && (
+                     <div className="text-danger">{newUserNameError}</div>
                   )}
                </div>
                <div className="form-group">
@@ -326,9 +325,9 @@ class AccountSettings extends React.Component {
                      id="password-input"
                      placeholder="Enter your password"
                   />
-                  {this.state.currentPasswordError && (
+                  {currentPasswordError && (
                      <div className="text-danger" id="password-error">
-                        {this.state.currentPasswordError}
+                        {currentPasswordError}
                      </div>
                   )}
                </div>
@@ -336,7 +335,7 @@ class AccountSettings extends React.Component {
                   // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
-                     this.validateAndChangeUserName(
+                     validateAndChangeUserName(
                         document.getElementById("new-user-name-input").value,
                         document.getElementById("password-input").value
                      )
@@ -347,8 +346,7 @@ class AccountSettings extends React.Component {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     this.clearMessageAndErrors();
-                     this.setState({ mode: "account-settings-menu" });
+                     cancelSubMenu();
                   }}
                >
                   Cancel
@@ -358,7 +356,7 @@ class AccountSettings extends React.Component {
       );
    }
 
-   renderChangeInitials() {
+   function renderChangeInitials() {
       return (
          <>
             <h5>Change Initials</h5>
@@ -369,14 +367,12 @@ class AccountSettings extends React.Component {
                      type="text"
                      className="form-control"
                      id="new-initials-input"
-                     placeholder={this.props.currentUser.initials}
+                     placeholder={currentUser.initials}
                      maxLength={MAX_USER_INITIALS_LENGTH}
                      style={{ textTransform: "uppercase" }}
                   />
-                  {this.state.newInitialsError && (
-                     <div className="text-danger">
-                        {this.state.newInitialsError}
-                     </div>
+                  {newInitialsError && (
+                     <div className="text-danger">{newInitialsError}</div>
                   )}
                </div>
                <div className="form-group">
@@ -387,9 +383,9 @@ class AccountSettings extends React.Component {
                      id="password-input"
                      placeholder="Enter your password"
                   />
-                  {this.state.currentPasswordError && (
+                  {currentPasswordError && (
                      <div className="text-danger" id="password-error">
-                        {this.state.currentPasswordError}
+                        {currentPasswordError}
                      </div>
                   )}
                </div>
@@ -397,7 +393,7 @@ class AccountSettings extends React.Component {
                   // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
-                     this.validateAndChangeInitials(
+                     validateAndChangeInitials(
                         document
                            .getElementById("new-initials-input")
                            .value.toUpperCase(),
@@ -410,8 +406,7 @@ class AccountSettings extends React.Component {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     this.clearMessageAndErrors();
-                     this.setState({ mode: "account-settings-menu" });
+                     cancelSubMenu();
                   }}
                >
                   Cancel
@@ -421,7 +416,8 @@ class AccountSettings extends React.Component {
       );
    }
 
-   renderChangeTeamName() {
+   function renderChangeTeamName() {
+      // TODO: do not allow a team name that is already in use
       return (
          <>
             <h5>Change Team Name</h5>
@@ -432,13 +428,11 @@ class AccountSettings extends React.Component {
                      type="text"
                      className="form-control"
                      id="new-team-name-input"
-                     placeholder={this.props.currentUser.team_name}
+                     placeholder={currentUser.team_name}
                      maxLength={MAX_TEAM_NAME_LENGTH}
                   />
-                  {this.state.newTeamNameError && (
-                     <div className="text-danger">
-                        {this.state.newTeamNameError}
-                     </div>
+                  {newTeamNameError && (
+                     <div className="text-danger">{newTeamNameError}</div>
                   )}
                </div>
                <div className="form-group">
@@ -449,9 +443,9 @@ class AccountSettings extends React.Component {
                      id="password-input"
                      placeholder="Enter your password"
                   />
-                  {this.state.currentPasswordError && (
+                  {currentPasswordError && (
                      <div className="text-danger" id="password-error">
-                        {this.state.currentPasswordError}
+                        {currentPasswordError}
                      </div>
                   )}
                </div>
@@ -459,7 +453,7 @@ class AccountSettings extends React.Component {
                   // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
-                     this.validateAndChangeTeamName(
+                     validateAndChangeTeamName(
                         document.getElementById("new-team-name-input").value,
                         document.getElementById("password-input").value
                      )
@@ -470,8 +464,7 @@ class AccountSettings extends React.Component {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     this.clearMessageAndErrors();
-                     this.setState({ mode: "account-settings-menu" });
+                     cancelSubMenu();
                   }}
                >
                   Cancel
@@ -481,7 +474,7 @@ class AccountSettings extends React.Component {
       );
    }
 
-   renderChangePassword() {
+   function renderChangePassword() {
       return (
          <>
             <h5>Change Password</h5>
@@ -496,10 +489,8 @@ class AccountSettings extends React.Component {
                      id="current-password-input"
                      placeholder="Enter your existing password."
                   />
-                  {this.state.currentPasswordError && (
-                     <div className="text-danger">
-                        {this.state.currentPasswordError}
-                     </div>
+                  {currentPasswordError && (
+                     <div className="text-danger">{currentPasswordError}</div>
                   )}
                </div>
                <div className="form-group">
@@ -510,17 +501,15 @@ class AccountSettings extends React.Component {
                      id="new-password-input"
                      placeholder="Enter a new password"
                   />
-                  {this.state.newPasswordError && (
-                     <div className="text-danger">
-                        {this.state.newPasswordError}
-                     </div>
+                  {newPasswordError && (
+                     <div className="text-danger">{newPasswordError}</div>
                   )}
                </div>
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
-                     this.validateAndChangePassword(
+                     validateAndChangePassword(
                         document.getElementById("current-password-input").value,
                         document.getElementById("new-password-input").value
                      )
@@ -531,8 +520,7 @@ class AccountSettings extends React.Component {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     this.clearMessageAndErrors();
-                     this.setState({ mode: "account-settings-menu" });
+                     cancelSubMenu();
                   }}
                >
                   Cancel
@@ -542,7 +530,7 @@ class AccountSettings extends React.Component {
       );
    }
 
-   renderDeleteAccount() {
+   function renderDeleteAccount() {
       return (
          <>
             <h5>Delete Account</h5>
@@ -555,21 +543,19 @@ class AccountSettings extends React.Component {
                      id="current-password-input"
                      placeholder="Enter your password."
                   />
-                  {this.state.currentPasswordError && (
-                     <div className="text-danger">
-                        {this.state.currentPasswordError}
-                     </div>
+                  {currentPasswordError && (
+                     <div className="text-danger">{currentPasswordError}</div>
                   )}
                </div>
                <p>
                   Are you sure you want to delete account&nbsp;"
-                  {this.props.currentUser.user_name}"?
+                  {currentUser.user_name}"?
                </p>
                <div
                   // type="submit"
                   className="btn btn-danger btn-block"
                   onClick={() =>
-                     this.validateAndDeleteAccount(
+                     validateAndDeleteAccount(
                         document.getElementById("current-password-input").value
                      )
                   }
@@ -579,8 +565,7 @@ class AccountSettings extends React.Component {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     this.clearMessageAndErrors();
-                     this.setState({ mode: "account-settings-menu" });
+                     cancelSubMenu();
                   }}
                >
                   Cancel
@@ -590,42 +575,33 @@ class AccountSettings extends React.Component {
       );
    }
 
-   render() {
-      return (
-         <>
-            <NavBar parentProps={this.props} />
-            <div className="my-container">
-               <div className="my-card">
-                  <div className="card-header">
-                     <h2>
-                        Account Settings
-                        {/* &nbsp;for&nbsp;
-                              {this.props.currentUser.user_name} */}
-                     </h2>
-                  </div>
-                  <div className="card-body">
-                     {this.state.messageFromServer && (
-                        <p>{this.state.messageFromServer}</p>
-                     )}
-                     {/* render component based on what mode we are in */}
-                     {this.state.mode === "account-settings-menu" &&
-                        this.renderAccountSettingsMenu()}
-                     {this.state.mode === "change-user-name" &&
-                        this.renderChangeUserName()}
-                     {this.state.mode === "change-team-name" &&
-                        this.renderChangeTeamName()}
-                     {this.state.mode === "change-initials" &&
-                        this.renderChangeInitials()}
-                     {this.state.mode === "change-password" &&
-                        this.renderChangePassword()}
-                     {this.state.mode === "delete-account" &&
-                        this.renderDeleteAccount()}
-                  </div>
+   return (
+      <>
+         <NavBar />
+         <div className="my-container">
+            <div className="my-card">
+               <div className="card-header">
+                  <h2>
+                     Account Settings
+                     {/* &nbsp;for&nbsp;
+                           {currentUser.user_name} */}
+                  </h2>
+               </div>
+               <div className="card-body">
+                  {messageFromServer && <p>{messageFromServer}</p>}
+                  {/* render component based on what mode we are in */}
+                  {mode === "account-settings-menu" &&
+                     renderAccountSettingsMenu()}
+                  {mode === "change-user-name" && renderChangeUserName()}
+                  {mode === "change-team-name" && renderChangeTeamName()}
+                  {mode === "change-initials" && renderChangeInitials()}
+                  {mode === "change-password" && renderChangePassword()}
+                  {mode === "delete-account" && renderDeleteAccount()}
                </div>
             </div>
-         </>
-      );
-   }
+         </div>
+      </>
+   );
 }
 
 // maps the Redux store/state to props
