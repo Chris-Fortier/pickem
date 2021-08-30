@@ -594,36 +594,32 @@ class AccountSettings extends React.Component {
       return (
          <>
             <NavBar parentProps={this.props} />
-            <div className="container">
-               <div className="row">
-                  <div className="col col-md-8 offset-md-2 col-xl-6 offset-xl-3">
-                     <div className="card mt-5 mb-5">
-                        <div className="card-header">
-                           <h2>
-                              Account Settings
-                              {/* &nbsp;for&nbsp;
+            <div className="my-container">
+               <div className="my-card">
+                  <div className="card-header">
+                     <h2>
+                        Account Settings
+                        {/* &nbsp;for&nbsp;
                               {this.props.currentUser.user_name} */}
-                           </h2>
-                        </div>
-                        <div className="card-body">
-                           {this.state.messageFromServer && (
-                              <p>{this.state.messageFromServer}</p>
-                           )}
-                           {/* render component based on what mode we are in */}
-                           {this.state.mode === "account-settings-menu" &&
-                              this.renderAccountSettingsMenu()}
-                           {this.state.mode === "change-user-name" &&
-                              this.renderChangeUserName()}
-                           {this.state.mode === "change-team-name" &&
-                              this.renderChangeTeamName()}
-                           {this.state.mode === "change-initials" &&
-                              this.renderChangeInitials()}
-                           {this.state.mode === "change-password" &&
-                              this.renderChangePassword()}
-                           {this.state.mode === "delete-account" &&
-                              this.renderDeleteAccount()}
-                        </div>
-                     </div>
+                     </h2>
+                  </div>
+                  <div className="card-body">
+                     {this.state.messageFromServer && (
+                        <p>{this.state.messageFromServer}</p>
+                     )}
+                     {/* render component based on what mode we are in */}
+                     {this.state.mode === "account-settings-menu" &&
+                        this.renderAccountSettingsMenu()}
+                     {this.state.mode === "change-user-name" &&
+                        this.renderChangeUserName()}
+                     {this.state.mode === "change-team-name" &&
+                        this.renderChangeTeamName()}
+                     {this.state.mode === "change-initials" &&
+                        this.renderChangeInitials()}
+                     {this.state.mode === "change-password" &&
+                        this.renderChangePassword()}
+                     {this.state.mode === "delete-account" &&
+                        this.renderDeleteAccount()}
                   </div>
                </div>
             </div>
