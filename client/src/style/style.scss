@@ -37,6 +37,28 @@ textarea,
    border: none;
 }
 
+.center-children {
+   display: flex;
+   justify-content: center;
+}
+
+.my-container {
+   max-width: 530px;
+   margin-left: auto;
+   margin-right: auto;
+   padding-left: 15px;
+   padding-right: 15px;
+}
+
+.my-card {
+   // max-width: 500px;
+   // margin-left: 15px;
+   // margin-right: 15px;
+   margin-top: 48px;
+   margin-bottom: 48px;
+   background: $gray;
+}
+
 .btn-primary {
    background-color: $green;
    color: $navy;
