@@ -13,17 +13,13 @@ import {
 } from "../../utils/helpers";
 
 function AccountSettings({ currentUser, history, dispatch }) {
-   const [state, setState] = useState({
-      mode: "account-settings-menu", // dictates what is rendered
-      messageFromServer: "",
-
-      // errors
-      currentPasswordError: "",
-      newUserNameError: "",
-      newTeamNameError: "",
-      newInitialsError: "",
-      newPasswordError: "",
-   });
+   const [mode, set_mode] = useState("account-settings-menu");
+   const [messageFromServer, set_messageFromServer] = useState("");
+   const [currentPasswordError, set_currentPasswordError] = useState("");
+   const [newUserNameError, set_newUserNameError] = useState("");
+   const [newTeamNameError, set_newTeamNameError] = useState("");
+   const [newInitialsError, set_newInitialsError] = useState("");
+   const [newPasswordError, set_newPasswordError] = useState("");
 
    useEffect(() => {
       // if there is not user logged in
@@ -34,60 +30,44 @@ function AccountSettings({ currentUser, history, dispatch }) {
       }
    }, [currentUser, history]);
 
-   // updates state values according to object of new values
-   const updateState = (updates) => {
-      console.log("updateState()", updates);
-      console.log(state);
-      setState({ ...state, ...updates });
-      console.log(state);
-   };
-
    function clearMessageAndErrors() {
-      updateState({
-         messageFromServer: "",
-         mode: state.mode,
-         currentPasswordError: "",
-         newUserNameError: "",
-         newTeamNameError: "",
-         newInitialsError: "",
-         newPasswordError: "",
-      });
+      set_messageFromServer("");
+      set_mode(mode);
+      set_currentPasswordError("");
+      set_newUserNameError("");
+      set_newTeamNameError("");
+      set_newInitialsError("");
+      set_newPasswordError("");
    }
 
    const cancelSubMenu = () => {
-      updateState({
-         messageFromServer: "",
-         mode: "account-settings-menu",
-         currentPasswordError: "",
-         newUserNameError: "",
-         newTeamNameError: "",
-         newInitialsError: "",
-         newPasswordError: "",
-      });
+      set_messageFromServer("");
+      set_mode("account-settings-menu");
+      set_currentPasswordError("");
+      set_newUserNameError("");
+      set_newTeamNameError("");
+      set_newInitialsError("");
+      set_newPasswordError("");
    };
 
    const updateMessageAndReturn = (new_message) => {
-      updateState({
-         messageFromServer: new_message,
-         mode: "account-settings-menu",
-         currentPasswordError: "",
-         newUserNameError: "",
-         newTeamNameError: "",
-         newInitialsError: "",
-         newPasswordError: "",
-      });
+      set_messageFromServer(new_message);
+      set_mode("account-settings-menu");
+      set_currentPasswordError("");
+      set_newUserNameError("");
+      set_newTeamNameError("");
+      set_newInitialsError("");
+      set_newPasswordError("");
    };
 
    const enterSubMenu = (sub_menu) => {
-      updateState({
-         messageFromServer: "",
-         mode: sub_menu,
-         currentPasswordError: "",
-         newUserNameError: "",
-         newTeamNameError: "",
-         newInitialsError: "",
-         newPasswordError: "",
-      });
+      set_messageFromServer("");
+      set_mode(sub_menu);
+      set_currentPasswordError("");
+      set_newUserNameError("");
+      set_newTeamNameError("");
+      set_newInitialsError("");
+      set_newPasswordError("");
    };
 
    // tests if the new user_name and password are valid and if so changes user_name
@@ -122,7 +102,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            updateState(data);
+            set_newUserNameError(data.newUserNameError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
@@ -160,7 +141,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            updateState(data);
+            set_newInitialsError(data.newInitialsError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
@@ -196,7 +178,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            updateState(data);
+            set_newTeamNameError(data.newTeamNameError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
@@ -222,8 +205,9 @@ function AccountSettings({ currentUser, history, dispatch }) {
          .catch((err) => {
             const data = err.response.data;
 
-            clearMessageAndErrors();
-            updateState(data); // the data received from server has the same keywords as state variables
+            // push errors or lack thereof to state
+            set_newPasswordError(data.newPasswordError);
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
@@ -239,18 +223,16 @@ function AccountSettings({ currentUser, history, dispatch }) {
          .put("api/v1/users/delete", submission)
          .then((res) => {
             clearMessageAndErrors();
-            updateState({
-               messageFromServer: "This account has been deleted",
-               mode: "account-settings-menu",
-            });
+            set_messageFromServer("This account has been deleted");
+            set_mode("account-settings-menu");
             logOutCurrentUser();
             history.push("/");
          })
          .catch((err) => {
             const data = err.response.data;
 
-            clearMessageAndErrors();
-            updateState(data); // the data received from server has the same keywords as state variables
+            // push errors or lack thereof to state
+            set_currentPasswordError(data.currentPasswordError);
          });
    }
 
@@ -331,8 +313,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      placeholder={currentUser.user_name}
                      maxLength={MAX_USER_NAME_LENGTH}
                   />
-                  {state.newUserNameError && (
-                     <div className="text-danger">{state.newUserNameError}</div>
+                  {newUserNameError && (
+                     <div className="text-danger">{newUserNameError}</div>
                   )}
                </div>
                <div className="form-group">
@@ -343,9 +325,9 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      id="password-input"
                      placeholder="Enter your password"
                   />
-                  {state.currentPasswordError && (
+                  {currentPasswordError && (
                      <div className="text-danger" id="password-error">
-                        {state.currentPasswordError}
+                        {currentPasswordError}
                      </div>
                   )}
                </div>
@@ -389,8 +371,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      maxLength={MAX_USER_INITIALS_LENGTH}
                      style={{ textTransform: "uppercase" }}
                   />
-                  {state.newInitialsError && (
-                     <div className="text-danger">{state.newInitialsError}</div>
+                  {newInitialsError && (
+                     <div className="text-danger">{newInitialsError}</div>
                   )}
                </div>
                <div className="form-group">
@@ -401,9 +383,9 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      id="password-input"
                      placeholder="Enter your password"
                   />
-                  {state.currentPasswordError && (
+                  {currentPasswordError && (
                      <div className="text-danger" id="password-error">
-                        {state.currentPasswordError}
+                        {currentPasswordError}
                      </div>
                   )}
                </div>
@@ -449,8 +431,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      placeholder={currentUser.team_name}
                      maxLength={MAX_TEAM_NAME_LENGTH}
                   />
-                  {state.newTeamNameError && (
-                     <div className="text-danger">{state.newTeamNameError}</div>
+                  {newTeamNameError && (
+                     <div className="text-danger">{newTeamNameError}</div>
                   )}
                </div>
                <div className="form-group">
@@ -461,9 +443,9 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      id="password-input"
                      placeholder="Enter your password"
                   />
-                  {state.currentPasswordError && (
+                  {currentPasswordError && (
                      <div className="text-danger" id="password-error">
-                        {state.currentPasswordError}
+                        {currentPasswordError}
                      </div>
                   )}
                </div>
@@ -507,10 +489,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      id="current-password-input"
                      placeholder="Enter your existing password."
                   />
-                  {state.currentPasswordError && (
-                     <div className="text-danger">
-                        {state.currentPasswordError}
-                     </div>
+                  {currentPasswordError && (
+                     <div className="text-danger">{currentPasswordError}</div>
                   )}
                </div>
                <div className="form-group">
@@ -521,8 +501,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      id="new-password-input"
                      placeholder="Enter a new password"
                   />
-                  {state.newPasswordError && (
-                     <div className="text-danger">{state.newPasswordError}</div>
+                  {newPasswordError && (
+                     <div className="text-danger">{newPasswordError}</div>
                   )}
                </div>
                <div
@@ -563,10 +543,8 @@ function AccountSettings({ currentUser, history, dispatch }) {
                      id="current-password-input"
                      placeholder="Enter your password."
                   />
-                  {state.currentPasswordError && (
-                     <div className="text-danger">
-                        {state.currentPasswordError}
-                     </div>
+                  {currentPasswordError && (
+                     <div className="text-danger">{currentPasswordError}</div>
                   )}
                </div>
                <p>
@@ -597,8 +575,6 @@ function AccountSettings({ currentUser, history, dispatch }) {
       );
    }
 
-   console.log("state", state);
-
    return (
       <>
          <NavBar />
@@ -614,22 +590,15 @@ function AccountSettings({ currentUser, history, dispatch }) {
                         </h2>
                      </div>
                      <div className="card-body">
-                        {state.messageFromServer && (
-                           <p>{state.messageFromServer}</p>
-                        )}
+                        {messageFromServer && <p>{messageFromServer}</p>}
                         {/* render component based on what mode we are in */}
-                        {state.mode === "account-settings-menu" &&
+                        {mode === "account-settings-menu" &&
                            renderAccountSettingsMenu()}
-                        {state.mode === "change-user-name" &&
-                           renderChangeUserName()}
-                        {state.mode === "change-team-name" &&
-                           renderChangeTeamName()}
-                        {state.mode === "change-initials" &&
-                           renderChangeInitials()}
-                        {state.mode === "change-password" &&
-                           renderChangePassword()}
-                        {state.mode === "delete-account" &&
-                           renderDeleteAccount()}
+                        {mode === "change-user-name" && renderChangeUserName()}
+                        {mode === "change-team-name" && renderChangeTeamName()}
+                        {mode === "change-initials" && renderChangeInitials()}
+                        {mode === "change-password" && renderChangePassword()}
+                        {mode === "delete-account" && renderDeleteAccount()}
                      </div>
                   </div>
                </div>
