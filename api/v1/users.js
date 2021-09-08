@@ -8,11 +8,13 @@ const selectUserById = require("../../queries/selectUserById");
 const selectUserByUserName = require("../../queries/selectUserByUserName");
 const deleteUser = require("../../queries/deleteUser");
 const setUserUserName = require("../../queries/setUserUserName");
+const set_user_email = require("../../queries/set_user_email");
 const setUserTeamName = require("../../queries/setUserTeamName");
 const setUserInitials = require("../../queries/setUserInitials");
 const setUserPassword = require("../../queries/setUserPassword");
 const { toHash, TOKEN_EXPIRE_TIME } = require("../../utils/helpers");
 const getNewUserNameError = require("../../validation/getNewUserNameError");
+const get_new_email_error = require("../../validation/get_new_email_error");
 const getNewTeamNameError = require("../../validation/getNewTeamNameError");
 const getNewInitialsError = require("../../validation/getNewInitialsError");
 const getNewPasswordError = require("../../validation/getNewPasswordError");
@@ -133,6 +135,7 @@ router.post("/auth", async (req, res) => {
             const user = {
                id: users[0].id,
                user_name: users[0].user_name,
+               email: users[0].email,
                team_name: users[0].team_name,
                initials: users[0].initials,
                created_at: users[0].created_at,
@@ -244,6 +247,47 @@ router.put("/set-user-name", validateJwt, async (req, res) => {
       res.status(400).json({
          newUserNameError,
          currentPasswordError,
+      });
+   }
+});
+
+// @route      PUT api/v1/users/set-email
+// @desc       change an email
+// @access     Private
+// test:
+router.put("/set-email", validateJwt, async (req, res) => {
+   const { new_email, password } = req.body; // grabbing variables from req.body
+   const userId = req.user.id; // get the user id from the JWT
+   console.log({ userId });
+   const new_email_error = await get_new_email_error(new_email); // check to see if the new email is valid
+   console.log({ new_email_error });
+   const current_password_error = await checkPasswordAgainstUserId(
+      password,
+      userId
+   ); // check to see if the password submitted is correct
+   console.log({
+      userId,
+      new_email_error,
+      current_password_error,
+   });
+
+   if (new_email_error === "" && current_password_error === "") {
+      // if it gets this far, email can be changed
+
+      db.query(set_user_email, [new_email, userId])
+         .then((dbRes) => {
+            console.log("dbRes", dbRes);
+            res.status(200).json("email changed to " + new_email);
+         })
+         .catch((err) => {
+            console.log("err", err);
+            res.status(400).json(err);
+         });
+   } else {
+      // return a 400 error to user
+      res.status(400).json({
+         new_email_error,
+         current_password_error,
       });
    }
 });

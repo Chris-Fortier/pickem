@@ -7,6 +7,7 @@ import axios from "axios";
 import isEmpty from "lodash/isEmpty";
 import {
    MAX_USER_NAME_LENGTH,
+   MAX_EMAIL_LENGTH,
    MAX_TEAM_NAME_LENGTH,
    MAX_USER_INITIALS_LENGTH,
    logOutCurrentUser,
@@ -17,6 +18,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
    const [messageFromServer, set_messageFromServer] = useState("");
    const [currentPasswordError, set_currentPasswordError] = useState("");
    const [newUserNameError, set_newUserNameError] = useState("");
+   const [new_email_error, set_new_email_error] = useState("");
    const [newTeamNameError, set_newTeamNameError] = useState("");
    const [newInitialsError, set_newInitialsError] = useState("");
    const [newPasswordError, set_newPasswordError] = useState("");
@@ -35,6 +37,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
       set_mode(mode);
       set_currentPasswordError("");
       set_newUserNameError("");
+      set_new_email_error("");
       set_newTeamNameError("");
       set_newInitialsError("");
       set_newPasswordError("");
@@ -45,6 +48,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
       set_mode("account-settings-menu");
       set_currentPasswordError("");
       set_newUserNameError("");
+      set_new_email_error("");
       set_newTeamNameError("");
       set_newInitialsError("");
       set_newPasswordError("");
@@ -55,6 +59,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
       set_mode("account-settings-menu");
       set_currentPasswordError("");
       set_newUserNameError("");
+      set_new_email_error("");
       set_newTeamNameError("");
       set_newInitialsError("");
       set_newPasswordError("");
@@ -65,6 +70,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
       set_mode(sub_menu);
       set_currentPasswordError("");
       set_newUserNameError("");
+      set_new_email_error("");
       set_newTeamNameError("");
       set_newInitialsError("");
       set_newPasswordError("");
@@ -104,6 +110,43 @@ function AccountSettings({ currentUser, history, dispatch }) {
             // push errors or lack thereof to state
             set_newUserNameError(data.newUserNameError);
             set_currentPasswordError(data.currentPasswordError);
+         });
+   }
+
+   // tests if the new email and password are valid and if so changes email
+   async function validate_and_change_email(email_input, password_input) {
+      console.log("currentUser", currentUser);
+      // create the object that will be the body that is sent
+      const submission = {
+         new_email: email_input,
+         password: password_input, // send the plain text password over secure connection, the server will hash it
+      };
+
+      // post to API
+      axios
+         .put("api/v1/users/set-email", submission)
+         .then((res) => {
+            const old_email = currentUser.email; // storing old email so I can put it in the message
+            // send the email with new name to Redux
+            currentUser.email = email_input;
+            dispatch({
+               type: actions.UPDATE_CURRENT_USER,
+               payload: currentUser,
+            });
+
+            // TODO: local token is not updated with the new email
+            // if they refresh it will put the email from token in currentUser
+
+            updateMessageAndReturn(
+               `Email changed from "${old_email}" to "${email_input}"`
+            );
+         })
+         .catch((err) => {
+            const data = err.response.data;
+
+            // push errors or lack thereof to state
+            set_new_email_error(data.new_email_error);
+            set_currentPasswordError(data.current_password_error);
          });
    }
 
@@ -262,6 +305,15 @@ function AccountSettings({ currentUser, history, dispatch }) {
                type="button"
                className="btn btn-secondary btn-block"
                onClick={() => {
+                  enterSubMenu("change-email");
+               }}
+            >
+               Change Email...
+            </button>
+            <button
+               type="button"
+               className="btn btn-secondary btn-block"
+               onClick={() => {
                   enterSubMenu("change-team-name");
                }}
             >
@@ -342,6 +394,62 @@ function AccountSettings({ currentUser, history, dispatch }) {
                   }
                >
                   Change User Name
+               </div>
+               <div
+                  className="btn btn-secondary mt-3"
+                  onClick={() => {
+                     cancelSubMenu();
+                  }}
+               >
+                  Cancel
+               </div>
+            </form>
+         </>
+      );
+   }
+
+   function render_change_email() {
+      return (
+         <>
+            <h5>Change Email Address</h5>
+            <form>
+               <div className="form-group">
+                  <label htmlFor="new-email-input">New Email Address</label>
+                  <input
+                     type="text"
+                     className="form-control"
+                     id="new-email-input"
+                     placeholder={currentUser.email}
+                     maxLength={MAX_EMAIL_LENGTH}
+                  />
+                  {new_email_error && (
+                     <div className="text-danger">{new_email_error}</div>
+                  )}
+               </div>
+               <div className="form-group">
+                  <label htmlFor="password-input">Password</label>
+                  <input
+                     type="password"
+                     className="form-control"
+                     id="password-input"
+                     placeholder="Enter your password"
+                  />
+                  {currentPasswordError && (
+                     <div className="text-danger" id="password-error">
+                        {currentPasswordError}
+                     </div>
+                  )}
+               </div>
+               <div
+                  className="btn btn-primary btn-block"
+                  onClick={() =>
+                     validate_and_change_email(
+                        document.getElementById("new-email-input").value,
+                        document.getElementById("password-input").value
+                     )
+                  }
+               >
+                  Change Email
                </div>
                <div
                   className="btn btn-secondary mt-3"
@@ -593,6 +701,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                   {mode === "account-settings-menu" &&
                      renderAccountSettingsMenu()}
                   {mode === "change-user-name" && renderChangeUserName()}
+                  {mode === "change-email" && render_change_email()}
                   {mode === "change-team-name" && renderChangeTeamName()}
                   {mode === "change-initials" && renderChangeInitials()}
                   {mode === "change-password" && renderChangePassword()}
