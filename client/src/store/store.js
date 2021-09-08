@@ -1,6 +1,6 @@
 import { createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
-import combine_reducers from "./combineReducers";
+import combine_reducers from "./combine_reducers";
 
 const initial_state = {
    current_user: {},

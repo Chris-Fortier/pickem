@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
-import current_user from "./reducers/currentUser";
-import group_season_week from "./reducers/groupSeasonWeek";
-import my_picks from "./reducers/myPicks";
+import current_user from "./reducers/current_user";
+import group_season_week from "./reducers/group_season_week";
+import my_picks from "./reducers/my_picks";
 import group_picks from "./reducers/groupPicks";
 import standings from "./reducers/standings";
 import message from "./reducers/message";

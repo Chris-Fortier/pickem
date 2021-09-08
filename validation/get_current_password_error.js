@@ -1,36 +1,31 @@
 const db = require("../db");
-const select_user_by_id = require("../queries/selectUserById");
+const select_user_by_user_name = require("../queries/select_user_by_user_name");
 const bcrypt = require("bcrypt");
-// const { toHash } = require("../utils/helpers");
 
-// this checks if its the correct password for the userId, it takes a hashed password
-module.exports = async function check_password_against_user_id(
+module.exports = async function get_current_password_error(
    password,
-   userId
+   user_name
 ) {
-   console.log("check_password_against_user_id()...");
-   console.log({ password, userId });
-   if (password === undefined) {
-      // check if password input is blank
-      return "Your password is undefined.";
-   }
+   console.log("get_current_password_error()...");
    if (password === "") {
       // check if password input is blank
       return "Please enter your password.";
    }
-   if ((await check_password(userId, password)) === false) {
-      return "The password you entered is not correct for this user.";
+   if (await check_is_valid_user(user_name, password)) {
+      return "";
    }
-   return "";
+   return "The user name and/or password you entered is invalid.";
 };
 
-function check_password(userId, password) {
-   // get the user by userId
+function check_is_valid_user(user_name, password) {
+   // get the user by user_name
    // compare user.password with password
    // if a match, return true, else false
+   console.log("check_is_valid_user()...");
    return db
-      .query(select_user_by_id, userId)
+      .query(select_user_by_user_name, user_name)
       .then(async (users) => {
+         // console.log("users", users);
          const user = users[0];
          // compares the hashed password with the hashed password in the database
          const is_valid_user = await bcrypt

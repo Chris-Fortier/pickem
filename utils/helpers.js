@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
-const select_user_by_user_name = require("../queries/selectUserByUserName");
-const select_user_id_by_user_name = require("../queries/selectUserIdByUserName");
+const select_user_by_user_name = require("../queries/select_user_by_user_name");
+const select_user_id_by_user_name = require("../queries/select_user_id_by_user_name");
 
 // this file is for short functions we will use throughout the app on the server side
 

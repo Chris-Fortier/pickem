@@ -1,7 +1,7 @@
 import React from "react";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
-import TEAM_NAMES from "../../utils/teamNames";
+import TEAM_NAMES from "../../utils/TEAM_NAMES";
 import classnames from "classnames";
 import axios from "axios";
 

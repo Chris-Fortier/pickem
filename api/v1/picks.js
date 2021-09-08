@@ -2,12 +2,12 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../../db");
-const validate_jwt = require("../../utils/validateJwt");
-const select_my_picks_for_the_week = require("../../queries/selectMyPicksForTheWeek");
-const upsert_pick = require("../../queries/upsertPick");
-const select_game = require("../../queries/selectGame");
-const select_group_picks_for_week = require("../../queries/selectGroupPicksForWeek");
-const select_standings = require("../../queries/selectStandings");
+const validate_jwt = require("../../utils/validate_jwt");
+const select_my_picks_for_the_week = require("../../queries/select_my_picks_for_the_week");
+const upsert_pick = require("../../queries/upsert_pick");
+const select_game = require("../../queries/select_game");
+const select_group_picks_for_week = require("../../queries/select_group_picks_for_week");
+const select_standings = require("../../queries/select_standings");
 
 // @route      GET api/v1/picks (http://localhost:3060/api/v1/picks)
 // @desc       this gets the picks for a given user, group, season and week
