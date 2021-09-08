@@ -10,6 +10,30 @@ import {
    MAX_USER_INITIALS_LENGTH,
 } from "../../utils/helpers";
 
+function Input({
+   name,
+   label,
+   placeholder = "",
+   max_length, // optional
+   error_message,
+   style = {},
+}) {
+   return (
+      <div className="form-group">
+         <label htmlFor={`${name}-input`}>{label}</label>
+         <input
+            type="text"
+            className="form-control"
+            id={`${name}-input`}
+            placeholder={placeholder}
+            maxLength={max_length}
+            style={style}
+         />
+         {error_message && <div className="text-danger">{error_message}</div>}
+      </div>
+   );
+}
+
 function Landing({ dispatch, history }) {
    const [mode, set_mode] = useState("log-in");
    const [newUserNameError, set_newUserNameError] = useState("");
@@ -128,35 +152,18 @@ function Landing({ dispatch, history }) {
             </div>
             <div className="card-body">
                <form>
-                  <div className="form-group">
-                     <label htmlFor="user-name-input">User Name</label>
-                     <input
-                        type="text"
-                        className="form-control"
-                        id="user-name-input"
-                        placeholder="Enter your user name."
-                        // maxLength={MAX_USER_NAME_LENGTH} no max length for existing users
-                     />
-                     {currentUserNameError && (
-                        <div className="text-danger">
-                           {currentUserNameError}
-                        </div>
-                     )}
-                  </div>
-                  <div className="form-group">
-                     <label htmlFor="password-input">Password</label>
-                     <input
-                        type="password"
-                        className="form-control"
-                        id="password-input"
-                        placeholder="Enter your password."
-                     />
-                     {currentPasswordError && (
-                        <div className="text-danger" id="password-error">
-                           {currentPasswordError}
-                        </div>
-                     )}
-                  </div>
+                  <Input
+                     name="user-name"
+                     label="User Name"
+                     placeholder="Enter your user name."
+                     error_message={currentUserNameError}
+                  />
+                  <Input
+                     name="password"
+                     label="Password"
+                     placeholder="Enter your password."
+                     error_message={currentPasswordError}
+                  />
                   <div
                      // type="submit"
                      className="btn btn-primary btn-block"
@@ -193,73 +200,41 @@ function Landing({ dispatch, history }) {
             </div>
             <div className="card-body">
                <form>
-                  <div className="form-group">
-                     <label htmlFor="user-name-input">User Name</label>
-                     <input
-                        type="text"
-                        className="form-control"
-                        id="user-name-input"
-                        placeholder="Name for logging in"
-                        maxLength={MAX_USER_NAME_LENGTH}
-                     />
-                     {newUserNameError && (
-                        <div className="text-danger">{newUserNameError}</div>
-                     )}
-                  </div>
-                  <div className="form-group">
-                     <label htmlFor="user-name-input">
-                        Email Address (optional)
-                     </label>
-                     <input
-                        type="text"
-                        className="form-control"
-                        id="email-input"
-                        placeholder="Enter your email"
-                        maxLength={MAX_EMAIL_LENGTH}
-                     />
-                     {new_email_error && (
-                        <div className="text-danger">{new_email_error}</div>
-                     )}
-                  </div>
-                  <div className="form-group">
-                     <label htmlFor="team-name-input">Team Name</label>
-                     <input
-                        type="text"
-                        className="form-control"
-                        id="team-name-input"
-                        placeholder="Public team name"
-                        maxLength={MAX_TEAM_NAME_LENGTH}
-                     />
-                     {newTeamNameError && (
-                        <div className="text-danger">{newTeamNameError}</div>
-                     )}
-                  </div>
-                  <div className="form-group">
-                     <label htmlFor="initials-input">Initials</label>
-                     <input
-                        type="text"
-                        className="form-control"
-                        id="initials-input"
-                        // placeholder="Enter a 3-letter identifier."
-                        maxLength={MAX_USER_INITIALS_LENGTH}
-                        style={{ textTransform: "uppercase" }}
-                     />
-                     {newInitialsError && (
-                        <div className="text-danger">{newInitialsError}</div>
-                     )}
-                  </div>
-                  <div className="form-group">
-                     <label htmlFor="password-input">Password</label>
-                     <input
-                        type="password"
-                        className="form-control"
-                        id="password-input"
-                        placeholder="Enter a password."
-                     />
-                     {newPasswordError && (
-                        <div className="text-danger">{newPasswordError}</div>
-                     )}
-                  </div>
+                  <Input
+                     name="user-name"
+                     label="User Name"
+                     placeholder="Name for logging in"
+                     max_length={MAX_USER_NAME_LENGTH}
+                     error_message={newUserNameError}
+                  />
+                  <Input
+                     name="email"
+                     label="Email Address (optional)"
+                     placeholder="Enter your email"
+                     max_length={MAX_EMAIL_LENGTH}
+                     error_message={new_email_error}
+                  />
+                  <Input
+                     name="team-name"
+                     label="Team Name"
+                     placeholder="Public team name"
+                     max_length={MAX_TEAM_NAME_LENGTH}
+                     error_message={newTeamNameError}
+                  />
+                  <Input
+                     name="initials"
+                     label="Initials"
+                     max_length={MAX_USER_INITIALS_LENGTH}
+                     error_message={newInitialsError}
+                     style={{ textTransform: "uppercase" }}
+                  />
+                  <Input
+                     name="password"
+                     label="Password"
+                     placeholder="Enter a password."
+                     max_length={50}
+                     error_message={newPasswordError}
+                  />
                   <div
                      // type="submit"
                      className="btn btn-primary btn-block"
