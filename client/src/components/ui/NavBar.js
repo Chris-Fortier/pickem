@@ -3,7 +3,9 @@ import { Link } from "react-router-dom";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
 import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
 import Alert from "react-bootstrap/Alert";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
 import {
@@ -343,6 +345,18 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
       }
    }
 
+   // get the title for the page nav drop down menu
+   let page_nav_title;
+   if (window.location.pathname === "/my-picks") {
+      page_nav_title = "My Picks";
+   } else if (window.location.pathname === "/group-picks") {
+      page_nav_title = "Group Picks";
+   } else if (window.location.pathname === "/standings") {
+      page_nav_title = "Standings";
+   } else if (window.location.pathname === "/account-settings") {
+      page_nav_title = "Picks/Standings";
+   }
+
    return (
       <>
          {/* React-Bootstrap navbar */}
@@ -355,6 +369,126 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
             // expanded // I adding this so the menu is always expanded, even with a smaller screen size
          >
             <Navbar.Brand href="/">Hawk Nation NFL Pick 'em</Navbar.Brand>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+               {false && (
+                  <Nav className="mr-auto">
+                     {/* Season dropdown */}
+                     {window.location.pathname !== "/account-settings" && (
+                        <>
+                           <NavDropdown
+                              title={`Season ${groupSeasonWeek.season}`}
+                           >
+                              {seasons.map((season) => {
+                                 return (
+                                    <NavDropdown.Item
+                                       key={uuid.v4()}
+                                       onClick={() => {
+                                          changeGroupSeasonWeek({
+                                             season: season,
+                                          });
+                                          // TODO: if they are viewing the entire season, don't change the week
+                                          if (
+                                             season ===
+                                             defaultGroupSeasonWeek.season
+                                          ) {
+                                             // if changing to the default season, also change the week to the default week
+                                             changeGroupSeasonWeek({
+                                                week: defaultGroupSeasonWeek.week,
+                                             });
+                                          } else {
+                                             // // if changing to a different season, set the week to 1
+                                             // changeGroupSeasonWeek({week: 1})
+                                             // if changing to a different season, set the week to "entire season"
+                                             changeGroupSeasonWeek({
+                                                week: "%",
+                                             });
+                                          }
+                                       }}
+                                    >
+                                       {season}
+                                    </NavDropdown.Item>
+                                 );
+                              })}
+                           </NavDropdown>
+                           {/* Week dropdown */}
+                           <NavDropdown
+                              title={get_week_or_season_text(
+                                 groupSeasonWeek.week
+                              )}
+                           >
+                              {weeks
+                                 .filter(
+                                    (week) =>
+                                       week === "%" ||
+                                       week <=
+                                          get_num_regular_season_weeks(
+                                             groupSeasonWeek.season
+                                          ) +
+                                             4
+                                 ) // the menu only shows the number of weeks in the season + 4 playoff weeks
+                                 .map((week) => {
+                                    return (
+                                       <NavDropdown.Item
+                                          key={uuid.v4()}
+                                          onClick={() => {
+                                             changeGroupSeasonWeek({
+                                                week: week,
+                                             });
+                                          }}
+                                       >
+                                          {get_week_or_season_text(
+                                             week,
+                                             groupSeasonWeek.season
+                                          )}
+                                       </NavDropdown.Item>
+                                    );
+                                 })}
+                           </NavDropdown>
+                        </>
+                     )}
+
+                     <NavDropdown
+                        title={page_nav_title}
+                        // id="collapsible-nav-dropdown"
+                     >
+                        <Link to="/my-picks" className="dropdown-item">
+                           My Picks
+                        </Link>
+                        <Link className="dropdown-item" to="/group-picks">
+                           Group Picks
+                        </Link>
+                        <Link to="/standings" className="dropdown-item">
+                           Standings
+                        </Link>
+                     </NavDropdown>
+                  </Nav>
+               )}
+               <Nav className="ml-auto">
+                  <NavDropdown
+                     title={currentUser.user_name}
+                     // id="collapsible-nav-dropdown"
+                     alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
+                     // className={classnames({
+                     //    "selected-nav-page":
+                     //       window.location.pathname === "/account-settings",
+                     // })}
+                  >
+                     <Link to="/account-settings" className="dropdown-item">
+                        Account Settings
+                     </Link>
+                     <Link
+                        className="dropdown-item"
+                        to="/"
+                        onClick={() => {
+                           logOutCurrentUser();
+                        }}
+                     >
+                        Log Out
+                     </Link>
+                  </NavDropdown>
+               </Nav>
+            </Navbar.Collapse>
          </Navbar>
          {window.location.pathname !== "/account-settings" && (
             <>
@@ -456,7 +590,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
             >
                Standings
             </Link>
-            <Link
+            {/* <Link
                to="/account-settings"
                className={`nav-tab ${
                   window.location.pathname === "/account-settings" &&
@@ -473,9 +607,8 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
                className={`nav-tab`}
             >
                Log Out
-            </Link>
+            </Link> */}
          </div>
-
          {/* message pop up */}
          {!isEmpty(message) && (
             <Alert variant={message.variant} className="message">
