@@ -5,6 +5,7 @@ import axios from "axios";
 import jwtDecode from "jwt-decode";
 import {
    MAX_USER_NAME_LENGTH,
+   MAX_EMAIL_LENGTH,
    MAX_TEAM_NAME_LENGTH,
    MAX_USER_INITIALS_LENGTH,
 } from "../../utils/helpers";
@@ -12,6 +13,7 @@ import {
 function Landing({ dispatch, history }) {
    const [mode, set_mode] = useState("log-in");
    const [newUserNameError, set_newUserNameError] = useState("");
+   const [new_email_error, set_new_email_error] = useState("");
    const [newInitialsError, set_newInitialsError] = useState("");
    const [newTeamNameError, set_newTeamNameError] = useState("");
    const [newPasswordError, set_newPasswordError] = useState("");
@@ -20,11 +22,35 @@ function Landing({ dispatch, history }) {
 
    function clearErrors() {
       set_newUserNameError("");
-      set_newInitialsError("");
+      set_new_email_error("");
       set_newTeamNameError("");
+      set_newInitialsError("");
       set_newPasswordError("");
       set_currentUserNameError("");
       set_currentPasswordError("");
+   }
+
+   // what happens when a user logs in
+   function log_in(res) {
+      // set token in localStorage
+      const authToken = res.data.accessToken;
+      localStorage.setItem("authToken", authToken);
+      console.log("authToken", authToken);
+
+      const user = jwtDecode(authToken); // decode the user from the access token
+
+      // send the user to Redux
+      dispatch({
+         type: actions.UPDATE_CURRENT_USER,
+         payload: user,
+      });
+
+      // set authorization headers for every request at the moment of log in
+      axios.defaults.headers.common["x-auth-token"] = authToken;
+
+      // go to home page
+      history.push("/my-picks");
+      window.scrollTo(0, 0); // sets focus to the top of the page
    }
 
    // sends an API call to make a new user and if successful, pushes to new page depending on the type of user
@@ -34,27 +60,7 @@ function Landing({ dispatch, history }) {
       axios
          .post("/api/v1/users", user) // post to this endpoint the user object we just made
          .then((res) => {
-            // TODO this is duplicated code, maybe make a function
-
-            // set token in localStorage
-            const authToken = res.data.accessToken;
-            localStorage.setItem("authToken", authToken);
-            console.log("authToken", authToken);
-
-            const user = jwtDecode(authToken); // decode the user from the access token
-
-            // send the user to Redux
-            dispatch({
-               type: actions.UPDATE_CURRENT_USER,
-               payload: user,
-            });
-
-            // set authorization headers for every request at the moment of log in
-            axios.defaults.headers.common["x-auth-token"] = authToken;
-
-            // go to home page
-            history.push("/my-picks");
-            window.scrollTo(0, 0); // sets focus to the top of the page
+            log_in(res);
          })
          .catch((err) => {
             const data = err.response.data;
@@ -62,6 +68,7 @@ function Landing({ dispatch, history }) {
 
             // push errors or lack thereof to state
             set_newUserNameError(data.newUserNameError);
+            set_new_email_error(data.new_email_error);
             set_newTeamNameError(data.newTeamNameError);
             set_newInitialsError(data.newInitialsError);
             set_newPasswordError(data.newPasswordError);
@@ -71,6 +78,7 @@ function Landing({ dispatch, history }) {
    // tests if the user_name and password are valid and if so creates the user
    async function validateAndCreateUser(
       userNameInput,
+      email_input,
       teamNameInput,
       initialsInput,
       passwordInput
@@ -78,6 +86,7 @@ function Landing({ dispatch, history }) {
       // create user obj
       const user = {
          user_name: userNameInput,
+         email: email_input,
          team_name: teamNameInput,
          initials: initialsInput,
          password: passwordInput, // send the plain text password over secure connection, the server will hash it
@@ -98,25 +107,7 @@ function Landing({ dispatch, history }) {
          .post("/api/v1/users/auth", user)
          // .post("http://localhost:3060/api/v1/users/auth", user)
          .then((res) => {
-            // set token in localStorage
-            const authToken = res.data.accessToken;
-            localStorage.setItem("authToken", authToken);
-            // console.log("authToken", authToken);
-
-            const user = jwtDecode(authToken); // decode the user from the access token
-
-            // send the user to Redux
-            dispatch({
-               type: actions.UPDATE_CURRENT_USER,
-               payload: user,
-            });
-
-            // set authorization headers for every request at the moment of log in
-            axios.defaults.headers.common["x-auth-token"] = authToken;
-
-            // go to home page
-            history.push("/my-picks");
-            window.scrollTo(0, 0); // sets focus to the top of the page
+            log_in(res);
          })
          .catch((err) => {
             console.log("err", err);
@@ -216,6 +207,21 @@ function Landing({ dispatch, history }) {
                      )}
                   </div>
                   <div className="form-group">
+                     <label htmlFor="user-name-input">
+                        Email Address (optional)
+                     </label>
+                     <input
+                        type="text"
+                        className="form-control"
+                        id="email-input"
+                        placeholder="Enter your email"
+                        maxLength={MAX_EMAIL_LENGTH}
+                     />
+                     {new_email_error && (
+                        <div className="text-danger">{new_email_error}</div>
+                     )}
+                  </div>
+                  <div className="form-group">
                      <label htmlFor="team-name-input">Team Name</label>
                      <input
                         type="text"
@@ -260,6 +266,7 @@ function Landing({ dispatch, history }) {
                      onClick={() => {
                         validateAndCreateUser(
                            document.getElementById("user-name-input").value,
+                           document.getElementById("email-input").value,
                            document.getElementById("team-name-input").value,
                            document
                               .getElementById("initials-input")

@@ -30,8 +30,9 @@ const uuid = require("uuid");
 // @desc       Create a new user
 // @access     Public
 router.post("/", async (req, res) => {
-   const { user_name, team_name, initials, password } = req.body; // destructuring to simplify code below, grabbing variables from req.body
+   const { user_name, email, team_name, initials, password } = req.body; // destructuring to simplify code below, grabbing variables from req.body
    const newUserNameError = await getNewUserNameError(user_name);
+   const new_email_error = await get_new_email_error(email);
    const newTeamNameError = await getNewTeamNameError(team_name);
    const newInitialsError = await getNewInitialsError(initials);
    const newPasswordError = getNewPasswordError(password);
@@ -40,6 +41,7 @@ router.post("/", async (req, res) => {
    // if there are no errors with user_name, team_name, initials and password:
    if (
       newUserNameError === "" &&
+      new_email_error === "" &&
       newTeamNameError === "" &&
       newInitialsError === "" &&
       newPasswordError === ""
@@ -49,6 +51,7 @@ router.post("/", async (req, res) => {
       const user = {
          id: newUserId,
          user_name, // if the key and value are called the same, you can just have the key
+         email,
          team_name,
          initials,
          password: await toHash(password), // hash the password (npm install bcrypt)
@@ -67,6 +70,7 @@ router.post("/", async (req, res) => {
                   const user = {
                      id: users[0].id,
                      user_name: users[0].user_name,
+                     email: users[0].email,
                      team_name: users[0].team_name,
                      initials: users[0].initials,
                      created_at: users[0].created_at,
@@ -102,6 +106,7 @@ router.post("/", async (req, res) => {
       // return a 400 error to user
       res.status(400).json({
          newUserNameError,
+         new_email_error,
          newTeamNameError,
          newInitialsError,
          newPasswordError,
