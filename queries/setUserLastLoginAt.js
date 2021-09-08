@@ -1,6 +1,6 @@
 // this updates the last login time of a user in the database
 
-const setUserLastLoginAt = `
+const set_user_last_login_at = `
    UPDATE pickem_app.users 
    SET 
       last_login_at = ?
@@ -8,4 +8,4 @@ const setUserLastLoginAt = `
       id = ?;
 `;
 
-module.exports = setUserLastLoginAt;
+module.exports = set_user_last_login_at;

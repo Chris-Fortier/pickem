@@ -1,9 +1,9 @@
 // this deletes an existing user
 
-const deleteUser = `
+const delete_user = `
    DELETE FROM pickem_app.users 
    WHERE
       id = ?;
 `;
 
-module.exports = deleteUser;
+module.exports = delete_user;

@@ -9,22 +9,22 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
 import {
-   logOutCurrentUser,
+   log_out_current_user,
    get_week_or_season_text,
    get_num_regular_season_weeks,
 } from "../../utils/helpers";
 import uuid from "uuid";
 
 // sets the users position when they refresh the page
-const defaultGroupSeasonWeek = {
+const DEFAULT_GROUP_SEASON_WEEK = {
    group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
    season: 2021,
    week: 1, // Math.floor((Date.now() - 1599634800000) / 604800000 + 1), // set the week to how many Wednesdays have started since 9/9/2020 in PDT (9/9 is 1599634800000)
 };
 
-const seasons = [2020, 2021];
+const SEASONS = [2020, 2021];
 
-const weeks = [
+const WEEKS = [
    "%",
    1,
    2,
@@ -48,62 +48,62 @@ const weeks = [
    20,
    21,
    22,
-]; // the weeks the user can select from
+]; // the WEEKS the user can select from
 // TODO: make this range based on the games data somehow
 
-function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
+function NavBar({ current_user, group_season_week, message, dispatch }) {
    // NOTE this stuff used to be in componentDidMount() when it was a class component
    useEffect(() => {
-      if (isEmpty(currentUser)) {
+      if (isEmpty(current_user)) {
          // if there is no user, send to landing page
          window.location.href = "/";
       }
 
-      // set the default groupSeasonWeek if there is no data there
+      // set the default group_season_week if there is no data there
       // do not run this if on account-settings tab
       if (window.location.pathname !== "/account-settings") {
-         if (isEmpty(groupSeasonWeek)) {
+         if (isEmpty(group_season_week)) {
             dispatch({
                type: actions.SET_GROUP_SEASON_WEEK,
-               payload: defaultGroupSeasonWeek,
+               payload: DEFAULT_GROUP_SEASON_WEEK,
             });
 
-            getData(defaultGroupSeasonWeek);
+            get_data(DEFAULT_GROUP_SEASON_WEEK);
          } else {
-            getData(groupSeasonWeek);
+            get_data(group_season_week);
          }
       }
       // eslint-disable-next-line
    }, []);
-   // TODO: React Hook useEffect has missing dependencies: 'currentUser', 'dispatch', 'getData', and 'groupSeasonWeek'. Either include them or remove the dependency array. If 'dispatch' changes too often, find the parent component that defines it and wrap that definition in useCallback
+   // TODO: React Hook useEffect has missing dependencies: 'current_user', 'dispatch', 'get_data', and 'group_season_week'. Either include them or remove the dependency array. If 'dispatch' changes too often, find the parent component that defines it and wrap that definition in useCallback
 
-   // change any property in the groupSeasonWeek
+   // change any property in the group_season_week
    // pass it an object with any of these properties: group_id, season and/or week
-   // any values it has will be pushed to groupSeasonWeek in Redux
-   function changeGroupSeasonWeek(new_values = {}) {
+   // any values it has will be pushed to group_season_week in Redux
+   function change_group_season_week(new_values = {}) {
       // if there is a group_id value, change the group_id
       if (new_values.group_id !== undefined) {
-         groupSeasonWeek.group_id = new_values.group_id;
+         group_season_week.group_id = new_values.group_id;
       }
       // if there is a season value, change the season
       if (new_values.season !== undefined) {
-         groupSeasonWeek.season = new_values.season;
+         group_season_week.season = new_values.season;
       }
       // if there is a week value, change the week
       if (new_values.week !== undefined) {
-         groupSeasonWeek.week = new_values.week;
+         group_season_week.week = new_values.week;
       }
       // push changes to the Redux store
       dispatch({
          type: actions.SET_GROUP_SEASON_WEEK,
-         payload: groupSeasonWeek,
+         payload: group_season_week,
       });
-      // get new data based on the new groupSeasonWeek
-      getData(groupSeasonWeek);
+      // get new data based on the new group_season_week
+      get_data(group_season_week);
    }
 
    // gets the data based on the group, season and week being viewed and also what page the user is on
-   function getData(groupSeasonWeek) {
+   function get_data(group_season_week) {
       // display a message until we get data back from the server
       dispatch({
          type: actions.STORE_WARNING_MESSAGE,
@@ -115,7 +115,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
       if (window.location.pathname === "/group-picks") {
          axios
             .get(
-               `/api/v1/picks/group-week?group_id=${groupSeasonWeek.group_id}&season=${groupSeasonWeek.season}&week=${groupSeasonWeek.week}`
+               `/api/v1/picks/group-week?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
             )
             .then((res) => {
                // send the data to state of component
@@ -130,8 +130,8 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
                // an array of teams that stores user id as well as initials
                let teams = [
                   {
-                     user_id: currentUser.id,
-                     initials: currentUser.initials,
+                     user_id: current_user.id,
+                     initials: current_user.initials,
                      num_picks: 0, // stores the number of picks for this team in the week
                   }, // initialize with the current user so they are the first column when group picks are displayed
                ];
@@ -211,7 +211,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
 
                // filter out teams that have no picks and are not the current user
                teams = teams.filter((team) => {
-                  return team.user_id === currentUser.id || team.num_picks > 0;
+                  return team.user_id === current_user.id || team.num_picks > 0;
                });
 
                // go through each matchup and flag the ones that are on new dates
@@ -257,7 +257,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
          // if on the my picks page get my picks
          axios
             .get(
-               `/api/v1/picks?group_id=${groupSeasonWeek.group_id}&season=${groupSeasonWeek.season}&week=${groupSeasonWeek.week}`
+               `/api/v1/picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
             )
             .then((res) => {
                // send the data to Redux
@@ -286,7 +286,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
          // if on the standings page get standings
          axios
             .get(
-               `/api/v1/picks/standings?group_id=${groupSeasonWeek.group_id}&season=${groupSeasonWeek.season}&week=${groupSeasonWeek.week}`
+               `/api/v1/picks/standings?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
             )
             .then((res) => {
                const standings = res.data;
@@ -377,30 +377,30 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
                      {window.location.pathname !== "/account-settings" && (
                         <>
                            <NavDropdown
-                              title={`Season ${groupSeasonWeek.season}`}
+                              title={`Season ${group_season_week.season}`}
                            >
-                              {seasons.map((season) => {
+                              {SEASONS.map((season) => {
                                  return (
                                     <NavDropdown.Item
                                        key={uuid.v4()}
                                        onClick={() => {
-                                          changeGroupSeasonWeek({
+                                          change_group_season_week({
                                              season: season,
                                           });
                                           // TODO: if they are viewing the entire season, don't change the week
                                           if (
                                              season ===
-                                             defaultGroupSeasonWeek.season
+                                             DEFAULT_GROUP_SEASON_WEEK.season
                                           ) {
                                              // if changing to the default season, also change the week to the default week
-                                             changeGroupSeasonWeek({
-                                                week: defaultGroupSeasonWeek.week,
+                                             change_group_season_week({
+                                                week: DEFAULT_GROUP_SEASON_WEEK.week,
                                              });
                                           } else {
                                              // // if changing to a different season, set the week to 1
-                                             // changeGroupSeasonWeek({week: 1})
+                                             // change_group_season_week({week: 1})
                                              // if changing to a different season, set the week to "entire season"
-                                             changeGroupSeasonWeek({
+                                             change_group_season_week({
                                                 week: "%",
                                              });
                                           }
@@ -414,32 +414,31 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
                            {/* Week dropdown */}
                            <NavDropdown
                               title={get_week_or_season_text(
-                                 groupSeasonWeek.week
+                                 group_season_week.week
                               )}
                            >
-                              {weeks
-                                 .filter(
-                                    (week) =>
-                                       week === "%" ||
-                                       week <=
-                                          get_num_regular_season_weeks(
-                                             groupSeasonWeek.season
-                                          ) +
-                                             4
-                                 ) // the menu only shows the number of weeks in the season + 4 playoff weeks
+                              {WEEKS.filter(
+                                 (week) =>
+                                    week === "%" ||
+                                    week <=
+                                       get_num_regular_season_weeks(
+                                          group_season_week.season
+                                       ) +
+                                          4
+                              ) // the menu only shows the number of WEEKS in the season + 4 playoff WEEKS
                                  .map((week) => {
                                     return (
                                        <NavDropdown.Item
                                           key={uuid.v4()}
                                           onClick={() => {
-                                             changeGroupSeasonWeek({
+                                             change_group_season_week({
                                                 week: week,
                                              });
                                           }}
                                        >
                                           {get_week_or_season_text(
                                              week,
-                                             groupSeasonWeek.season
+                                             group_season_week.season
                                           )}
                                        </NavDropdown.Item>
                                     );
@@ -466,7 +465,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
                )}
                <Nav className="ml-auto">
                   <NavDropdown
-                     title={currentUser.user_name}
+                     title={current_user.user_name}
                      // id="collapsible-nav-dropdown"
                      alignRight // I added this so it doesn't expand off the page with short usernames (it adds the dropdown-menu-right class)
                      // className={classnames({
@@ -481,7 +480,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
                         className="dropdown-item"
                         to="/"
                         onClick={() => {
-                           logOutCurrentUser();
+                           log_out_current_user();
                         }}
                      >
                         Log Out
@@ -495,28 +494,28 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
                {/* season tabs */}
                <div className="nav-row">
                   <span className="nav-row-title">Season:</span>
-                  {seasons.map((season) => (
+                  {SEASONS.map((season) => (
                      <div
                         key={uuid.v4()}
                         className={`nav-tab ${
-                           season === groupSeasonWeek.season &&
+                           season === group_season_week.season &&
                            "nav-tab-current"
                         }`}
                         onClick={() => {
-                           changeGroupSeasonWeek({
+                           change_group_season_week({
                               season: season,
                            });
                            // TODO: if they are viewing the entire season, don't change the week
-                           if (season === defaultGroupSeasonWeek.season) {
+                           if (season === DEFAULT_GROUP_SEASON_WEEK.season) {
                               // if changing to the default season, also change the week to the default week
-                              changeGroupSeasonWeek({
-                                 week: defaultGroupSeasonWeek.week,
+                              change_group_season_week({
+                                 week: DEFAULT_GROUP_SEASON_WEEK.week,
                               });
                            } else {
                               // // if changing to a different season, set the week to 1
-                              // changeGroupSeasonWeek({week: 1})
+                              // change_group_season_week({week: 1})
                               // if changing to a different season, set the week to "entire season"
-                              changeGroupSeasonWeek({
+                              change_group_season_week({
                                  week: "%",
                               });
                            }
@@ -529,31 +528,31 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
                {/* week tabs */}
                <div className="nav-row">
                   <span className="nav-row-title">Week:</span>
-                  {weeks
-                     .filter(
-                        (week) =>
-                           week === "%" ||
-                           week <=
-                              get_num_regular_season_weeks(
-                                 groupSeasonWeek.season
-                              ) +
-                                 4
-                     ) // the menu only shows the number of weeks in the season + 4 playoff weeks
+                  {WEEKS.filter(
+                     (week) =>
+                        week === "%" ||
+                        week <=
+                           get_num_regular_season_weeks(
+                              group_season_week.season
+                           ) +
+                              4
+                  ) // the menu only shows the number of WEEKS in the season + 4 playoff WEEKS
                      .map((week) => (
                         <div
                            key={uuid.v4()}
                            className={`nav-tab ${
-                              week === groupSeasonWeek.week && "nav-tab-current"
+                              week === group_season_week.week &&
+                              "nav-tab-current"
                            }`}
                            onClick={() => {
-                              changeGroupSeasonWeek({
+                              change_group_season_week({
                                  week: week,
                               });
                            }}
                         >
                            {get_week_or_season_text(
                               week,
-                              groupSeasonWeek.season,
+                              group_season_week.season,
                               true
                            )}
                         </div>
@@ -602,7 +601,7 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
             <Link
                to="/"
                onClick={() => {
-                  logOutCurrentUser();
+                  log_out_current_user();
                }}
                className={`nav-tab`}
             >
@@ -622,8 +621,8 @@ function NavBar({ currentUser, groupSeasonWeek, message, dispatch }) {
 // maps the Redux store/state to props
 function mapStateToProps(state) {
    return {
-      currentUser: state.currentUser,
-      groupSeasonWeek: state.groupSeasonWeek,
+      current_user: state.current_user,
+      group_season_week: state.group_season_week,
       message: state.message,
    };
 }

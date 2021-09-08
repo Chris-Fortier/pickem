@@ -1,7 +1,7 @@
 import actions from "../actions";
 
-export default function myPicks(myPicks = [], action) {
-   let newMyPicks = [...myPicks];
+export default function my_picks(my_picks = [], action) {
+   let newMyPicks = [...my_picks];
 
    switch (action.type) {
       case actions.STORE_MY_PICKS:
@@ -9,6 +9,6 @@ export default function myPicks(myPicks = [], action) {
          newMyPicks = action.payload;
          return newMyPicks;
       default:
-         return myPicks;
+         return my_picks;
    }
 }

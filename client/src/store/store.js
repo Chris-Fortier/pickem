@@ -1,12 +1,12 @@
 import { createStore } from "redux";
 import { composeWithDevTools } from "redux-devtools-extension";
-import combineReducers from "./combineReducers";
+import combine_reducers from "./combineReducers";
 
-const initialState = {
-   currentUser: {},
-   groupSeasonWeek: {},
-   myPicks: [],
-   groupPicks: {
+const initial_state = {
+   current_user: {},
+   group_season_week: {},
+   my_picks: [],
+   group_picks: {
       teams: [],
       match_ups: [],
       num_completed_games: 0,
@@ -15,6 +15,10 @@ const initialState = {
    message: {},
 };
 
-const store = createStore(combineReducers, initialState, composeWithDevTools());
+const store = createStore(
+   combine_reducers,
+   initial_state,
+   composeWithDevTools()
+);
 
 export default store;

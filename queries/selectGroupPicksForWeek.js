@@ -1,6 +1,6 @@
 // this gets the picks of the entire group for a week
 // given user, group, season and week
-const selectGroupPicksForWeek = `
+const select_group_picks_for_week = `
 SELECT 
     \`game_at\`,
     \`away_team\`,
@@ -30,4 +30,4 @@ WHERE
 ORDER BY \`game_at\` ASC;
 `;
 
-module.exports = selectGroupPicksForWeek;
+module.exports = select_group_picks_for_week;

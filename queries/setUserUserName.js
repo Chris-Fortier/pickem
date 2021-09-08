@@ -1,6 +1,6 @@
 // this updates the user_name of a user in the database
 
-const setUserUserName = `
+const set_user_user_name = `
    UPDATE pickem_app.users 
    SET 
       user_name = ?
@@ -8,4 +8,4 @@ const setUserUserName = `
       id = ?;
 `;
 
-module.exports = setUserUserName;
+module.exports = set_user_user_name;

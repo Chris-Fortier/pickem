@@ -2,22 +2,22 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../../db");
-const validateJwt = require("../../utils/validateJwt");
-const selectMyPicksForTheWeek = require("../../queries/selectMyPicksForTheWeek");
-const upsertPick = require("../../queries/upsertPick");
-const selectGame = require("../../queries/selectGame");
-const selectGroupPicksForWeek = require("../../queries/selectGroupPicksForWeek");
-const selectStandings = require("../../queries/selectStandings");
+const validate_jwt = require("../../utils/validateJwt");
+const select_my_picks_for_the_week = require("../../queries/selectMyPicksForTheWeek");
+const upsert_pick = require("../../queries/upsertPick");
+const select_game = require("../../queries/selectGame");
+const select_group_picks_for_week = require("../../queries/selectGroupPicksForWeek");
+const select_standings = require("../../queries/selectStandings");
 
 // @route      GET api/v1/picks (http://localhost:3060/api/v1/picks)
 // @desc       this gets the picks for a given user, group, season and week
 // @access     Private
 // test: http://localhost:3060/api/v1/picks
-router.get("/", validateJwt, (req, res) => {
+router.get("/", validate_jwt, (req, res) => {
    const user_id = req.user.id; // get the user id from the JWT
    const { group_id, season, week } = req.query; // grabbing variables from req.query
 
-   db.query(selectMyPicksForTheWeek, [group_id, user_id, season, week]) // this syntax style prevents hackers
+   db.query(select_my_picks_for_the_week, [group_id, user_id, season, week]) // this syntax style prevents hackers
       .then((picks) => {
          // successful response
          return res.status(200).json(picks);
@@ -33,11 +33,11 @@ router.get("/", validateJwt, (req, res) => {
 // @desc       this gets the picks of the entire group for a week
 // @access     Private
 // test:
-router.get("/group-week", validateJwt, (req, res) => {
+router.get("/group-week", validate_jwt, (req, res) => {
    const user_id = req.user.id; // get the user id from the JWT
    const { group_id, season, week } = req.query; // grabbing variables from req.query
 
-   db.query(selectGroupPicksForWeek, [user_id, group_id, season, week]) // this syntax style prevents hackers
+   db.query(select_group_picks_for_week, [user_id, group_id, season, week]) // this syntax style prevents hackers
       .then((picks) => {
          // successful response
          return res.status(200).json(picks);
@@ -60,7 +60,7 @@ router.get("/standings", (req, res) => {
 
    // const week = '%';
 
-   db.query(selectStandings, [group_id, season, week]) // this syntax style prevents hackers
+   db.query(select_standings, [group_id, season, week]) // this syntax style prevents hackers
       .then((standings) => {
          // successful response
          console.log(standings);
@@ -77,7 +77,7 @@ router.get("/standings", (req, res) => {
 // @desc       upsert a pick (update or create)
 // @access     Private
 // test:
-router.put("/", validateJwt, (req, res) => {
+router.put("/", validate_jwt, (req, res) => {
    const user_id = req.user.id; // get the user id from the JWT
    const { game_id, group_id, pick } = req.query; // grabbing variables from req.query
 
@@ -90,11 +90,11 @@ router.put("/", validateJwt, (req, res) => {
    }
 
    // make sure that this game hasn't already started
-   db.query(selectGame, [game_id])
+   db.query(select_game, [game_id])
       .then((gameInfo) => {
          console.log("gameInfo", gameInfo[0].game_at);
          if (gameInfo[0].game_at > Date.now()) {
-            db.query(upsertPick, [
+            db.query(upsert_pick, [
                user_id,
                game_id,
                group_id,

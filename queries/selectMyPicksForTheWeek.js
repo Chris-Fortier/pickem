@@ -1,5 +1,5 @@
 // this gets the picks for a given user, group, season and week
-const selectMyPicksForTheWeek = `
+const select_my_picks_for_the_week = `
 SELECT 
     \`game_at\`,
     \`away_team\`,
@@ -19,4 +19,4 @@ ORDER BY
 	\`game_at\` ASC;
 `;
 
-module.exports = selectMyPicksForTheWeek;
+module.exports = select_my_picks_for_the_week;

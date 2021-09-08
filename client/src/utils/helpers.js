@@ -16,7 +16,7 @@ export const MAX_USER_INITIALS_LENGTH = 3;
 //    return bcrypt.hash(myPlaintextPassword, SALT_ROUNDS);
 // }
 
-export function logOutCurrentUser() {
+export function log_out_current_user() {
    // clear reducers from Redux
    console.log("log out");
    store.dispatch({

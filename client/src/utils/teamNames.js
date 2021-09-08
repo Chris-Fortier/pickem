@@ -1,4 +1,4 @@
-// const teamNames = {
+// const TEAM_NAMES = {
 //    ARI: "Arizona Cardinals",
 //    ATL: "Atlanta Falcons",
 //    BAL: "Baltimore Ravens",
@@ -33,7 +33,7 @@
 //    WAS: "Washington Football Team",
 // };
 
-const teamNames = {
+const TEAM_NAMES = {
    ARI: "Cardinals",
    ATL: "Falcons",
    BAL: "Ravens",
@@ -68,4 +68,4 @@ const teamNames = {
    WAS: "Football Team",
 };
 
-export default teamNames;
+export default TEAM_NAMES;

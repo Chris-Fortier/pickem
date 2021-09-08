@@ -2,7 +2,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 // this is a "middleware" function
-module.exports = function validateJwt(req, res, next) {
+module.exports = function validate_jwt(req, res, next) {
    const accessToken = req.header("x-auth-token");
 
    if (!accessToken) {
@@ -12,13 +12,13 @@ module.exports = function validateJwt(req, res, next) {
    try {
       // verify the token,
       // if valid, extract the user payload
-      const decodedPayload = jwt.verify(
+      const decoded_payload = jwt.verify(
          accessToken,
          process.env.JWT_ACCESS_SECRET
       );
 
       // assign the payload to the request
-      req.user = decodedPayload;
+      req.user = decoded_payload;
 
       // continue on in the API
       next();

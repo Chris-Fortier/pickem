@@ -1,6 +1,6 @@
 // this updates the initials of a user in the database
 
-const setUserInitials = `
+const set_user_initials = `
    UPDATE pickem_app.users 
    SET 
       initials = ?
@@ -8,4 +8,4 @@ const setUserInitials = `
       id = ?;
 `;
 
-module.exports = setUserInitials;
+module.exports = set_user_initials;
