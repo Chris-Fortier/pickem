@@ -27,7 +27,7 @@ function Standings({ groupSeasonWeek, standings, currentUser }) {
                      <p>
                         These are standings for week {groupSeasonWeek.week}{" "}
                         only. To see the standings for the entire season, choose
-                        "Season" in the week dropdown.
+                        "Entire Season" in the week selector.
                      </p>
                   )}
                </div>
