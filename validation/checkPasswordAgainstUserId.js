@@ -16,7 +16,7 @@ module.exports = async function checkPasswordAgainstUserId(password, userId) {
       return "Please enter your password.";
    }
    if ((await checkPassword(userId, password)) === false) {
-      return "The password you entered not correct for this user.";
+      return "The password you entered is not correct for this user.";
    }
    return "";
 };

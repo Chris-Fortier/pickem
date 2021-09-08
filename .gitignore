@@ -12,3 +12,5 @@ yarn-error.log*
 
 # folder for random local files not committed to git
 offline
+
+presentation-notes.*
