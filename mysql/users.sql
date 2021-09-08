@@ -3,7 +3,9 @@ use `pickem_app`;
 CREATE TABLE `users`(
 	`id` CHAR(36) PRIMARY KEY DEFAULT (UUID()), /* fixed length of string uuid */
     `user_name` VARCHAR(32) NOT NULL,
+    `email` VARCHAR(320) DEFAULT '',
     `initials` VARCHAR(3) NOT NULL,
+    `team_name` VARCHAR(32) NOT NULL DEFAULT '',
     `password` VARCHAR(128) NOT NULL DEFAULT ('$2b$12$VEde/skts3gLAGYo0ZqGmeh0d12oCT6QDpAfwGtNH9QH8ZZS9kiyC'), -- george lucas password
     `created_at` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000),
     `last_login_at` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000)
@@ -24,3 +26,7 @@ ADD COLUMN `initials` VARCHAR(3) NOT NULL AFTER `user_name`;
 -- add colums 9/7/2020
 ALTER TABLE `users`
 ADD COLUMN `team_name` VARCHAR(32) NOT NULL DEFAULT '' AFTER `initials`;
+
+-- add email
+ALTER TABLE `users`
+ADD COLUMN `email` VARCHAR(320) DEFAULT '' AFTER `user_name`;
