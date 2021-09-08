@@ -9,34 +9,11 @@ import {
    MAX_TEAM_NAME_LENGTH,
    MAX_USER_INITIALS_LENGTH,
 } from "../../utils/helpers";
-
-function Input({
-   name,
-   label,
-   placeholder = "",
-   max_length, // optional
-   error_message,
-   style = {},
-}) {
-   return (
-      <div className="form-group">
-         <label htmlFor={`${name}-input`}>{label}</label>
-         <input
-            type="text"
-            className="form-control"
-            id={`${name}-input`}
-            placeholder={placeholder}
-            maxLength={max_length}
-            style={style}
-         />
-         {error_message && <div className="text-danger">{error_message}</div>}
-      </div>
-   );
-}
+import Input from "../ui/Input";
 
 function Landing({ dispatch, history }) {
    const [mode, set_mode] = useState("log-in");
-   const [newUserNameError, set_newUserNameError] = useState("");
+   const [new_username_error, set_newUserNameError] = useState("");
    const [new_email_error, set_new_email_error] = useState("");
    const [newInitialsError, set_newInitialsError] = useState("");
    const [newTeamNameError, set_newTeamNameError] = useState("");
@@ -91,7 +68,7 @@ function Landing({ dispatch, history }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            set_newUserNameError(data.newUserNameError);
+            set_newUserNameError(data.new_username_error);
             set_new_email_error(data.new_email_error);
             set_newTeamNameError(data.newTeamNameError);
             set_newInitialsError(data.newInitialsError);
@@ -161,6 +138,7 @@ function Landing({ dispatch, history }) {
                   <Input
                      name="password"
                      label="Password"
+                     type="password"
                      placeholder="Enter your password."
                      error_message={currentPasswordError}
                   />
@@ -205,7 +183,7 @@ function Landing({ dispatch, history }) {
                      label="User Name"
                      placeholder="Name for logging in"
                      max_length={MAX_USER_NAME_LENGTH}
-                     error_message={newUserNameError}
+                     error_message={new_username_error}
                   />
                   <Input
                      name="email"
@@ -231,6 +209,7 @@ function Landing({ dispatch, history }) {
                   <Input
                      name="password"
                      label="Password"
+                     type="password"
                      placeholder="Enter a password."
                      max_length={50}
                      error_message={newPasswordError}

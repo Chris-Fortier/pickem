@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../ui/NavBar";
+import Input from "../ui/Input";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -17,7 +18,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
    const [mode, set_mode] = useState("account-settings-menu");
    const [messageFromServer, set_messageFromServer] = useState("");
    const [currentPasswordError, set_currentPasswordError] = useState("");
-   const [newUserNameError, set_newUserNameError] = useState("");
+   const [new_username_error, set_newUserNameError] = useState("");
    const [new_email_error, set_new_email_error] = useState("");
    const [newTeamNameError, set_newTeamNameError] = useState("");
    const [newInitialsError, set_newInitialsError] = useState("");
@@ -108,7 +109,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            set_newUserNameError(data.newUserNameError);
+            set_newUserNameError(data.new_username_error);
             set_currentPasswordError(data.currentPasswordError);
          });
    }
@@ -279,6 +280,19 @@ function AccountSettings({ currentUser, history, dispatch }) {
          });
    }
 
+   // abstract duplicated jsx
+   function InputCurrentPassword() {
+      return (
+         <Input
+            name="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            error_message={currentPasswordError}
+         />
+      );
+   }
+
    // renders the account settings menu buttons
    function renderAccountSettingsMenu() {
       return (
@@ -356,33 +370,14 @@ function AccountSettings({ currentUser, history, dispatch }) {
          <>
             <h5>Change User Name</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="new-user-name-input">New User Name</label>
-                  <input
-                     type="text"
-                     className="form-control"
-                     id="new-user-name-input"
-                     placeholder={currentUser.user_name}
-                     maxLength={MAX_USER_NAME_LENGTH}
-                  />
-                  {newUserNameError && (
-                     <div className="text-danger">{newUserNameError}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="password-input"
-                     placeholder="Enter your password"
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger" id="password-error">
-                        {currentPasswordError}
-                     </div>
-                  )}
-               </div>
+               <Input
+                  name="new-user-name"
+                  label="New User Name"
+                  placeholder={currentUser.user_name}
+                  max_length={MAX_USER_NAME_LENGTH}
+                  error_message={new_username_error}
+               />
+               <InputCurrentPassword />
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
@@ -413,33 +408,14 @@ function AccountSettings({ currentUser, history, dispatch }) {
          <>
             <h5>Change Email Address</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="new-email-input">New Email Address</label>
-                  <input
-                     type="text"
-                     className="form-control"
-                     id="new-email-input"
-                     placeholder={currentUser.email}
-                     maxLength={MAX_EMAIL_LENGTH}
-                  />
-                  {new_email_error && (
-                     <div className="text-danger">{new_email_error}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="password-input"
-                     placeholder="Enter your password"
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger" id="password-error">
-                        {currentPasswordError}
-                     </div>
-                  )}
-               </div>
+               <Input
+                  name="new-email"
+                  label="New Email Address"
+                  placeholder={currentUser.email}
+                  error_message={new_email_error}
+                  max_length={MAX_EMAIL_LENGTH}
+               />
+               <InputCurrentPassword />
                <div
                   className="btn btn-primary btn-block"
                   onClick={() =>
@@ -469,34 +445,15 @@ function AccountSettings({ currentUser, history, dispatch }) {
          <>
             <h5>Change Initials</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="new-initials-input">New Initials</label>
-                  <input
-                     type="text"
-                     className="form-control"
-                     id="new-initials-input"
-                     placeholder={currentUser.initials}
-                     maxLength={MAX_USER_INITIALS_LENGTH}
-                     style={{ textTransform: "uppercase" }}
-                  />
-                  {newInitialsError && (
-                     <div className="text-danger">{newInitialsError}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="password-input"
-                     placeholder="Enter your password"
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger" id="password-error">
-                        {currentPasswordError}
-                     </div>
-                  )}
-               </div>
+               <Input
+                  name="new-initials"
+                  label="New Initials"
+                  placeholder={currentUser.initials}
+                  max_length={MAX_USER_INITIALS_LENGTH}
+                  style={{ textTransform: "uppercase" }}
+                  error_message={newInitialsError}
+               />
+               <InputCurrentPassword />
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
@@ -530,33 +487,14 @@ function AccountSettings({ currentUser, history, dispatch }) {
          <>
             <h5>Change Team Name</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="new-team-name-input">New Team Name</label>
-                  <input
-                     type="text"
-                     className="form-control"
-                     id="new-team-name-input"
-                     placeholder={currentUser.team_name}
-                     maxLength={MAX_TEAM_NAME_LENGTH}
-                  />
-                  {newTeamNameError && (
-                     <div className="text-danger">{newTeamNameError}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="password-input"
-                     placeholder="Enter your password"
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger" id="password-error">
-                        {currentPasswordError}
-                     </div>
-                  )}
-               </div>
+               <Input
+                  name="new-team-name"
+                  label="New Team Name"
+                  placeholder={currentUser.team_name}
+                  max_length={MAX_TEAM_NAME_LENGTH}
+                  error_message={newTeamNameError}
+               />
+               <InputCurrentPassword />
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
@@ -587,32 +525,20 @@ function AccountSettings({ currentUser, history, dispatch }) {
          <>
             <h5>Change Password</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="current-password-input">
-                     Current Password
-                  </label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="current-password-input"
-                     placeholder="Enter your existing password."
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger">{currentPasswordError}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="new-password-input">New Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="new-password-input"
-                     placeholder="Enter a new password"
-                  />
-                  {newPasswordError && (
-                     <div className="text-danger">{newPasswordError}</div>
-                  )}
-               </div>
+               <Input
+                  name="current-password"
+                  label="Current Password"
+                  type="password"
+                  placeholder="Enter your existing password."
+                  error_message={currentPasswordError}
+               />
+               <Input
+                  name="new-password"
+                  label="New Password"
+                  type="password"
+                  placeholder="Enter a new password"
+                  error_message={newPasswordError}
+               />
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
@@ -643,18 +569,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
          <>
             <h5>Delete Account</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="current-password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="current-password-input"
-                     placeholder="Enter your password."
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger">{currentPasswordError}</div>
-                  )}
-               </div>
+               <InputCurrentPassword />
                <p>
                   Are you sure you want to delete account&nbsp;"
                   {currentUser.user_name}"?
@@ -664,7 +579,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                   className="btn btn-danger btn-block"
                   onClick={() =>
                      validateAndDeleteAccount(
-                        document.getElementById("current-password-input").value
+                        document.getElementById("password-input").value
                      )
                   }
                >

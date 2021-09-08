@@ -31,7 +31,7 @@ const uuid = require("uuid");
 // @access     Public
 router.post("/", async (req, res) => {
    const { user_name, email, team_name, initials, password } = req.body; // destructuring to simplify code below, grabbing variables from req.body
-   const newUserNameError = await getNewUserNameError(user_name);
+   const new_username_error = await getNewUserNameError(user_name);
    const new_email_error = await get_new_email_error(email);
    const newTeamNameError = await getNewTeamNameError(team_name);
    const newInitialsError = await getNewInitialsError(initials);
@@ -40,7 +40,7 @@ router.post("/", async (req, res) => {
 
    // if there are no errors with user_name, team_name, initials and password:
    if (
-      newUserNameError === "" &&
+      new_username_error === "" &&
       new_email_error === "" &&
       newTeamNameError === "" &&
       newInitialsError === "" &&
@@ -105,7 +105,7 @@ router.post("/", async (req, res) => {
    } else {
       // return a 400 error to user
       res.status(400).json({
-         newUserNameError,
+         new_username_error,
          new_email_error,
          newTeamNameError,
          newInitialsError,
@@ -221,19 +221,19 @@ router.put("/set-user-name", validateJwt, async (req, res) => {
    const { newUserName, password } = req.body; // grabbing variables from req.body
    const userId = req.user.id; // get the user id from the JWT
    console.log({ userId });
-   const newUserNameError = await getNewUserNameError(newUserName); // check to see if the new user_name is valid
-   console.log({ newUserNameError });
+   const new_username_error = await getNewUserNameError(newUserName); // check to see if the new user_name is valid
+   console.log({ new_username_error });
    const currentPasswordError = await checkPasswordAgainstUserId(
       password,
       userId
    ); // check to see if the password submitted is correct
    console.log({
       userId,
-      newUserNameError,
+      new_username_error,
       currentPasswordError,
    });
 
-   if (newUserNameError === "" && currentPasswordError === "") {
+   if (new_username_error === "" && currentPasswordError === "") {
       // if it gets this far, user_name can be changed
       console.log("user_name can be changed");
       // res.status(200).json("UserName can be changed");
@@ -250,7 +250,7 @@ router.put("/set-user-name", validateJwt, async (req, res) => {
    } else {
       // return a 400 error to user
       res.status(400).json({
-         newUserNameError,
+         new_username_error,
          currentPasswordError,
       });
    }
