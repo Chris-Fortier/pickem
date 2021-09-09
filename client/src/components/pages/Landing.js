@@ -121,7 +121,7 @@ function Landing({ dispatch, history }) {
          });
    }
 
-   function LogIn() {
+   function render_log_in() {
       return (
          <div className="my-card">
             <div className="card-header">
@@ -170,7 +170,8 @@ function Landing({ dispatch, history }) {
       );
    }
 
-   function SignUp() {
+   // NOTE: if I make these functional components, the inputs clear when the user clicks the submit button if there are errors
+   function render_sign_up() {
       return (
          <div className="my-card">
             <div className="card-header">
@@ -255,8 +256,8 @@ function Landing({ dispatch, history }) {
             NFL Pick 'em
          </h1>
          {/* render component based on what mode we are in */}
-         {mode === "log-in" && <LogIn />}
-         {mode === "sign-up" && <SignUp />}
+         {mode === "log-in" && render_log_in()}
+         {mode === "sign-up" && render_sign_up()}
       </div>
    );
 }
