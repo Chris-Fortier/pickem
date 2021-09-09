@@ -7,6 +7,7 @@ CREATE TABLE `users`(
     `initials` VARCHAR(3) NOT NULL,
     `team_name` VARCHAR(32) NOT NULL DEFAULT '',
     `password` VARCHAR(128) NOT NULL DEFAULT ('$2b$12$VEde/skts3gLAGYo0ZqGmeh0d12oCT6QDpAfwGtNH9QH8ZZS9kiyC'), -- george lucas password
+    `is_admin` TINYINT UNSIGNED NOT NULL DEFAULT 0,
     `created_at` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000),
     `last_login_at` BIGINT UNSIGNED NOT NULL DEFAULT (UNIX_TIMESTAMP() * 1000)
 );
@@ -30,3 +31,7 @@ ADD COLUMN `team_name` VARCHAR(32) NOT NULL DEFAULT '' AFTER `initials`;
 -- add email
 ALTER TABLE `users`
 ADD COLUMN `email` VARCHAR(320) DEFAULT '' AFTER `user_name`;
+
+-- add is_admin
+ALTER TABLE `users`
+ADD COLUMN `is_admin` TINYINT UNSIGNED NOT NULL DEFAULT 0 AFTER `password`;
