@@ -342,6 +342,11 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                      "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
                });
             });
+      } else if (window.location.pathname === "/results") {
+         // clear the server message
+         dispatch({
+            type: actions.CLEAR_MESSAGE,
+         });
       }
    }
 
@@ -459,6 +464,9 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                         </Link>
                         <Link to="/standings" className="dropdown-item">
                            Standings
+                        </Link>
+                        <Link className="dropdown-item" to="/results">
+                           Results
                         </Link>
                      </NavDropdown>
                   </Nav>
@@ -588,6 +596,15 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                }`}
             >
                Standings
+            </Link>
+            {/* TODO: only show this if they are an admin */}
+            <Link
+               to="/results"
+               className={`nav-tab ${
+                  window.location.pathname === "/results" && "nav-tab-current"
+               }`}
+            >
+               Results
             </Link>
             {/* <Link
                to="/account-settings"
