@@ -30,19 +30,22 @@ module.exports = {
       return bcrypt.hash(myPlaintextPassword, SALT_ROUNDS);
    },
 
-   // returns true if a user has this user_name in the db, false if not
-   check_if_user_name_exists(user_name) {
-      console.log("check_if_user_name_exists()...", user_name);
+   // returns true if an existing user has the given where_clause {key: value}, false if not
+   check_if_existing_user_has_key_with_value(where_clause) {
+      console.log(
+         "check_if_existing_user_has_key_with_value()...",
+         where_clause
+      );
 
       return mysqldb
          .select()
          .from("users")
-         .where({ user_name })
+         .where(where_clause)
          .then((users) => {
             if (users.length === 0) {
                return false;
             } else {
-               console.log("user_name already in the db");
+               console.log("A user already has this key: value combination");
                return true;
             }
          })
