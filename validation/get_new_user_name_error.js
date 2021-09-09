@@ -1,10 +1,12 @@
-const { checkIfUserNameExists } = require("../utils/helpers");
+const {
+   check_if_existing_user_has_key_with_value,
+} = require("../utils/helpers");
 
 module.exports = async function get_new_user_name_error(user_name) {
    if (user_name === "") {
       return "Please enter a new user name.";
    }
-   if (await checkIfUserNameExists(user_name)) {
+   if (await check_if_existing_user_has_key_with_value({ user_name })) {
       return "This user name already exists.";
    }
    return "";

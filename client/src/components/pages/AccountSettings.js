@@ -21,7 +21,7 @@ function AccountSettings({ current_user, history, dispatch }) {
    const [new_user_name_error, set_new_user_name_error] = useState("");
    const [new_email_error, set_new_email_error] = useState("");
    const [new_team_name_error, set_new_team_name_error] = useState("");
-   const [new_initials_error, set_newInitialsError] = useState("");
+   const [new_initials_error, set_new_initials_error] = useState("");
    const [new_password_error, set_new_password_error] = useState("");
 
    useEffect(() => {
@@ -40,7 +40,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
    }
 
@@ -51,7 +51,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
    };
 
@@ -62,7 +62,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
    };
 
@@ -73,7 +73,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
    };
 
@@ -188,7 +188,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            set_newInitialsError(data.new_initials_error);
+            set_new_initials_error(data.new_initials_error);
             set_current_password_error(data.current_password_error);
          });
    }
@@ -300,7 +300,7 @@ function AccountSettings({ current_user, history, dispatch }) {
    }
 
    // renders the account settings menu buttons
-   function AccountSettingsMenu() {
+   function render_account_settings_menu() {
       return (
          <>
             <button
@@ -371,7 +371,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       );
    }
 
-   function ChangeUserName() {
+   function render_change_user_name() {
       return (
          <>
             <h5>Change User Name</h5>
@@ -409,7 +409,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       );
    }
 
-   function ChangeEmail() {
+   function render_change_email() {
       return (
          <>
             <h5>Change Email Address</h5>
@@ -446,7 +446,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       );
    }
 
-   function ChangeInitials() {
+   function render_change_initials() {
       return (
          <>
             <h5>Change Initials</h5>
@@ -487,7 +487,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       );
    }
 
-   function ChangeTeamName() {
+   function render_change_team_name() {
       // TODO: do not allow a team name that is already in use
       return (
          <>
@@ -526,7 +526,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       );
    }
 
-   function ChangePassword() {
+   function render_change_password() {
       return (
          <>
             <h5>Change Password</h5>
@@ -570,7 +570,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       );
    }
 
-   function DeleteAccount() {
+   function render_delete_account() {
       return (
          <>
             <h5>Delete Account</h5>
@@ -619,13 +619,14 @@ function AccountSettings({ current_user, history, dispatch }) {
                <div className="card-body">
                   {message_from_server && <p>{message_from_server}</p>}
                   {/* render component based on what mode we are in */}
-                  {mode === "account-settings-menu" && <AccountSettingsMenu />}
-                  {mode === "change-user-name" && <ChangeUserName />}
-                  {mode === "change-email" && <ChangeEmail />}
-                  {mode === "change-team-name" && <ChangeTeamName />}
-                  {mode === "change-initials" && <ChangeInitials />}
-                  {mode === "change-password" && <ChangePassword />}
-                  {mode === "delete-account" && <DeleteAccount />}
+                  {mode === "account-settings-menu" &&
+                     render_account_settings_menu()}
+                  {mode === "change-user-name" && render_change_user_name()}
+                  {mode === "change-email" && render_change_email()}
+                  {mode === "change-team-name" && render_change_team_name()}
+                  {mode === "change-initials" && render_change_initials()}
+                  {mode === "change-password" && render_change_password()}
+                  {mode === "delete-account" && render_delete_account()}
                </div>
             </div>
          </div>

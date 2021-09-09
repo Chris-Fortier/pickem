@@ -1,7 +1,9 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
-const select_user_by_user_name = require("../queries/select_user_by_user_name");
 const select_user_id_by_user_name = require("../queries/select_user_id_by_user_name");
+const knex = require("knex");
+const config = require("../knexfile");
+const mysqldb = knex(config);
 
 // this file is for short functions we will use throughout the app on the server side
 
@@ -28,16 +30,22 @@ module.exports = {
       return bcrypt.hash(myPlaintextPassword, SALT_ROUNDS);
    },
 
-   // returns true if a user has this user_name in the db, false if not
-   checkIfUserNameExists(user_name) {
-      console.log("checkIfUserNameExists()...", user_name);
-      return db
-         .query(select_user_by_user_name, user_name)
+   // returns true if an existing user has the given where_clause {key: value}, false if not
+   check_if_existing_user_has_key_with_value(where_clause) {
+      console.log(
+         "check_if_existing_user_has_key_with_value()...",
+         where_clause
+      );
+
+      return mysqldb
+         .select()
+         .from("users")
+         .where(where_clause)
          .then((users) => {
             if (users.length === 0) {
                return false;
             } else {
-               console.log("user_name already in the db");
+               console.log("A user already has this key: value combination");
                return true;
             }
          })

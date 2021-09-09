@@ -15,7 +15,7 @@ function Landing({ dispatch, history }) {
    const [mode, set_mode] = useState("log-in");
    const [new_user_name_error, set_new_user_name_error] = useState("");
    const [new_email_error, set_new_email_error] = useState("");
-   const [new_initials_error, set_newInitialsError] = useState("");
+   const [new_initials_error, set_new_initials_error] = useState("");
    const [new_team_name_error, set_new_team_name_error] = useState("");
    const [new_password_error, set_new_password_error] = useState("");
    const [current_user_name_error, set_current_user_name_error] = useState("");
@@ -25,7 +25,7 @@ function Landing({ dispatch, history }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
       set_current_user_name_error("");
       set_current_password_error("");
@@ -71,7 +71,7 @@ function Landing({ dispatch, history }) {
             set_new_user_name_error(data.new_user_name_error);
             set_new_email_error(data.new_email_error);
             set_new_team_name_error(data.new_team_name_error);
-            set_newInitialsError(data.new_initials_error);
+            set_new_initials_error(data.new_initials_error);
             set_new_password_error(data.new_password_error);
          });
    }
@@ -121,7 +121,7 @@ function Landing({ dispatch, history }) {
          });
    }
 
-   function LogIn() {
+   function render_log_in() {
       return (
          <div className="my-card">
             <div className="card-header">
@@ -170,7 +170,8 @@ function Landing({ dispatch, history }) {
       );
    }
 
-   function SignUp() {
+   // NOTE: if I make these functional components, the inputs clear when the user clicks the submit button if there are errors
+   function render_sign_up() {
       return (
          <div className="my-card">
             <div className="card-header">
@@ -255,8 +256,8 @@ function Landing({ dispatch, history }) {
             NFL Pick 'em
          </h1>
          {/* render component based on what mode we are in */}
-         {mode === "log-in" && <LogIn />}
-         {mode === "sign-up" && <SignUp />}
+         {mode === "log-in" && render_log_in()}
+         {mode === "sign-up" && render_sign_up()}
       </div>
    );
 }
