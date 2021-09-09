@@ -1,6 +1,6 @@
 // get standings for a each user in a group season
 // given group, season, week (week is string or '%' for any week in the season)
-const selectStandings = `
+const select_standings = `
 SELECT 
 	\`team_name\`,
     \`initials\`,
@@ -17,4 +17,4 @@ WHERE
          GROUP BY \`user_id\` ORDER BY \`num_correct\` DESC;
 `;
 
-module.exports = selectStandings;
+module.exports = select_standings;

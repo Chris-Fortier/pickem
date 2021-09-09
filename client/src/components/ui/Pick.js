@@ -1,13 +1,13 @@
 import React from "react";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
-import teamNames from "../../utils/teamNames";
+import TEAM_NAMES from "../../utils/TEAM_NAMES";
 import classnames from "classnames";
 import axios from "axios";
 
-function Pick({ myPicks, pick, dispatch }) {
+function Pick({ my_picks, pick, dispatch }) {
    // only allow changing of pick if game has not stated yet (has server side check too)
-   function upsertPick(game_id, group_id, pick_choice) {
+   function upsert_pick(game_id, group_id, pick_choice) {
       // get the previous pick value
       const prev_pick = pick.pick;
 
@@ -20,7 +20,7 @@ function Pick({ myPicks, pick, dispatch }) {
       pick.pick = pick_choice;
       dispatch({
          type: actions.STORE_MY_PICKS,
-         payload: [...myPicks],
+         payload: [...my_picks],
       });
 
       // post a message about waiting for server response
@@ -49,7 +49,7 @@ function Pick({ myPicks, pick, dispatch }) {
             pick.pick = prev_pick;
             dispatch({
                type: actions.STORE_MY_PICKS,
-               payload: [...myPicks],
+               payload: [...my_picks],
             });
 
             // post an error message
@@ -75,11 +75,11 @@ function Pick({ myPicks, pick, dispatch }) {
             })}
             onClick={() => {
                if (is_pickable) {
-                  upsertPick(pick.game_id, pick.group_id, 0);
+                  upsert_pick(pick.game_id, pick.group_id, 0);
                }
             }}
          >
-            {teamNames[pick.away_team]}
+            {TEAM_NAMES[pick.away_team]}
          </div>
          &nbsp;@&nbsp;
          <div
@@ -93,11 +93,11 @@ function Pick({ myPicks, pick, dispatch }) {
             })}
             onClick={() => {
                if (is_pickable) {
-                  upsertPick(pick.game_id, pick.group_id, 1);
+                  upsert_pick(pick.game_id, pick.group_id, 1);
                }
             }}
          >
-            {teamNames[pick.home_team]}
+            {TEAM_NAMES[pick.home_team]}
          </div>
       </div>
    );
@@ -105,7 +105,7 @@ function Pick({ myPicks, pick, dispatch }) {
 
 // maps the Redux store/state to props
 function mapStateToProps(state) {
-   return { myPicks: state.myPicks };
+   return { my_picks: state.my_picks };
 }
 
 export default connect(mapStateToProps)(Pick);

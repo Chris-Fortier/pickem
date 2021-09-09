@@ -1,6 +1,6 @@
 const { checkIfUserNameExists } = require("../utils/helpers");
 
-module.exports = async function getNewUserNameError(user_name) {
+module.exports = async function get_new_user_name_error(user_name) {
    if (user_name === "") {
       return "Please enter a new user name.";
    }

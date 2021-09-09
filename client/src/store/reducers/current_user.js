@@ -2,10 +2,10 @@ import actions from "../actions";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
 
-export default function currentUser(currentUser = {}, action) {
+export default function current_user(current_user = {}, action) {
    // default for state is an empty object
 
-   // let newCurrentUser = { ...currentUser }; // make a copy of it as we cannot change the original one in place
+   // let newCurrentUser = { ...current_user }; // make a copy of it as we cannot change the original one in place
 
    switch (action.type) {
       case actions.UPDATE_CURRENT_USER:
@@ -19,6 +19,6 @@ export default function currentUser(currentUser = {}, action) {
          }
          return action.payload; // if its empty or not, return it to the redux store
       default:
-         return currentUser;
+         return current_user;
    }
 }

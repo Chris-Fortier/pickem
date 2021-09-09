@@ -1,6 +1,6 @@
 // this updates the password of a user in the database
 
-const setUserPassword = `
+const set_user_password = `
    UPDATE pickem_app.users 
    SET 
       password = ?
@@ -8,4 +8,4 @@ const setUserPassword = `
       id = ?;
 `;
 
-module.exports = setUserPassword;
+module.exports = set_user_password;

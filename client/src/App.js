@@ -24,7 +24,7 @@ if (authToken) {
       // user.this_login_at < 1599508200000 to force the user to log in with an old token before change
       console.log("expired token");
 
-      // remove the currentUser from the global state / redux store
+      // remove the current_user from the global state / redux store
       store.dispatch({
          type: actions.UPDATE_CURRENT_USER,
          payload: {},
@@ -37,7 +37,7 @@ if (authToken) {
 
       console.log("valid token");
 
-      // store the user in global state / redux store (currentUser)
+      // store the user in global state / redux store (current_user)
       store.dispatch({
          type: actions.UPDATE_CURRENT_USER,
          payload: user,

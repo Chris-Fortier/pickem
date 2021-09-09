@@ -1,4 +1,4 @@
-module.exports = function getNewPasswordError(password) {
+module.exports = function get_new_password_error(password) {
    if (password === "") {
       // check if password input is blank
       return "Please create a password.";

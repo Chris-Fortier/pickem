@@ -13,10 +13,10 @@ import uuid from "uuid";
 // const season = 2020;
 // const week = 1;
 
-function MyPicks({ groupSeasonWeek, myPicks }) {
-   let rollingDate = 0; // for keeping track when a game is on a new date
-   let renderDate = true;
-   let renderTime = true;
+function MyPicks({ group_season_week, my_picks }) {
+   let rolling_date = 0; // for keeping track when a game is on a new date
+   let is_rendering_date = true;
+   let is_rendering_time = true;
 
    return (
       <>
@@ -26,11 +26,11 @@ function MyPicks({ groupSeasonWeek, myPicks }) {
                <div className="card-header">
                   <h2>
                      My Picks For&nbsp;
-                     {groupSeasonWeek.season}
+                     {group_season_week.season}
                      &nbsp;
                      {get_week_or_season_text(
-                        groupSeasonWeek.week,
-                        groupSeasonWeek.season
+                        group_season_week.week,
+                        group_season_week.season
                      )}
                   </h2>
                </div>
@@ -40,27 +40,27 @@ function MyPicks({ groupSeasonWeek, myPicks }) {
                      change your pick for a game as many times as you want until
                      the game starts.
                   </p>
-                  {myPicks.map((pick) => {
-                     if (pick.game_at > rollingDate + 43200000) {
-                        renderDate = true;
-                        renderTime = true;
-                     } else if (pick.game_at > rollingDate) {
-                        renderDate = false;
-                        renderTime = true;
+                  {my_picks.map((pick) => {
+                     if (pick.game_at > rolling_date + 43200000) {
+                        is_rendering_date = true;
+                        is_rendering_time = true;
+                     } else if (pick.game_at > rolling_date) {
+                        is_rendering_date = false;
+                        is_rendering_time = true;
                      } else {
-                        renderDate = false;
-                        renderTime = false;
+                        is_rendering_date = false;
+                        is_rendering_time = false;
                      }
-                     rollingDate = pick.game_at;
+                     rolling_date = pick.game_at;
                      return (
                         <span key={uuid.v4()}>
-                           {renderTime && <br />}
-                           {renderDate && (
+                           {is_rendering_time && <br />}
+                           {is_rendering_date && (
                               <h5 align="center">
                                  {toDisplayDate(pick.game_at, "EEE MMM dd")}
                               </h5>
                            )}
-                           {renderTime && (
+                           {is_rendering_time && (
                               <h6 align="center">
                                  {toDisplayDate(pick.game_at, "p")}
                               </h6>
@@ -79,8 +79,8 @@ function MyPicks({ groupSeasonWeek, myPicks }) {
 // maps the Redux store/state to props
 function mapStateToProps(state) {
    return {
-      groupSeasonWeek: state.groupSeasonWeek,
-      myPicks: state.myPicks,
+      group_season_week: state.group_season_week,
+      my_picks: state.my_picks,
    };
 }
 

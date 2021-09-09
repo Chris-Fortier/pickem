@@ -5,7 +5,7 @@ import classnames from "classnames";
 import { get_week_or_season_text } from "../../utils/helpers";
 import toDisplayDate from "date-fns/format";
 
-function GroupPicks({ groupSeasonWeek, groupPicks }) {
+function GroupPicks({ group_season_week, group_picks }) {
    return (
       <>
          <div className="my-table-container">
@@ -13,11 +13,11 @@ function GroupPicks({ groupSeasonWeek, groupPicks }) {
                <NavBar />
                <div className="card card-header">
                   <h2>
-                     Group Picks For&nbsp;{groupSeasonWeek.season}
+                     Group Picks For&nbsp;{group_season_week.season}
                      &nbsp;
                      {get_week_or_season_text(
-                        groupSeasonWeek.week,
-                        groupSeasonWeek.season
+                        group_season_week.week,
+                        group_season_week.season
                      )}
                   </h2>
                </div>
@@ -25,7 +25,7 @@ function GroupPicks({ groupSeasonWeek, groupPicks }) {
             <table className="table-dark table-striped">
                <tbody>
                   {/* each game of the week has one row */}
-                  {groupPicks.match_ups.map((match_up) => {
+                  {group_picks.match_ups.map((match_up) => {
                      return (
                         <>
                            {/* each new date has a row divider */}
@@ -40,7 +40,7 @@ function GroupPicks({ groupSeasonWeek, groupPicks }) {
                                        "EE MM/dd"
                                     )}
                                  </th>
-                                 {groupPicks.teams.map((team) => {
+                                 {group_picks.teams.map((team) => {
                                     return (
                                        <th
                                           scope="col"
@@ -57,7 +57,7 @@ function GroupPicks({ groupSeasonWeek, groupPicks }) {
                               <th scope="row" className="left-column">
                                  {match_up.title}
                               </th>
-                              {groupPicks.teams.map((team) => {
+                              {group_picks.teams.map((team) => {
                                  return (
                                     <td
                                        className={classnames({
@@ -91,8 +91,8 @@ function GroupPicks({ groupSeasonWeek, groupPicks }) {
 // maps the Redux store/state to props
 function mapStateToProps(state) {
    return {
-      groupSeasonWeek: state.groupSeasonWeek,
-      groupPicks: state.groupPicks,
+      group_season_week: state.group_season_week,
+      group_picks: state.group_picks,
    };
 }
 

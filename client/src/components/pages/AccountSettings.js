@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavBar from "../ui/NavBar";
+import Input from "../ui/Input";
 import actions from "../../store/actions";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -10,97 +11,100 @@ import {
    MAX_EMAIL_LENGTH,
    MAX_TEAM_NAME_LENGTH,
    MAX_USER_INITIALS_LENGTH,
-   logOutCurrentUser,
+   log_out_current_user,
 } from "../../utils/helpers";
 
-function AccountSettings({ currentUser, history, dispatch }) {
+function AccountSettings({ current_user, history, dispatch }) {
    const [mode, set_mode] = useState("account-settings-menu");
-   const [messageFromServer, set_messageFromServer] = useState("");
-   const [currentPasswordError, set_currentPasswordError] = useState("");
-   const [newUserNameError, set_newUserNameError] = useState("");
+   const [message_from_server, set_message_from_server] = useState("");
+   const [current_password_error, set_current_password_error] = useState("");
+   const [new_user_name_error, set_new_user_name_error] = useState("");
    const [new_email_error, set_new_email_error] = useState("");
-   const [newTeamNameError, set_newTeamNameError] = useState("");
-   const [newInitialsError, set_newInitialsError] = useState("");
-   const [newPasswordError, set_newPasswordError] = useState("");
+   const [new_team_name_error, set_new_team_name_error] = useState("");
+   const [new_initials_error, set_newInitialsError] = useState("");
+   const [new_password_error, set_new_password_error] = useState("");
 
    useEffect(() => {
       // if there is not user logged in
-      if (isEmpty(currentUser)) {
+      if (isEmpty(current_user)) {
          // send to landing page
          history.push("/");
       } else {
       }
-   }, [currentUser, history]);
+   }, [current_user, history]);
 
-   function clearMessageAndErrors() {
-      set_messageFromServer("");
+   function clear_message_and_errors() {
+      set_message_from_server("");
       set_mode(mode);
-      set_currentPasswordError("");
-      set_newUserNameError("");
+      set_current_password_error("");
+      set_new_user_name_error("");
       set_new_email_error("");
-      set_newTeamNameError("");
+      set_new_team_name_error("");
       set_newInitialsError("");
-      set_newPasswordError("");
+      set_new_password_error("");
    }
 
-   const cancelSubMenu = () => {
-      set_messageFromServer("");
+   const cancel_sub_menu = () => {
+      set_message_from_server("");
       set_mode("account-settings-menu");
-      set_currentPasswordError("");
-      set_newUserNameError("");
+      set_current_password_error("");
+      set_new_user_name_error("");
       set_new_email_error("");
-      set_newTeamNameError("");
+      set_new_team_name_error("");
       set_newInitialsError("");
-      set_newPasswordError("");
+      set_new_password_error("");
    };
 
-   const updateMessageAndReturn = (new_message) => {
-      set_messageFromServer(new_message);
+   const update_message_and_return = (new_message) => {
+      set_message_from_server(new_message);
       set_mode("account-settings-menu");
-      set_currentPasswordError("");
-      set_newUserNameError("");
+      set_current_password_error("");
+      set_new_user_name_error("");
       set_new_email_error("");
-      set_newTeamNameError("");
+      set_new_team_name_error("");
       set_newInitialsError("");
-      set_newPasswordError("");
+      set_new_password_error("");
    };
 
-   const enterSubMenu = (sub_menu) => {
-      set_messageFromServer("");
+   const enter_sub_menu = (sub_menu) => {
+      set_message_from_server("");
       set_mode(sub_menu);
-      set_currentPasswordError("");
-      set_newUserNameError("");
+      set_current_password_error("");
+      set_new_user_name_error("");
       set_new_email_error("");
-      set_newTeamNameError("");
+      set_new_team_name_error("");
       set_newInitialsError("");
-      set_newPasswordError("");
+      set_new_password_error("");
    };
 
    // tests if the new user_name and password are valid and if so changes user_name
-   async function validateAndChangeUserName(userNameInput, passwordInput) {
+   async function validate_and_change_user_name(
+      user_name_input,
+      password_input
+   ) {
       // create the object that will be the body that is sent
       const submission = {
-         newUserName: userNameInput,
-         password: passwordInput, // send the plain text password over secure connection, the server will hash it
+         newUserName: user_name_input,
+         password: password_input, // send the plain text password over secure connection, the server will hash it
       };
 
       // post to API
       axios
          .put("api/v1/users/set-user-name", submission)
          .then((res) => {
-            const oldUserName = currentUser.user_name; // storing old name so I can put it in the message
+            const oldUserName = current_user.user_name; // storing old name so I can put it in the message
             // send the user with new name to Redux
-            currentUser.user_name = userNameInput;
+            current_user.user_name = user_name_input;
             dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: currentUser,
+               payload: current_user,
             });
 
             // TODO: local token is not updated with the new user_name, but I don't think I am using that user_name for anything
-            // if they refresh it will put the user_name from token in currentUser
+            // if they refresh it will put the user_name from token in current_user
 
-            updateMessageAndReturn(
-               `User name changed from "${oldUserName}" to "${userNameInput}"`
+            update_message_and_return(
+               `User name changed from "${oldUserName}" to "${user_name_input}"`
             );
          })
          .catch((err) => {
@@ -108,14 +112,14 @@ function AccountSettings({ currentUser, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            set_newUserNameError(data.newUserNameError);
-            set_currentPasswordError(data.currentPasswordError);
+            set_new_user_name_error(data.new_user_name_error);
+            set_current_password_error(data.current_password_error);
          });
    }
 
    // tests if the new email and password are valid and if so changes email
    async function validate_and_change_email(email_input, password_input) {
-      console.log("currentUser", currentUser);
+      console.log("current_user", current_user);
       // create the object that will be the body that is sent
       const submission = {
          new_email: email_input,
@@ -126,18 +130,18 @@ function AccountSettings({ currentUser, history, dispatch }) {
       axios
          .put("api/v1/users/set-email", submission)
          .then((res) => {
-            const old_email = currentUser.email; // storing old email so I can put it in the message
+            const old_email = current_user.email; // storing old email so I can put it in the message
             // send the email with new name to Redux
-            currentUser.email = email_input;
+            current_user.email = email_input;
             dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: currentUser,
+               payload: current_user,
             });
 
             // TODO: local token is not updated with the new email
-            // if they refresh it will put the email from token in currentUser
+            // if they refresh it will put the email from token in current_user
 
-            updateMessageAndReturn(
+            update_message_and_return(
                `Email changed from "${old_email}" to "${email_input}"`
             );
          })
@@ -146,37 +150,37 @@ function AccountSettings({ currentUser, history, dispatch }) {
 
             // push errors or lack thereof to state
             set_new_email_error(data.new_email_error);
-            set_currentPasswordError(data.current_password_error);
+            set_current_password_error(data.current_password_error);
          });
    }
 
    // tests if the new initials and password are valid and if so changes initials
-   async function validateAndChangeInitials(initialsInput, passwordInput) {
+   async function validate_and_change_initials(initials_input, password_input) {
       // TODO: do not allow initials that are already in use
 
       // create the object that will be the body that is sent
       const submission = {
-         newInitials: initialsInput,
-         password: passwordInput, // send the plain text password over secure connection, the server will hash it
+         newInitials: initials_input,
+         password: password_input, // send the plain text password over secure connection, the server will hash it
       };
 
       // post to API
       axios
          .put("api/v1/users/set-initials", submission)
          .then((res) => {
-            const oldInitials = currentUser.initials; // storing old name so I can put it in the message
+            const oldInitials = current_user.initials; // storing old name so I can put it in the message
             // send the user with new name to Redux
-            currentUser.initials = initialsInput;
+            current_user.initials = initials_input;
             dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: currentUser,
+               payload: current_user,
             });
 
             // TODO: local token is not updated with the new initials, but I don't think I am using that initials for anything
-            // if they refresh it will put the initials from token in currentUser
+            // if they refresh it will put the initials from token in current_user
 
-            updateMessageAndReturn(
-               `User initials changed from "${oldInitials}" to "${initialsInput}"`
+            update_message_and_return(
+               `User initials changed from "${oldInitials}" to "${initials_input}"`
             );
          })
          .catch((err) => {
@@ -184,36 +188,39 @@ function AccountSettings({ currentUser, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            set_newInitialsError(data.newInitialsError);
-            set_currentPasswordError(data.currentPasswordError);
+            set_newInitialsError(data.new_initials_error);
+            set_current_password_error(data.current_password_error);
          });
    }
 
    // tests if the new team name and password are valid and if so changes team name
-   async function validateAndChangeTeamName(teamNameInput, passwordInput) {
+   async function validate_and_change_team_name(
+      team_name_input,
+      password_input
+   ) {
       // create the object that will be the body that is sent
       const submission = {
-         newTeamName: teamNameInput,
-         password: passwordInput, // send the plain text password over secure connection, the server will hash it
+         newTeamName: team_name_input,
+         password: password_input, // send the plain text password over secure connection, the server will hash it
       };
 
       // post to API
       axios
          .put("api/v1/users/set-team-name", submission)
          .then((res) => {
-            const oldTeamName = currentUser.team_name; // storing old name so I can put it in the message
+            const oldTeamName = current_user.team_name; // storing old name so I can put it in the message
             // send the user with new name to Redux
-            currentUser.team_name = teamNameInput;
+            current_user.team_name = team_name_input;
             dispatch({
                type: actions.UPDATE_CURRENT_USER,
-               payload: currentUser,
+               payload: current_user,
             });
 
             // TODO: local token is not updated with the new team name, but I don't think I am using that team name for anything
-            // if they refresh it will put the team name from token in currentUser
+            // if they refresh it will put the team name from token in current_user
 
-            updateMessageAndReturn(
-               `Team name changed from "${oldTeamName}" to "${teamNameInput}"`
+            update_message_and_return(
+               `Team name changed from "${oldTeamName}" to "${team_name_input}"`
             );
          })
          .catch((err) => {
@@ -221,13 +228,13 @@ function AccountSettings({ currentUser, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            set_newTeamNameError(data.newTeamNameError);
-            set_currentPasswordError(data.currentPasswordError);
+            set_new_team_name_error(data.new_team_name_error);
+            set_current_password_error(data.current_password_error);
          });
    }
 
    // tests if the old password is valid and if so changes password to new one
-   async function validateAndChangePassword(
+   async function validate_and_change_password(
       currentPasswordInput,
       newPasswordInput
    ) {
@@ -241,7 +248,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
       axios
          .put("api/v1/users/set-password", submission)
          .then((res) => {
-            updateMessageAndReturn("Password changed.");
+            update_message_and_return("Password changed.");
 
             // updateState(data); // the data received from server has the same keywords as state variables
          })
@@ -249,13 +256,13 @@ function AccountSettings({ currentUser, history, dispatch }) {
             const data = err.response.data;
 
             // push errors or lack thereof to state
-            set_newPasswordError(data.newPasswordError);
-            set_currentPasswordError(data.currentPasswordError);
+            set_new_password_error(data.new_password_error);
+            set_current_password_error(data.current_password_error);
          });
    }
 
    // tests if the password is valid and if so deletes the account
-   async function validateAndDeleteAccount(currentPasswordInput) {
+   async function validate_and_delete_account(currentPasswordInput) {
       // create the object that will be the body that is sent
       const submission = {
          currentPassword: currentPasswordInput, // send the plain text password over secure connection, the server will hash it
@@ -265,29 +272,42 @@ function AccountSettings({ currentUser, history, dispatch }) {
       axios
          .put("api/v1/users/delete", submission)
          .then((res) => {
-            clearMessageAndErrors();
-            set_messageFromServer("This account has been deleted");
+            clear_message_and_errors();
+            set_message_from_server("This account has been deleted");
             set_mode("account-settings-menu");
-            logOutCurrentUser();
+            log_out_current_user();
             history.push("/");
          })
          .catch((err) => {
             const data = err.response.data;
 
             // push errors or lack thereof to state
-            set_currentPasswordError(data.currentPasswordError);
+            set_current_password_error(data.current_password_error);
          });
    }
 
+   // abstract duplicated jsx
+   function InputCurrentPassword() {
+      return (
+         <Input
+            name="password"
+            label="Password"
+            type="password"
+            placeholder="Enter your password"
+            error_message={current_password_error}
+         />
+      );
+   }
+
    // renders the account settings menu buttons
-   function renderAccountSettingsMenu() {
+   function AccountSettingsMenu() {
       return (
          <>
             <button
                type="button"
                className="btn btn-primary btn-block"
                onClick={() => {
-                  enterSubMenu("change-password");
+                  enter_sub_menu("change-password");
                }}
             >
                Change Password...
@@ -296,7 +316,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                type="button"
                className="btn btn-secondary btn-block"
                onClick={() => {
-                  enterSubMenu("change-user-name");
+                  enter_sub_menu("change-user-name");
                }}
             >
                Change User Name...
@@ -305,7 +325,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                type="button"
                className="btn btn-secondary btn-block"
                onClick={() => {
-                  enterSubMenu("change-email");
+                  enter_sub_menu("change-email");
                }}
             >
                Change Email...
@@ -314,7 +334,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                type="button"
                className="btn btn-secondary btn-block"
                onClick={() => {
-                  enterSubMenu("change-team-name");
+                  enter_sub_menu("change-team-name");
                }}
             >
                Change Team Name...
@@ -323,7 +343,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                type="button"
                className="btn btn-secondary btn-block"
                onClick={() => {
-                  enterSubMenu("change-initials");
+                  enter_sub_menu("change-initials");
                }}
             >
                Change Initials...
@@ -332,7 +352,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                type="button"
                className="btn btn-secondary text-danger btn-block"
                onClick={() => {
-                  enterSubMenu("delete-account");
+                  enter_sub_menu("delete-account");
                }}
             >
                Delete Account...
@@ -341,7 +361,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                type="button"
                className="btn btn-secondary mt-2"
                onClick={() => {
-                  logOutCurrentUser();
+                  log_out_current_user();
                   history.push("/");
                }}
             >
@@ -351,43 +371,24 @@ function AccountSettings({ currentUser, history, dispatch }) {
       );
    }
 
-   function renderChangeUserName() {
+   function ChangeUserName() {
       return (
          <>
             <h5>Change User Name</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="new-user-name-input">New User Name</label>
-                  <input
-                     type="text"
-                     className="form-control"
-                     id="new-user-name-input"
-                     placeholder={currentUser.user_name}
-                     maxLength={MAX_USER_NAME_LENGTH}
-                  />
-                  {newUserNameError && (
-                     <div className="text-danger">{newUserNameError}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="password-input"
-                     placeholder="Enter your password"
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger" id="password-error">
-                        {currentPasswordError}
-                     </div>
-                  )}
-               </div>
+               <Input
+                  name="new-user-name"
+                  label="New User Name"
+                  placeholder={current_user.user_name}
+                  max_length={MAX_USER_NAME_LENGTH}
+                  error_message={new_user_name_error}
+               />
+               <InputCurrentPassword />
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
-                     validateAndChangeUserName(
+                     validate_and_change_user_name(
                         document.getElementById("new-user-name-input").value,
                         document.getElementById("password-input").value
                      )
@@ -398,7 +399,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     cancelSubMenu();
+                     cancel_sub_menu();
                   }}
                >
                   Cancel
@@ -408,38 +409,19 @@ function AccountSettings({ currentUser, history, dispatch }) {
       );
    }
 
-   function render_change_email() {
+   function ChangeEmail() {
       return (
          <>
             <h5>Change Email Address</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="new-email-input">New Email Address</label>
-                  <input
-                     type="text"
-                     className="form-control"
-                     id="new-email-input"
-                     placeholder={currentUser.email}
-                     maxLength={MAX_EMAIL_LENGTH}
-                  />
-                  {new_email_error && (
-                     <div className="text-danger">{new_email_error}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="password-input"
-                     placeholder="Enter your password"
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger" id="password-error">
-                        {currentPasswordError}
-                     </div>
-                  )}
-               </div>
+               <Input
+                  name="new-email"
+                  label="New Email Address"
+                  placeholder={current_user.email}
+                  error_message={new_email_error}
+                  max_length={MAX_EMAIL_LENGTH}
+               />
+               <InputCurrentPassword />
                <div
                   className="btn btn-primary btn-block"
                   onClick={() =>
@@ -454,7 +436,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     cancelSubMenu();
+                     cancel_sub_menu();
                   }}
                >
                   Cancel
@@ -464,44 +446,25 @@ function AccountSettings({ currentUser, history, dispatch }) {
       );
    }
 
-   function renderChangeInitials() {
+   function ChangeInitials() {
       return (
          <>
             <h5>Change Initials</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="new-initials-input">New Initials</label>
-                  <input
-                     type="text"
-                     className="form-control"
-                     id="new-initials-input"
-                     placeholder={currentUser.initials}
-                     maxLength={MAX_USER_INITIALS_LENGTH}
-                     style={{ textTransform: "uppercase" }}
-                  />
-                  {newInitialsError && (
-                     <div className="text-danger">{newInitialsError}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="password-input"
-                     placeholder="Enter your password"
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger" id="password-error">
-                        {currentPasswordError}
-                     </div>
-                  )}
-               </div>
+               <Input
+                  name="new-initials"
+                  label="New Initials"
+                  placeholder={current_user.initials}
+                  max_length={MAX_USER_INITIALS_LENGTH}
+                  style={{ textTransform: "uppercase" }}
+                  error_message={new_initials_error}
+               />
+               <InputCurrentPassword />
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
-                     validateAndChangeInitials(
+                     validate_and_change_initials(
                         document
                            .getElementById("new-initials-input")
                            .value.toUpperCase(),
@@ -514,7 +477,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     cancelSubMenu();
+                     cancel_sub_menu();
                   }}
                >
                   Cancel
@@ -524,44 +487,25 @@ function AccountSettings({ currentUser, history, dispatch }) {
       );
    }
 
-   function renderChangeTeamName() {
+   function ChangeTeamName() {
       // TODO: do not allow a team name that is already in use
       return (
          <>
             <h5>Change Team Name</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="new-team-name-input">New Team Name</label>
-                  <input
-                     type="text"
-                     className="form-control"
-                     id="new-team-name-input"
-                     placeholder={currentUser.team_name}
-                     maxLength={MAX_TEAM_NAME_LENGTH}
-                  />
-                  {newTeamNameError && (
-                     <div className="text-danger">{newTeamNameError}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="password-input"
-                     placeholder="Enter your password"
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger" id="password-error">
-                        {currentPasswordError}
-                     </div>
-                  )}
-               </div>
+               <Input
+                  name="new-team-name"
+                  label="New Team Name"
+                  placeholder={current_user.team_name}
+                  max_length={MAX_TEAM_NAME_LENGTH}
+                  error_message={new_team_name_error}
+               />
+               <InputCurrentPassword />
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
-                     validateAndChangeTeamName(
+                     validate_and_change_team_name(
                         document.getElementById("new-team-name-input").value,
                         document.getElementById("password-input").value
                      )
@@ -572,7 +516,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     cancelSubMenu();
+                     cancel_sub_menu();
                   }}
                >
                   Cancel
@@ -582,42 +526,30 @@ function AccountSettings({ currentUser, history, dispatch }) {
       );
    }
 
-   function renderChangePassword() {
+   function ChangePassword() {
       return (
          <>
             <h5>Change Password</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="current-password-input">
-                     Current Password
-                  </label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="current-password-input"
-                     placeholder="Enter your existing password."
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger">{currentPasswordError}</div>
-                  )}
-               </div>
-               <div className="form-group">
-                  <label htmlFor="new-password-input">New Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="new-password-input"
-                     placeholder="Enter a new password"
-                  />
-                  {newPasswordError && (
-                     <div className="text-danger">{newPasswordError}</div>
-                  )}
-               </div>
+               <Input
+                  name="current-password"
+                  label="Current Password"
+                  type="password"
+                  placeholder="Enter your existing password."
+                  error_message={current_password_error}
+               />
+               <Input
+                  name="new-password"
+                  label="New Password"
+                  type="password"
+                  placeholder="Enter a new password"
+                  error_message={new_password_error}
+               />
                <div
                   // type="submit"
                   className="btn btn-primary btn-block"
                   onClick={() =>
-                     validateAndChangePassword(
+                     validate_and_change_password(
                         document.getElementById("current-password-input").value,
                         document.getElementById("new-password-input").value
                      )
@@ -628,7 +560,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     cancelSubMenu();
+                     cancel_sub_menu();
                   }}
                >
                   Cancel
@@ -638,33 +570,22 @@ function AccountSettings({ currentUser, history, dispatch }) {
       );
    }
 
-   function renderDeleteAccount() {
+   function DeleteAccount() {
       return (
          <>
             <h5>Delete Account</h5>
             <form>
-               <div className="form-group">
-                  <label htmlFor="current-password-input">Password</label>
-                  <input
-                     type="password"
-                     className="form-control"
-                     id="current-password-input"
-                     placeholder="Enter your password."
-                  />
-                  {currentPasswordError && (
-                     <div className="text-danger">{currentPasswordError}</div>
-                  )}
-               </div>
+               <InputCurrentPassword />
                <p>
                   Are you sure you want to delete account&nbsp;"
-                  {currentUser.user_name}"?
+                  {current_user.user_name}"?
                </p>
                <div
                   // type="submit"
                   className="btn btn-danger btn-block"
                   onClick={() =>
-                     validateAndDeleteAccount(
-                        document.getElementById("current-password-input").value
+                     validate_and_delete_account(
+                        document.getElementById("password-input").value
                      )
                   }
                >
@@ -673,7 +594,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
                <div
                   className="btn btn-secondary mt-3"
                   onClick={() => {
-                     cancelSubMenu();
+                     cancel_sub_menu();
                   }}
                >
                   Cancel
@@ -692,20 +613,19 @@ function AccountSettings({ currentUser, history, dispatch }) {
                   <h2>
                      Account Settings
                      {/* &nbsp;for&nbsp;
-                           {currentUser.user_name} */}
+                           {current_user.user_name} */}
                   </h2>
                </div>
                <div className="card-body">
-                  {messageFromServer && <p>{messageFromServer}</p>}
+                  {message_from_server && <p>{message_from_server}</p>}
                   {/* render component based on what mode we are in */}
-                  {mode === "account-settings-menu" &&
-                     renderAccountSettingsMenu()}
-                  {mode === "change-user-name" && renderChangeUserName()}
-                  {mode === "change-email" && render_change_email()}
-                  {mode === "change-team-name" && renderChangeTeamName()}
-                  {mode === "change-initials" && renderChangeInitials()}
-                  {mode === "change-password" && renderChangePassword()}
-                  {mode === "delete-account" && renderDeleteAccount()}
+                  {mode === "account-settings-menu" && <AccountSettingsMenu />}
+                  {mode === "change-user-name" && <ChangeUserName />}
+                  {mode === "change-email" && <ChangeEmail />}
+                  {mode === "change-team-name" && <ChangeTeamName />}
+                  {mode === "change-initials" && <ChangeInitials />}
+                  {mode === "change-password" && <ChangePassword />}
+                  {mode === "delete-account" && <DeleteAccount />}
                </div>
             </div>
          </div>
@@ -715,7 +635,7 @@ function AccountSettings({ currentUser, history, dispatch }) {
 
 // maps the Redux store/state to props
 function mapStateToProps(state) {
-   return { currentUser: state.currentUser };
+   return { current_user: state.current_user };
 }
 
 export default connect(mapStateToProps)(AccountSettings);

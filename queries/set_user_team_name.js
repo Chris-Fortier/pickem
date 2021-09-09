@@ -1,6 +1,6 @@
 // this updates the team name of a user in the database
 
-const setUserTeamName = `
+const set_user_team_name = `
    UPDATE pickem_app.users 
    SET 
       team_name = ?
@@ -8,4 +8,4 @@ const setUserTeamName = `
       id = ?;
 `;
 
-module.exports = setUserTeamName;
+module.exports = set_user_team_name;

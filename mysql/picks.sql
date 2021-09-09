@@ -38,7 +38,7 @@ SELECT * FROM `picks` ORDER BY `last_change_at` DESC;
 SELECT * FROM `picks` WHERE `last_change_at` > (UNIX_TIMESTAMP() * 1000 - 3600000 * 1) ORDER BY `last_change_at` DESC;
 
 -- upsert a pick (update or create)
--- upsertPick
+-- upsert_pick
 INSERT INTO `pickem_app`.`picks` 
 SET 
     `user_id` = '84cbd806-1a5d-4b2c-beed-3b7b7ca686bc',
@@ -67,7 +67,7 @@ WHERE
 ORDER BY
 	`game_at` ASC;
         
--- selectGroupPicksForWeek
+-- select_group_picks_for_week
 -- get all picks for the week for the entire group
 -- user picks are shown but for games that haven't started yet it only shows if picks have been made (null means no pick, 0 means visitor, 1 means home, 2 means pick made but other user and game hasn't started yet) 
 SELECT 
@@ -98,7 +98,7 @@ WHERE
         AND `week` LIKE '1'
 ORDER BY `game_at` ASC;
 
--- selectStandings
+-- select_standings
 -- new version with week or wildcard week for entire season
 SELECT 
 	`team_name`,

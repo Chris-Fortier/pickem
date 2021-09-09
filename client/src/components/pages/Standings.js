@@ -6,7 +6,7 @@ import { get_week_or_season_text } from "../../utils/helpers";
 import Medal2020 from "../svg/Medal2020";
 import uuid from "uuid";
 
-function Standings({ groupSeasonWeek, standings, currentUser }) {
+function Standings({ group_season_week, standings, current_user }) {
    return (
       <>
          <NavBar />
@@ -14,18 +14,18 @@ function Standings({ groupSeasonWeek, standings, currentUser }) {
             <div className="my-card">
                <div className="card-header">
                   <h2>
-                     {groupSeasonWeek.season}
+                     {group_season_week.season}
                      &nbsp;
                      {get_week_or_season_text(
-                        groupSeasonWeek.week,
-                        groupSeasonWeek.season
+                        group_season_week.week,
+                        group_season_week.season
                      )}
                      <br />
                      Standings
                   </h2>
-                  {groupSeasonWeek.week !== "%" && (
+                  {group_season_week.week !== "%" && (
                      <p>
-                        These are standings for week {groupSeasonWeek.week}{" "}
+                        These are standings for week {group_season_week.week}{" "}
                         only. To see the standings for the entire season, choose
                         "Entire Season" in the week selector.
                      </p>
@@ -50,7 +50,8 @@ function Standings({ groupSeasonWeek, standings, currentUser }) {
                                  className={classnames({
                                     "new-standings-rank": user.is_new_rank,
                                     "this-user-standings":
-                                       user.team_name === currentUser.team_name,
+                                       user.team_name ===
+                                       current_user.team_name,
                                  })}
                               >
                                  <td>{user.rank}</td>
@@ -96,9 +97,9 @@ function Standings({ groupSeasonWeek, standings, currentUser }) {
 // maps the Redux store/state to props
 function mapStateToProps(state) {
    return {
-      groupSeasonWeek: state.groupSeasonWeek,
+      group_season_week: state.group_season_week,
       standings: state.standings,
-      currentUser: state.currentUser,
+      current_user: state.current_user,
    };
 }
 

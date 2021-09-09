@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
-const selectUserByUserName = require("../queries/selectUserByUserName");
-const selectUserIdByUserName = require("../queries/selectUserIdByUserName");
+const select_user_by_user_name = require("../queries/select_user_by_user_name");
+const select_user_id_by_user_name = require("../queries/select_user_id_by_user_name");
 
 // this file is for short functions we will use throughout the app on the server side
 
@@ -32,7 +32,7 @@ module.exports = {
    checkIfUserNameExists(user_name) {
       console.log("checkIfUserNameExists()...", user_name);
       return db
-         .query(selectUserByUserName, user_name)
+         .query(select_user_by_user_name, user_name)
          .then((users) => {
             if (users.length === 0) {
                return false;
@@ -50,7 +50,7 @@ module.exports = {
    getUserIdByUserName(user_name) {
       console.log("getUserIdByUserName()...", { user_name });
       return db
-         .query(selectUserIdByUserName, user_name)
+         .query(select_user_id_by_user_name, user_name)
          .then((users) => {
             if (users.length === 0) {
                return "";
@@ -64,7 +64,8 @@ module.exports = {
    },
 
    // server side constants
-   EMAIL_REGEX: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+   EMAIL_REGEX:
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
    PHONE_REGEX: /^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/, // https://regexlib.com Laurence O'Donnell
    TOKEN_EXPIRE_TIME: "3h",
 };

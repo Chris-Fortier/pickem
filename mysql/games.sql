@@ -58,7 +58,7 @@ ORDER BY `game_at` ASC;
 -- UPDATE `pickem_app`.`games` SET `winner` = '1' WHERE (`away_score` < `home_score`) and `winner` is null;
 -- UPDATE `pickem_app`.`games` SET `winner` = '2' WHERE (`away_score` = `home_score`) and `winner` is null;
 
--- selectGame
+-- select_game
 -- get the details of a single game form the game id
 SELECT * from `games` where `id` = '0781b6ed-e97f-11ea-b134-06a4a2a4eb91';
 

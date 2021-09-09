@@ -1,5 +1,5 @@
 // this runs a query on the database to get a user from an user_name
-const selectUserByUserName = `
+const select_user_by_user_name = `
    SELECT 
       *
    FROM
@@ -9,4 +9,4 @@ const selectUserByUserName = `
    LIMIT 1;
    `;
 
-module.exports = selectUserByUserName;
+module.exports = select_user_by_user_name;
