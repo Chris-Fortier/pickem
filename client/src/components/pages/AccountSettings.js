@@ -21,7 +21,7 @@ function AccountSettings({ current_user, history, dispatch }) {
    const [new_user_name_error, set_new_user_name_error] = useState("");
    const [new_email_error, set_new_email_error] = useState("");
    const [new_team_name_error, set_new_team_name_error] = useState("");
-   const [new_initials_error, set_newInitialsError] = useState("");
+   const [new_initials_error, set_new_initials_error] = useState("");
    const [new_password_error, set_new_password_error] = useState("");
 
    useEffect(() => {
@@ -40,7 +40,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
    }
 
@@ -51,7 +51,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
    };
 
@@ -62,7 +62,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
    };
 
@@ -73,7 +73,7 @@ function AccountSettings({ current_user, history, dispatch }) {
       set_new_user_name_error("");
       set_new_email_error("");
       set_new_team_name_error("");
-      set_newInitialsError("");
+      set_new_initials_error("");
       set_new_password_error("");
    };
 
@@ -188,7 +188,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             console.log("err", data);
 
             // push errors or lack thereof to state
-            set_newInitialsError(data.new_initials_error);
+            set_new_initials_error(data.new_initials_error);
             set_current_password_error(data.current_password_error);
          });
    }
