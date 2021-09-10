@@ -131,12 +131,14 @@ function Landing({ dispatch, history }) {
             <div className="card-body">
                <form>
                   <Input
+                     double
                      name="user-name"
                      label="User Name"
                      placeholder="Enter your user name."
                      error_message={current_user_name_error}
                   />
                   <Input
+                     double
                      name="password"
                      label="Password"
                      type="password"
@@ -162,6 +164,7 @@ function Landing({ dispatch, history }) {
                         set_mode("sign-up");
                         window.scrollTo(0, 0); // sets focus to the top of the page
                      }}
+                     style={{ marginBottom: 0 }} // inline buttons have margins below them that need to be removed if they are the last one in its container
                   />
                </form>
             </div>
@@ -179,6 +182,7 @@ function Landing({ dispatch, history }) {
             <div className="card-body">
                <form>
                   <Input
+                     double
                      name="user-name"
                      label="User Name"
                      placeholder="Name for logging in"
@@ -186,6 +190,7 @@ function Landing({ dispatch, history }) {
                      error_message={new_user_name_error}
                   />
                   <Input
+                     double
                      name="email"
                      label="Email Address (optional)"
                      placeholder="Enter your email"
@@ -193,6 +198,7 @@ function Landing({ dispatch, history }) {
                      error_message={new_email_error}
                   />
                   <Input
+                     double
                      name="team-name"
                      label="Team Name"
                      placeholder="Public team name"
@@ -200,6 +206,7 @@ function Landing({ dispatch, history }) {
                      error_message={new_team_name_error}
                   />
                   <Input
+                     double
                      name="initials"
                      label="Initials"
                      max_length={MAX_USER_INITIALS_LENGTH}
@@ -207,6 +214,7 @@ function Landing({ dispatch, history }) {
                      style={{ textTransform: "uppercase" }}
                   />
                   <Input
+                     double
                      name="password"
                      label="Password"
                      type="password"
@@ -238,6 +246,7 @@ function Landing({ dispatch, history }) {
                         set_mode("log-in");
                         window.scrollTo(0, 0); // sets focus to the top of the page
                      }}
+                     style={{ marginBottom: 0 }} // inline buttons have margins below them that need to be removed if they are the last one in its container
                   />
                </form>
             </div>

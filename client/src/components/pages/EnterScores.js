@@ -44,7 +44,7 @@ function EnterScores({ group_season_week }) {
    return (
       <>
          <NavBar />
-         <div className="my-container">
+         <div className="my-container" style={{ maxWidth: "630px" }}>
             <div className="my-card">
                <div className="card-header">
                   <h2>
@@ -70,6 +70,7 @@ function EnterScores({ group_season_week }) {
                               default_value={game.away_score}
                               min="0"
                               max="200"
+                              label_style={{ width: "30px" }}
                            />
                            at{" "}
                            <Input
@@ -80,6 +81,7 @@ function EnterScores({ group_season_week }) {
                               default_value={game.home_score}
                               min="0"
                               max="200"
+                              label_style={{ width: "30px" }}
                            />
                            <Button
                               label="Update"

@@ -309,6 +309,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             action={() => {
                cancel_sub_menu();
             }}
+            style={{ marginBottom: 0 }} // inline buttons have margins below them that need to be removed if they are the last one in its container
          />
       );
    }
@@ -373,6 +374,7 @@ function AccountSettings({ current_user, history, dispatch }) {
                   log_out_current_user();
                   history.push("/");
                }}
+               style={{ marginBottom: 0 }} // inline buttons have margins below them that need to be removed if they are the last one in its container
             />
          </>
       );
@@ -573,7 +575,11 @@ function AccountSettings({ current_user, history, dispatch }) {
    return (
       <>
          <NavBar />
-         {/* <div style={{ background: "gray" }}>
+         {/* input and button testing */}
+         {/* <div
+            className="my-card"
+            style={{ background: "gray", padding: "1rem" }}
+         >
             <Input label="inline" inline />
             <Input label="inline" inline />
             <Input label="block" block />
@@ -581,6 +587,25 @@ function AccountSettings({ current_user, history, dispatch }) {
             <Input label="inline" inline />
             <Input label="inline" inline />
             <Input label="double" double />
+            <Input label="inline" inline error_message="error message" />
+            <Input label="inline" inline error_message="error message" />
+            <Input label="block" block error_message="error message" />
+            <Input label="block" block error_message="error message" />
+            <Input label="inline" inline error_message="error message" />
+            <Input label="inline" inline error_message="error message" />
+            <Input label="double" double error_message="error message" />
+            <Input label="double" double />
+            <Button label="inline primary" primary />
+            <Button label="inline secondary" secondary />
+            <Button label="inline warning" warning secondary />
+            <Button label="inline danger" danger />
+            <Button label="block primary" block primary />
+            <Button label="block secondary" block secondary />
+            <Button label="block warning" block warning secondary />
+            <Button label="block danger" block danger />
+            <div>
+               <Button label="inline danger" danger />
+            </div>
          </div> */}
          <div className="my-container">
             <div className="my-card">
