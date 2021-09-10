@@ -47,6 +47,7 @@ export default function Input({
          <input
             type={type}
             // className="form-control"
+            className="iphone-fix"
             id={`${name}-input`}
             placeholder={placeholder}
             maxLength={max_length}
