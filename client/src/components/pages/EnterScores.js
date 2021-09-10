@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../ui/NavBar";
 import Button from "../ui/Button";
+import Input from "../ui/Input";
 import { connect } from "react-redux";
 import { get_week_or_season_text } from "../../utils/helpers";
 import axios from "axios";
@@ -60,20 +61,23 @@ function EnterScores({ group_season_week }) {
                   <p>{message_from_server}</p>
                   {games.map((game, game_index) => {
                      return (
-                        <p key={uuid.v4()}>
-                           {game.away_team}{" "}
-                           <input
+                        <div key={uuid.v4()}>
+                           <Input
+                              inline
+                              label={game.away_team}
                               type="number"
-                              id={`${game.id}-away_score`}
-                              defaultValue={game.away_score}
+                              name={`${game.id}-away_score`}
+                              default_value={game.away_score}
                               min="0"
                               max="200"
-                           />{" "}
-                           at {game.home_team}{" "}
-                           <input
+                           />
+                           at{" "}
+                           <Input
+                              inline
+                              label={game.home_team}
                               type="number"
-                              id={`${game.id}-home_score`}
-                              defaultValue={game.home_score}
+                              name={`${game.id}-home_score`}
+                              default_value={game.home_score}
                               min="0"
                               max="200"
                            />
@@ -88,11 +92,11 @@ function EnterScores({ group_season_week }) {
                                           game.id
                                        }&away_score=${
                                           document.getElementById(
-                                             `${game.id}-away_score`
+                                             `${game.id}-away_score-input`
                                           ).value
                                        }&home_score=${
                                           document.getElementById(
-                                             `${game.id}-home_score`
+                                             `${game.id}-home_score-input`
                                           ).value
                                        }`
                                     )
@@ -112,7 +116,7 @@ function EnterScores({ group_season_week }) {
                               }}
                            />{" "}
                            {game.note}
-                        </p>
+                        </div>
                      );
                   })}
                </div>

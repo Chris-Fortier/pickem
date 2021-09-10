@@ -291,6 +291,7 @@ function AccountSettings({ current_user, history, dispatch }) {
    function InputCurrentPassword() {
       return (
          <Input
+            double
             name="password"
             label="Password"
             type="password"
@@ -383,6 +384,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change User Name</h5>
             <form>
                <Input
+                  double
                   name="new-user-name"
                   label="New User Name"
                   placeholder={current_user.user_name}
@@ -413,6 +415,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change Email Address</h5>
             <form>
                <Input
+                  double
                   name="new-email"
                   label="New Email Address"
                   placeholder={current_user.email}
@@ -443,6 +446,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change Initials</h5>
             <form>
                <Input
+                  double
                   name="new-initials"
                   label="New Initials"
                   placeholder={current_user.initials}
@@ -477,6 +481,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change Team Name</h5>
             <form>
                <Input
+                  double
                   name="new-team-name"
                   label="New Team Name"
                   placeholder={current_user.team_name}
@@ -507,6 +512,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change Password</h5>
             <form>
                <Input
+                  double
                   name="current-password"
                   label="Current Password"
                   type="password"
@@ -514,6 +520,7 @@ function AccountSettings({ current_user, history, dispatch }) {
                   error_message={current_password_error}
                />
                <Input
+                  double
                   name="new-password"
                   label="New Password"
                   type="password"
@@ -566,6 +573,15 @@ function AccountSettings({ current_user, history, dispatch }) {
    return (
       <>
          <NavBar />
+         {/* <div style={{ background: "gray" }}>
+            <Input label="inline" inline />
+            <Input label="inline" inline />
+            <Input label="block" block />
+            <Input label="block" block />
+            <Input label="inline" inline />
+            <Input label="inline" inline />
+            <Input label="double" double />
+         </div> */}
          <div className="my-container">
             <div className="my-card">
                <div className="card-header">
