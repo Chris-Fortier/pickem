@@ -40,7 +40,7 @@ export default function Button({
                // "mt-3 mr-2": !block,
             })}
             onClick={action}
-            style={style}
+            style={{ WebkitAppearance: "none" }} // fixes button appearance on iPhone?
          >
             {label}
          </div>

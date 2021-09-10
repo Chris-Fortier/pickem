@@ -21,6 +21,7 @@
 1. Update master with the version you want to deploy either directly or my merging a pull request.
 2. Make sure you are on master and have pulled the latest.
 3. Run `git push heroku master` to push latest git commit to Heroku.
+   1. Or if you would like to deploy a different branch to heroku, use `git push heroku other-branch:master`. Keep in mind after doing this if you want to push master again you might need to force it using `git push heroku master --force`.
 4. `heroku open` to open the [heroku page](https://hawknation.herokuapp.com) in a browser.
 
 ## Development Checklists
