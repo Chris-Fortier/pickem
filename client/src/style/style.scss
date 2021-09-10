@@ -370,3 +370,7 @@ table {
 .nav-tab-current:hover {
    background: $navy;
 }
+
+.iphone-fix {
+   -webkit-appearance: none; // fixes button appearance on iPhone?
+}

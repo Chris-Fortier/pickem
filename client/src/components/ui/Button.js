@@ -31,7 +31,7 @@ export default function Button({
       >
          <div
             type={type}
-            className={classnames(`btn ${className}`, {
+            className={classnames(`btn iphone-fix ${className}`, {
                "btn-block": block,
                "btn-primary": primary,
                "btn-secondary": secondary,
@@ -40,7 +40,6 @@ export default function Button({
                // "mt-3 mr-2": !block,
             })}
             onClick={action}
-            style={{ WebkitAppearance: "none" }} // fixes button appearance on iPhone?
          >
             {label}
          </div>
