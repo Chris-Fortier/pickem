@@ -371,6 +371,9 @@ table {
    background: $navy;
 }
 
+// fixes button appearance on iPhone?
 .iphone-fix {
-   -webkit-appearance: none; // fixes button appearance on iPhone?
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;
 }
