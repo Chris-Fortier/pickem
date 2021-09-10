@@ -14,6 +14,7 @@ import MyPicks from "./components/pages/MyPicks";
 import GroupPicks from "./components/pages/GroupPicks";
 import Standings from "./components/pages/Standings";
 import NotFound from "./components/pages/NotFound";
+import EnterScores from "./components/pages/EnterScores";
 
 const authToken = localStorage.authToken; // get the auth token from local storage
 if (authToken) {
@@ -67,6 +68,7 @@ function App() {
             <Route exact path="/my-picks" component={MyPicks} />
             <Route exact path="/group-picks" component={GroupPicks} />
             <Route exact path="/standings" component={Standings} />
+            <Route exact path="/enter-scores" component={EnterScores} />
             <Route component={NotFound} />
          </Switch>
       </Router>

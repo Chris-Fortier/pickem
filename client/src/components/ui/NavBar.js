@@ -342,6 +342,12 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                      "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments.",
                });
             });
+      } else if (window.location.pathname === "/enter-scores") {
+         // clear the server message
+         // the data for enter-scores is handled on its own page
+         dispatch({
+            type: actions.CLEAR_MESSAGE,
+         });
       }
    }
 
@@ -460,6 +466,11 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                         <Link to="/standings" className="dropdown-item">
                            Standings
                         </Link>
+                        {current_user.is_admin === 1 && (
+                           <Link className="dropdown-item" to="/enter-scores">
+                              Enter Scores
+                           </Link>
+                        )}
                      </NavDropdown>
                   </Nav>
                )}
@@ -589,6 +600,19 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
             >
                Standings
             </Link>
+            {/* TODO: only show this if they are an admin */}
+            {current_user.is_admin === 1 && (
+               <Link
+                  to="/enter-scores"
+                  className={`nav-tab ${
+                     window.location.pathname === "/enter-scores" &&
+                     "nav-tab-current"
+                  }`}
+               >
+                  Enter Scores
+               </Link>
+            )}
+
             {/* <Link
                to="/account-settings"
                className={`nav-tab ${
