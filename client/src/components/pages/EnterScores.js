@@ -5,7 +5,7 @@ import { get_week_or_season_text } from "../../utils/helpers";
 import axios from "axios";
 import uuid from "uuid";
 
-function Results({ group_season_week }) {
+function EnterScores({ group_season_week }) {
    const [games, set_games] = useState([]);
    const [message_from_server, set_message_from_server] = useState("");
 
@@ -46,7 +46,7 @@ function Results({ group_season_week }) {
             <div className="my-card">
                <div className="card-header">
                   <h2>
-                     Results For&nbsp;
+                     Enter Scores for&nbsp;
                      {group_season_week.season}
                      &nbsp;
                      {get_week_or_season_text(
@@ -128,4 +128,4 @@ function mapStateToProps(state) {
    };
 }
 
-export default connect(mapStateToProps)(Results);
+export default connect(mapStateToProps)(EnterScores);
