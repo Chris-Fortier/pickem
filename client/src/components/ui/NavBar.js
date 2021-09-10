@@ -466,9 +466,11 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                         <Link to="/standings" className="dropdown-item">
                            Standings
                         </Link>
-                        <Link className="dropdown-item" to="/enter-scores">
-                           Enter Scores
-                        </Link>
+                        {current_user.is_admin === 1 && (
+                           <Link className="dropdown-item" to="/enter-scores">
+                              Enter Scores
+                           </Link>
+                        )}
                      </NavDropdown>
                   </Nav>
                )}
@@ -599,15 +601,18 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                Standings
             </Link>
             {/* TODO: only show this if they are an admin */}
-            <Link
-               to="/enter-scores"
-               className={`nav-tab ${
-                  window.location.pathname === "/enter-scores" &&
-                  "nav-tab-current"
-               }`}
-            >
-               Enter Scores
-            </Link>
+            {current_user.is_admin === 1 && (
+               <Link
+                  to="/enter-scores"
+                  className={`nav-tab ${
+                     window.location.pathname === "/enter-scores" &&
+                     "nav-tab-current"
+                  }`}
+               >
+                  Enter Scores
+               </Link>
+            )}
+
             {/* <Link
                to="/account-settings"
                className={`nav-tab ${
