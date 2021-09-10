@@ -1,34 +1,44 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../ui/NavBar";
 import { connect } from "react-redux";
-// import classnames from "classnames";
 import { get_week_or_season_text } from "../../utils/helpers";
-// import toDisplayDate from "date-fns/format";
 import axios from "axios";
 import uuid from "uuid";
 
 function Results({ group_season_week }) {
    const [games, set_games] = useState([]);
+   const [message_from_server, set_message_from_server] = useState("");
+
    useEffect(() => {
       console.log("use effect");
+      set_message_from_server("Getting games from the server...");
       axios
-         // .get(
-         //    `/api/v1/picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
-         // )
          .get(
             `/api/v1/games?season=${group_season_week.season}&week=${group_season_week.week}`
          )
          .then((res) => {
             console.log("res", res);
-            set_games(res.data);
+            set_games(
+               // initialize each game with a blank note
+               res.data.map((game) => {
+                  return { ...game, note: "" };
+               })
+            );
+            set_message_from_server(
+               `Received ${res.data.length} games from the server.`
+            );
          })
          .catch((err) => {
             const data = err.response.data;
             console.log("err", data);
 
             // todo: post some message
+            set_message_from_server(
+               "There was a problem getting games from the server."
+            );
          });
    }, [group_season_week]);
+
    return (
       <>
          <NavBar />
@@ -46,7 +56,8 @@ function Results({ group_season_week }) {
                   </h2>
                </div>
                <div className="card-body">
-                  {games.map((game) => {
+                  <p>{message_from_server}</p>
+                  {games.map((game, game_index) => {
                      return (
                         <p key={uuid.v4()}>
                            {game.away_team}{" "}
@@ -69,9 +80,6 @@ function Results({ group_season_week }) {
                               onClick={() => {
                                  console.log("clicked");
                                  axios
-                                    // .get(
-                                    //    `/api/v1/picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
-                                    // )
                                     .patch(
                                        `/api/v1/games/update-score?game_id=${
                                           game.id
@@ -86,16 +94,23 @@ function Results({ group_season_week }) {
                                        }`
                                     )
                                     .then((res) => {
-                                       console.log("res", res);
+                                       // insert the response message into this game's note
+                                       const new_games = [...games];
+                                       new_games[game_index].note = res.data;
+                                       set_games(new_games);
                                     })
                                     .catch((err) => {
-                                       const data = err.response.data;
-                                       console.log("err", data);
+                                       // insert the response error into this game's note
+                                       const new_games = [...games];
+                                       new_games[game_index].note =
+                                          err.response.data;
+                                       set_games(new_games);
                                     });
                               }}
                            >
                               Update
-                           </button>
+                           </button>{" "}
+                           {game.note}
                         </p>
                      );
                   })}
