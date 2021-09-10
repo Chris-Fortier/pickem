@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../ui/NavBar";
+import Button from "../ui/Button";
 import { connect } from "react-redux";
 import { get_week_or_season_text } from "../../utils/helpers";
 import axios from "axios";
@@ -76,8 +77,10 @@ function EnterScores({ group_season_week }) {
                               min="0"
                               max="200"
                            />
-                           <button
-                              onClick={() => {
+                           <Button
+                              label="Update"
+                              secondary
+                              action={() => {
                                  console.log("clicked");
                                  axios
                                     .patch(
@@ -107,9 +110,7 @@ function EnterScores({ group_season_week }) {
                                        set_games(new_games);
                                     });
                               }}
-                           >
-                              Update
-                           </button>{" "}
+                           />{" "}
                            {game.note}
                         </p>
                      );

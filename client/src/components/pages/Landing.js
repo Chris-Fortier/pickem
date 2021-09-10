@@ -10,6 +10,7 @@ import {
    MAX_USER_INITIALS_LENGTH,
 } from "../../utils/helpers";
 import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 function Landing({ dispatch, history }) {
    const [mode, set_mode] = useState("log-in");
@@ -142,28 +143,26 @@ function Landing({ dispatch, history }) {
                      placeholder="Enter your password."
                      error_message={current_password_error}
                   />
-                  <div
-                     // type="submit"
-                     className="btn btn-primary btn-block"
-                     onClick={() =>
+                  <Button
+                     label="Log in"
+                     primary
+                     block
+                     action={() =>
                         validate_and_log_in_user(
                            document.getElementById("user-name-input").value,
                            document.getElementById("password-input").value
                         )
                      }
-                  >
-                     Log in
-                  </div>
-                  <div
-                     className="btn btn-secondary mt-3"
-                     onClick={() => {
+                  />
+                  <Button
+                     label="Make a new account..."
+                     secondary
+                     action={() => {
                         clear_errors();
                         set_mode("sign-up");
                         window.scrollTo(0, 0); // sets focus to the top of the page
                      }}
-                  >
-                     Make a new account
-                  </div>
+                  />
                </form>
             </div>
          </div>
@@ -215,10 +214,11 @@ function Landing({ dispatch, history }) {
                      max_length={50}
                      error_message={new_password_error}
                   />
-                  <div
-                     // type="submit"
-                     className="btn btn-primary btn-block"
-                     onClick={() => {
+                  <Button
+                     label="Sign up"
+                     primary
+                     block
+                     action={() => {
                         validate_and_create_user(
                            document.getElementById("user-name-input").value,
                            document.getElementById("email-input").value,
@@ -229,19 +229,16 @@ function Landing({ dispatch, history }) {
                            document.getElementById("password-input").value
                         );
                      }}
-                  >
-                     Sign up
-                  </div>
-                  <div
-                     className="btn btn-secondary mt-3"
-                     onClick={() => {
+                  />
+                  <Button
+                     label="Use an existing account..."
+                     secondary
+                     action={() => {
                         clear_errors();
                         set_mode("log-in");
                         window.scrollTo(0, 0); // sets focus to the top of the page
                      }}
-                  >
-                     Use an existing account
-                  </div>
+                  />
                </form>
             </div>
          </div>
