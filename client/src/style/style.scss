@@ -370,3 +370,10 @@ table {
 .nav-tab-current:hover {
    background: $navy;
 }
+
+// fixes button/input appearance on iPhone
+.iphone-fix {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;
+}

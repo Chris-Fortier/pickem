@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import axios from "axios";
 // import jwtDecode from "jwt-decode";
 import isEmpty from "lodash/isEmpty";
+import Button from "../ui/Button";
 import {
    MAX_USER_NAME_LENGTH,
    MAX_EMAIL_LENGTH,
@@ -290,6 +291,7 @@ function AccountSettings({ current_user, history, dispatch }) {
    function InputCurrentPassword() {
       return (
          <Input
+            double
             name="password"
             label="Password"
             type="password"
@@ -299,74 +301,81 @@ function AccountSettings({ current_user, history, dispatch }) {
       );
    }
 
+   function CancelButton() {
+      return (
+         <Button
+            label="Cancel"
+            secondary
+            action={() => {
+               cancel_sub_menu();
+            }}
+            style={{ marginBottom: 0 }} // inline buttons have margins below them that need to be removed if they are the last one in its container
+         />
+      );
+   }
+
    // renders the account settings menu buttons
    function render_account_settings_menu() {
       return (
          <>
-            <button
-               type="button"
-               className="btn btn-primary btn-block"
-               onClick={() => {
+            <Button
+               label="Change Password..."
+               primary
+               block
+               action={() => {
                   enter_sub_menu("change-password");
                }}
-            >
-               Change Password...
-            </button>
-            <button
-               type="button"
-               className="btn btn-secondary btn-block"
-               onClick={() => {
+            />
+            <Button
+               label="Change User Name..."
+               secondary
+               block
+               action={() => {
                   enter_sub_menu("change-user-name");
                }}
-            >
-               Change User Name...
-            </button>
-            <button
-               type="button"
-               className="btn btn-secondary btn-block"
-               onClick={() => {
+            />
+            <Button
+               label="Change Email..."
+               secondary
+               block
+               action={() => {
                   enter_sub_menu("change-email");
                }}
-            >
-               Change Email...
-            </button>
-            <button
-               type="button"
-               className="btn btn-secondary btn-block"
-               onClick={() => {
+            />
+            <Button
+               label="Change Team Name..."
+               secondary
+               block
+               action={() => {
                   enter_sub_menu("change-team-name");
                }}
-            >
-               Change Team Name...
-            </button>
-            <button
-               type="button"
-               className="btn btn-secondary btn-block"
-               onClick={() => {
+            />
+            <Button
+               label="Change Initials..."
+               secondary
+               block
+               action={() => {
                   enter_sub_menu("change-initials");
                }}
-            >
-               Change Initials...
-            </button>
-            <button
-               type="button"
-               className="btn btn-secondary text-danger btn-block"
-               onClick={() => {
+            />
+            <Button
+               label="Delete Account..."
+               secondary
+               warning
+               block
+               action={() => {
                   enter_sub_menu("delete-account");
                }}
-            >
-               Delete Account...
-            </button>
-            <button
-               type="button"
-               className="btn btn-secondary mt-2"
-               onClick={() => {
+            />
+            <Button
+               label="Log out"
+               secondary
+               action={() => {
                   log_out_current_user();
                   history.push("/");
                }}
-            >
-               Log out
-            </button>
+               style={{ marginBottom: 0 }} // inline buttons have margins below them that need to be removed if they are the last one in its container
+            />
          </>
       );
    }
@@ -377,6 +386,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change User Name</h5>
             <form>
                <Input
+                  double
                   name="new-user-name"
                   label="New User Name"
                   placeholder={current_user.user_name}
@@ -384,26 +394,18 @@ function AccountSettings({ current_user, history, dispatch }) {
                   error_message={new_user_name_error}
                />
                <InputCurrentPassword />
-               <div
-                  // type="submit"
-                  className="btn btn-primary btn-block"
-                  onClick={() =>
+               <Button
+                  label="Change User Name"
+                  primary
+                  block
+                  action={() =>
                      validate_and_change_user_name(
                         document.getElementById("new-user-name-input").value,
                         document.getElementById("password-input").value
                      )
                   }
-               >
-                  Change User Name
-               </div>
-               <div
-                  className="btn btn-secondary mt-3"
-                  onClick={() => {
-                     cancel_sub_menu();
-                  }}
-               >
-                  Cancel
-               </div>
+               />
+               <CancelButton />
             </form>
          </>
       );
@@ -415,6 +417,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change Email Address</h5>
             <form>
                <Input
+                  double
                   name="new-email"
                   label="New Email Address"
                   placeholder={current_user.email}
@@ -422,25 +425,18 @@ function AccountSettings({ current_user, history, dispatch }) {
                   max_length={MAX_EMAIL_LENGTH}
                />
                <InputCurrentPassword />
-               <div
-                  className="btn btn-primary btn-block"
-                  onClick={() =>
+               <Button
+                  label="Change Email"
+                  primary
+                  block
+                  action={() =>
                      validate_and_change_email(
                         document.getElementById("new-email-input").value,
                         document.getElementById("password-input").value
                      )
                   }
-               >
-                  Change Email
-               </div>
-               <div
-                  className="btn btn-secondary mt-3"
-                  onClick={() => {
-                     cancel_sub_menu();
-                  }}
-               >
-                  Cancel
-               </div>
+               />
+               <CancelButton />
             </form>
          </>
       );
@@ -452,6 +448,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change Initials</h5>
             <form>
                <Input
+                  double
                   name="new-initials"
                   label="New Initials"
                   placeholder={current_user.initials}
@@ -460,10 +457,11 @@ function AccountSettings({ current_user, history, dispatch }) {
                   error_message={new_initials_error}
                />
                <InputCurrentPassword />
-               <div
-                  // type="submit"
-                  className="btn btn-primary btn-block"
-                  onClick={() =>
+               <Button
+                  label="Change Initials"
+                  primary
+                  block
+                  action={() =>
                      validate_and_change_initials(
                         document
                            .getElementById("new-initials-input")
@@ -471,17 +469,8 @@ function AccountSettings({ current_user, history, dispatch }) {
                         document.getElementById("password-input").value
                      )
                   }
-               >
-                  Change Initials
-               </div>
-               <div
-                  className="btn btn-secondary mt-3"
-                  onClick={() => {
-                     cancel_sub_menu();
-                  }}
-               >
-                  Cancel
-               </div>
+               />
+               <CancelButton />
             </form>
          </>
       );
@@ -494,6 +483,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change Team Name</h5>
             <form>
                <Input
+                  double
                   name="new-team-name"
                   label="New Team Name"
                   placeholder={current_user.team_name}
@@ -501,26 +491,18 @@ function AccountSettings({ current_user, history, dispatch }) {
                   error_message={new_team_name_error}
                />
                <InputCurrentPassword />
-               <div
-                  // type="submit"
-                  className="btn btn-primary btn-block"
-                  onClick={() =>
+               <Button
+                  label="Change Team Name"
+                  primary
+                  block
+                  action={() =>
                      validate_and_change_team_name(
                         document.getElementById("new-team-name-input").value,
                         document.getElementById("password-input").value
                      )
                   }
-               >
-                  Change Team Name
-               </div>
-               <div
-                  className="btn btn-secondary mt-3"
-                  onClick={() => {
-                     cancel_sub_menu();
-                  }}
-               >
-                  Cancel
-               </div>
+               />
+               <CancelButton />
             </form>
          </>
       );
@@ -532,6 +514,7 @@ function AccountSettings({ current_user, history, dispatch }) {
             <h5>Change Password</h5>
             <form>
                <Input
+                  double
                   name="current-password"
                   label="Current Password"
                   type="password"
@@ -539,32 +522,25 @@ function AccountSettings({ current_user, history, dispatch }) {
                   error_message={current_password_error}
                />
                <Input
+                  double
                   name="new-password"
                   label="New Password"
                   type="password"
                   placeholder="Enter a new password"
                   error_message={new_password_error}
                />
-               <div
-                  // type="submit"
-                  className="btn btn-primary btn-block"
-                  onClick={() =>
+               <Button
+                  label="Change Password"
+                  primary
+                  block
+                  action={() =>
                      validate_and_change_password(
                         document.getElementById("current-password-input").value,
                         document.getElementById("new-password-input").value
                      )
                   }
-               >
-                  Change Password
-               </div>
-               <div
-                  className="btn btn-secondary mt-3"
-                  onClick={() => {
-                     cancel_sub_menu();
-                  }}
-               >
-                  Cancel
-               </div>
+               />
+               <CancelButton />
             </form>
          </>
       );
@@ -580,25 +556,17 @@ function AccountSettings({ current_user, history, dispatch }) {
                   Are you sure you want to delete account&nbsp;"
                   {current_user.user_name}"?
                </p>
-               <div
-                  // type="submit"
-                  className="btn btn-danger btn-block"
-                  onClick={() =>
+               <Button
+                  label="Delete Account"
+                  danger
+                  block
+                  action={() =>
                      validate_and_delete_account(
                         document.getElementById("password-input").value
                      )
                   }
-               >
-                  Delete Account
-               </div>
-               <div
-                  className="btn btn-secondary mt-3"
-                  onClick={() => {
-                     cancel_sub_menu();
-                  }}
-               >
-                  Cancel
-               </div>
+               />
+               <CancelButton />
             </form>
          </>
       );
@@ -607,6 +575,38 @@ function AccountSettings({ current_user, history, dispatch }) {
    return (
       <>
          <NavBar />
+         {/* input and button testing */}
+         {/* <div
+            className="my-card"
+            style={{ background: "gray", padding: "1rem" }}
+         >
+            <Input label="inline" inline />
+            <Input label="inline" inline />
+            <Input label="block" block />
+            <Input label="block" block />
+            <Input label="inline" inline />
+            <Input label="inline" inline />
+            <Input label="double" double />
+            <Input label="inline" inline error_message="error message" />
+            <Input label="inline" inline error_message="error message" />
+            <Input label="block" block error_message="error message" />
+            <Input label="block" block error_message="error message" />
+            <Input label="inline" inline error_message="error message" />
+            <Input label="inline" inline error_message="error message" />
+            <Input label="double" double error_message="error message" />
+            <Input label="double" double />
+            <Button label="inline primary" primary />
+            <Button label="inline secondary" secondary />
+            <Button label="inline warning" warning secondary />
+            <Button label="inline danger" danger />
+            <Button label="block primary" block primary />
+            <Button label="block secondary" block secondary />
+            <Button label="block warning" block warning secondary />
+            <Button label="block danger" block danger />
+            <div>
+               <Button label="inline danger" danger />
+            </div>
+         </div> */}
          <div className="my-container">
             <div className="my-card">
                <div className="card-header">
