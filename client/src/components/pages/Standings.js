@@ -39,7 +39,9 @@ function Standings({ group_season_week, standings, current_user }) {
                            <th>Rk</th>
                            <th>Team</th>
                            <th>Abbr</th>
-                           <th style={{ textAlign: "right" }}>CP</th>
+                           <th style={{ textAlign: "right" }}>
+                              {group_season_week.season <= 2020 ? "CP" : "Pts"}
+                           </th>
                            <th style={{ textAlign: "right" }}>PB</th>
                         </tr>
                         {standings.map((user) => {
@@ -77,7 +79,9 @@ function Standings({ group_season_week, standings, current_user }) {
                                  </td>
                                  <td>{initials}</td>
                                  <td style={{ textAlign: "right" }}>
-                                    {user.num_correct}
+                                    {group_season_week.season <= 2020
+                                       ? user.num_correct
+                                       : user.num_points}
                                  </td>
                                  <td style={{ textAlign: "right" }}>
                                     {user.num_behind}
@@ -87,6 +91,23 @@ function Standings({ group_season_week, standings, current_user }) {
                         })}
                      </tbody>
                   </table>
+               </div>
+               <div className="card-footer">
+                  {group_season_week.season <= 2020 ? (
+                     <p>CP = Correct Picks</p>
+                  ) : (
+                     <p>
+                        Pts = Points. As of the 2021 season, regular season
+                        correct picks are worth 1 point each, wild-card round 2
+                        points, divisional 4 points, conference championship 8
+                        points and the big game 16 points.
+                     </p>
+                  )}
+                  <p>
+                     PB = how many{" "}
+                     {group_season_week.season <= 2020 ? "picks" : "points"}{" "}
+                     this player is behind the leader.
+                  </p>
                </div>
             </div>
          </div>

@@ -5,6 +5,7 @@ CREATE TABLE `games`(
     `game_at` BIGINT SIGNED NOT NULL, -- time of the game
     `week` TINYINT UNSIGNED NOT NULL,
     `season` SMALLINT UNSIGNED NOT NULL DEFAULT 2020,
+    `value` TINYINT UNSIGNED NOT NULL DEFAULT 1,
     `away_team` CHAR(3) NOT NULL, -- jarjarbinks
     `home_team` CHAR(3) NOT NULL,
     `winner` TINYINT UNSIGNED, -- null = not set yet, 0 = away team, 1 = home team, 2 = tie
@@ -573,3 +574,7 @@ INSERT INTO `games` (
 )
 VALUES
 (21,1612744200000,'KC','TB');
+
+-- add value
+ALTER TABLE `games`
+ADD COLUMN `value` TINYINT UNSIGNED NOT NULL DEFAULT 1 AFTER `season`;
