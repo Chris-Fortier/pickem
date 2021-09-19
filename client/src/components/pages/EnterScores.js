@@ -41,6 +41,8 @@ function EnterScores({ group_season_week }) {
          });
    }, [group_season_week]);
 
+   const now = Date.now();
+
    return (
       <>
          <NavBar />
@@ -59,68 +61,85 @@ function EnterScores({ group_season_week }) {
                </div>
                <div className="card-body">
                   <p>{message_from_server}</p>
-                  {games.map((game, game_index) => {
-                     return (
-                        <div key={uuid.v4()}>
-                           <Input
-                              inline
-                              label={game.away_team}
-                              type="number"
-                              name={`${game.id}-away_score`}
-                              default_value={game.away_score}
-                              min="0"
-                              max="200"
-                              label_style={{ width: "30px" }}
-                           />
-                           at{" "}
-                           <Input
-                              inline
-                              label={game.home_team}
-                              type="number"
-                              name={`${game.id}-home_score`}
-                              default_value={game.home_score}
-                              min="0"
-                              max="200"
-                              label_style={{ width: "30px" }}
-                           />
-                           <Button
-                              label="Update"
-                              secondary
-                              action={() => {
-                                 console.log("clicked");
-                                 axios
-                                    .patch(
-                                       `/api/v1/games/update-score?game_id=${
-                                          game.id
-                                       }&away_score=${
-                                          document.getElementById(
-                                             `${game.id}-away_score-input`
-                                          ).value
-                                       }&home_score=${
-                                          document.getElementById(
-                                             `${game.id}-home_score-input`
-                                          ).value
-                                       }`
-                                    )
-                                    .then((res) => {
-                                       // insert the response message into this game's note
-                                       const new_games = [...games];
-                                       new_games[game_index].note = res.data;
-                                       set_games(new_games);
-                                    })
-                                    .catch((err) => {
-                                       // insert the response error into this game's note
-                                       const new_games = [...games];
-                                       new_games[game_index].note =
-                                          err.response.data;
-                                       set_games(new_games);
-                                    });
-                              }}
-                           />{" "}
-                           {game.note}
-                        </div>
-                     );
-                  })}
+                  {games
+                     // only show games with no entered scores that have taken place at least 2.5 hours earlier
+                     .filter((game) => {
+                        return (
+                           (game.away_score === null ||
+                              game.home_score === null) &&
+                           game.game_at + 3600000 < now
+                        );
+                     })
+                     .map((game, game_index) => {
+                        return (
+                           <div key={uuid.v4()}>
+                              <Input
+                                 inline
+                                 label={game.away_team}
+                                 type="number"
+                                 name={`${game.id}-away_score`}
+                                 default_value={game.away_score}
+                                 min="0"
+                                 max="200"
+                                 label_style={{ width: "30px" }}
+                              />
+                              at{" "}
+                              <Input
+                                 inline
+                                 label={game.home_team}
+                                 type="number"
+                                 name={`${game.id}-home_score`}
+                                 default_value={game.home_score}
+                                 min="0"
+                                 max="200"
+                                 label_style={{ width: "30px" }}
+                              />
+                              <Button
+                                 label="Update"
+                                 secondary
+                                 action={() => {
+                                    console.log("clicked");
+                                    axios
+                                       .patch(
+                                          `/api/v1/games/update-score?game_id=${
+                                             game.id
+                                          }&away_score=${
+                                             document.getElementById(
+                                                `${game.id}-away_score-input`
+                                             ).value
+                                          }&home_score=${
+                                             document.getElementById(
+                                                `${game.id}-home_score-input`
+                                             ).value
+                                          }`
+                                       )
+                                       .then((res) => {
+                                          // insert the response message into this game's note
+                                          const new_games = [...games];
+                                          new_games[game_index].note = res.data;
+                                          new_games[game_index].away_score =
+                                             document.getElementById(
+                                                `${game.id}-away_score-input`
+                                             ).value;
+                                          new_games[game_index].home_score =
+                                             document.getElementById(
+                                                `${game.id}-home_score-input`
+                                             ).value;
+                                          set_games(new_games);
+                                       })
+                                       .catch((err) => {
+                                          // insert the response error into this game's note
+                                          const new_games = [...games];
+                                          new_games[game_index].note =
+                                             err.response.data;
+                                          set_games(new_games);
+                                       });
+                                 }}
+                              />{" "}
+                              {game.note}
+                           </div>
+                        );
+                     })}
                </div>
             </div>
          </div>
