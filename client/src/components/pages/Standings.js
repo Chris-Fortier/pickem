@@ -84,7 +84,9 @@ function Standings({ group_season_week, standings, current_user }) {
                                        : user.num_points}
                                  </td>
                                  <td style={{ textAlign: "right" }}>
-                                    {user.num_behind}
+                                    {group_season_week.season <= 2020
+                                       ? user.num_behind
+                                       : user.num_points_behind}
                                  </td>
                               </tr>
                            );
