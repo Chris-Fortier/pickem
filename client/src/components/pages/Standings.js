@@ -3,10 +3,15 @@ import NavBar from "../ui/NavBar";
 import { connect } from "react-redux";
 import classnames from "classnames";
 import { get_week_or_season_text } from "../../utils/helpers";
-import Medal2020 from "../svg/Medal2020";
 import uuid from "uuid";
 
+const MEDALS = [
+   { user_id: "ba1c83b1-9899-42e0-97f3-561f0643153a", label: "20" },
+   { user_id: "23e3a0cc-588a-4a91-8709-0be31c89ce6e", label: "21" },
+];
+
 function Standings({ group_season_week, standings, current_user }) {
+   console.log(standings);
    return (
       <>
          <NavBar />
@@ -60,22 +65,18 @@ function Standings({ group_season_week, standings, current_user }) {
                                  <td>
                                     {user.team_name}
                                     {/* TODO: need a better way to determine medals than hard-coding */}
-                                    {user.team_name ===
-                                       "Andrew Luck’s Neckbeard" && (
-                                       <>
-                                          {" "}
-                                          <span>
-                                             <Medal2020
-                                                style={{
-                                                   width: "20px",
-                                                   height: "20px",
-                                                   position: "relative",
-                                                   top: "-2px",
-                                                }}
-                                             />
+                                    {MEDALS.filter((medal) => {
+                                       return medal.user_id === user.user_id;
+                                    }).map((medal) => {
+                                       return (
+                                          <span
+                                             className="medal"
+                                             key={uuid.v4()}
+                                          >
+                                             {medal.label}
                                           </span>
-                                       </>
-                                    )}
+                                       );
+                                    })}
                                  </td>
                                  <td>{initials}</td>
                                  <td style={{ textAlign: "right" }}>

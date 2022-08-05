@@ -377,3 +377,13 @@ table {
    -moz-appearance: none;
    appearance: none;
 }
+
+.medal {
+   margin-left: 4px;
+   padding: 1px 4px;
+   background: #3375b9;
+   color: white;
+   font-family: "Russo One";
+   text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, -1px 1px 0 #000,
+      1px -1px 0 #000;
+}

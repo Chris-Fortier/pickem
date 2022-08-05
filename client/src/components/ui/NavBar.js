@@ -15,39 +15,26 @@ import {
 } from "../../utils/helpers";
 import uuid from "uuid";
 
+const NUM_WEEKS_IN_SEASON = 22; // includes playoffs and superbowl, not preseason
+const WED_BEFORE_GAME_1 = 1662534000000; // time of the Wednesday before first game this season
+const SEASONS = [2020, 2021, 2022];
+
 // sets the users position when they refresh the page
 const DEFAULT_GROUP_SEASON_WEEK = {
    group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
-   season: 2021,
-   week: Math.floor((Date.now() - 1631084400000) / 604800000 + 1), // set the week to how many Wednesdays have started since 9/8/2020 in PDT (9/9 is 1631084400000)
+   season: SEASONS[SEASONS.length - 1],
+   week: Math.max(
+      Math.min(
+         Math.floor((Date.now() - WED_BEFORE_GAME_1) / 604800000 + 1),
+         NUM_WEEKS_IN_SEASON // makes it show the superbowl week if current date is later
+      ),
+      1 // makes it show week 1 if current date is earlier
+   ), // set the week to how many Wednesdays have started since the start of season
 };
-
-const SEASONS = [2020, 2021];
 
 const WEEKS = [
    "%",
-   1,
-   2,
-   3,
-   4,
-   5,
-   6,
-   7,
-   8,
-   9,
-   10,
-   11,
-   12,
-   13,
-   14,
-   15,
-   16,
-   17,
-   18,
-   19,
-   20,
-   21,
-   22,
+   ...Array.from({ length: NUM_WEEKS_IN_SEASON }, (_, index) => index + 1),
 ]; // the WEEKS the user can select from
 // TODO: make this range based on the games data somehow
 
@@ -237,10 +224,18 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                   },
                });
 
-               // clear the server message
-               dispatch({
-                  type: actions.CLEAR_MESSAGE,
-               });
+               if (res.data.length) {
+                  // clear the server message
+                  dispatch({
+                     type: actions.CLEAR_MESSAGE,
+                  });
+               } else {
+                  // post warning that there are no games
+                  dispatch({
+                     type: actions.STORE_WARNING_MESSAGE,
+                     payload: `No picks have been made for week ${group_season_week.week} yet.`,
+                  });
+               }
             })
             .catch((err) => {
                const data = err.response.data;
@@ -266,10 +261,18 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                   payload: res.data,
                });
 
-               // clear the server message
-               dispatch({
-                  type: actions.CLEAR_MESSAGE,
-               });
+               if (res.data.length) {
+                  // clear the server message
+                  dispatch({
+                     type: actions.CLEAR_MESSAGE,
+                  });
+               } else {
+                  // post warning that there are no games
+                  dispatch({
+                     type: actions.STORE_WARNING_MESSAGE,
+                     payload: `No games have been entered in the schedule for week ${group_season_week.week} yet.`,
+                  });
+               }
             })
             .catch((err) => {
                const data = err.response.data;
@@ -331,10 +334,18 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                   payload: res.data,
                });
 
-               // clear the server message
-               dispatch({
-                  type: actions.CLEAR_MESSAGE,
-               });
+               if (res.data.length) {
+                  // clear the server message
+                  dispatch({
+                     type: actions.CLEAR_MESSAGE,
+                  });
+               } else {
+                  // post warning that there are no games
+                  dispatch({
+                     type: actions.STORE_WARNING_MESSAGE,
+                     payload: `No picks have been made for week ${group_season_week.week} yet.`,
+                  });
+               }
             })
             .catch((err) => {
                console.log(err);
