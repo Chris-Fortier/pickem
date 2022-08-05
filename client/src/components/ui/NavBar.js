@@ -15,18 +15,18 @@ import {
 } from "../../utils/helpers";
 import uuid from "uuid";
 
-// sets the users position when they refresh the page
 const NUM_WEEKS_IN_SEASON = 22; // includes playoffs and superbowl, not preseason
+const SEASONS = [2020, 2021];
+
+// sets the users position when they refresh the page
 const DEFAULT_GROUP_SEASON_WEEK = {
    group_id: "3fd8d78c-8151-4145-b276-aea3559deb76",
-   season: 2021,
+   season: SEASONS[SEASONS.length - 1],
    week: Math.min(
       Math.floor((Date.now() - 1631084400000) / 604800000 + 1),
       NUM_WEEKS_IN_SEASON
    ), // set the week to how many Wednesdays have started since 9/8/2021
 };
-
-const SEASONS = [2020, 2021];
 
 const WEEKS = [
    "%",
