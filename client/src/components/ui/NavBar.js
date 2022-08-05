@@ -224,10 +224,18 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                   },
                });
 
-               // clear the server message
-               dispatch({
-                  type: actions.CLEAR_MESSAGE,
-               });
+               if (res.data.length) {
+                  // clear the server message
+                  dispatch({
+                     type: actions.CLEAR_MESSAGE,
+                  });
+               } else {
+                  // post warning that there are no games
+                  dispatch({
+                     type: actions.STORE_WARNING_MESSAGE,
+                     payload: `No picks have been made for week ${group_season_week.week} yet.`,
+                  });
+               }
             })
             .catch((err) => {
                const data = err.response.data;
@@ -253,10 +261,18 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                   payload: res.data,
                });
 
-               // clear the server message
-               dispatch({
-                  type: actions.CLEAR_MESSAGE,
-               });
+               if (res.data.length) {
+                  // clear the server message
+                  dispatch({
+                     type: actions.CLEAR_MESSAGE,
+                  });
+               } else {
+                  // post warning that there are no games
+                  dispatch({
+                     type: actions.STORE_WARNING_MESSAGE,
+                     payload: `No games have been entered in the schedule for week ${group_season_week.week} yet.`,
+                  });
+               }
             })
             .catch((err) => {
                const data = err.response.data;
@@ -318,10 +334,18 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                   payload: res.data,
                });
 
-               // clear the server message
-               dispatch({
-                  type: actions.CLEAR_MESSAGE,
-               });
+               if (res.data.length) {
+                  // clear the server message
+                  dispatch({
+                     type: actions.CLEAR_MESSAGE,
+                  });
+               } else {
+                  // post warning that there are no games
+                  dispatch({
+                     type: actions.STORE_WARNING_MESSAGE,
+                     payload: `No picks have been made for week ${group_season_week.week} yet.`,
+                  });
+               }
             })
             .catch((err) => {
                console.log(err);
