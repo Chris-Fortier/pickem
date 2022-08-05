@@ -296,6 +296,7 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                   let current_num_correct = standings[0].num_correct;
                   let is_new_rank = true; // if true will style with a border above it to separate tied teams
                   const leader_num_correct = standings[0].num_correct;
+                  const leader_num_points = standings[0].num_points;
                   for (let i in standings) {
                      console.log({ i });
                      if (
@@ -313,6 +314,8 @@ function NavBar({ current_user, group_season_week, message, dispatch }) {
                      standings[i].rank = current_rank;
                      standings[i].num_behind =
                         standings[i].num_correct - leader_num_correct;
+                     standings[i].num_points_behind =
+                        standings[i].num_points - leader_num_points;
                      standings[i].is_new_rank = is_new_rank;
                      console.log(
                         i,
