@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "../ui/NavBar";
 import { connect } from "react-redux";
 import classnames from "classnames";
+import uuid from "uuid";
 import { get_week_or_season_text } from "../../utils/helpers";
 import toDisplayDate from "date-fns/format";
 
@@ -27,7 +28,7 @@ function GroupPicks({ group_season_week, group_picks }) {
                   {/* each game of the week has one row */}
                   {group_picks.match_ups.map((match_up) => {
                      return (
-                        <>
+                        <React.Fragment key={uuid.v4()}>
                            {/* each new date has a row divider */}
                            {match_up.is_new_date && (
                               <tr>
@@ -43,6 +44,7 @@ function GroupPicks({ group_season_week, group_picks }) {
                                  {group_picks.teams.map((team) => {
                                     return (
                                        <th
+                                          key={uuid.v4()}
                                           scope="col"
                                           style={{ textAlign: "center" }}
                                           className="top-row"
@@ -60,6 +62,7 @@ function GroupPicks({ group_season_week, group_picks }) {
                               {group_picks.teams.map((team) => {
                                  return (
                                     <td
+                                       key={uuid.v4()}
                                        className={classnames({
                                           "pregame-pick-group": true,
                                           "locked-pick-group":
@@ -78,7 +81,7 @@ function GroupPicks({ group_season_week, group_picks }) {
                                  );
                               })}
                            </tr>
-                        </>
+                        </React.Fragment>
                      );
                   })}
                </tbody>

@@ -69,7 +69,10 @@ function Standings({ group_season_week, standings, current_user }) {
                                        return medal.user_id === user.user_id;
                                     }).map((medal) => {
                                        return (
-                                          <span className="medal">
+                                          <span
+                                             className="medal"
+                                             key={uuid.v4()}
+                                          >
                                              {medal.label}
                                           </span>
                                        );
