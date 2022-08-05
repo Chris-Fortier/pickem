@@ -118,3 +118,9 @@ WHERE
 	
 -- see who got the most correct picks in a week
 
+SELECT * FROM `users`;
+SELECT * FROM `picks`;
+SELECT * FROM `games`;
+
+-- ChrisDs pick
+INSERT INTO `pickem_app`.`picks` (`user_id`, `game_id`, `group_id`, `pick`) VALUES ('23e3a0cc-588a-4a91-8709-0be31c89ce6e', '3c23381c-5dc1-11ec-a76e-06a4a2a4eb91', '3fd8d78c-8151-4145-b276-aea3559deb76', '0');

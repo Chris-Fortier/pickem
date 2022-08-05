@@ -958,3 +958,15 @@ VALUES
 (20,1642900500000,'SF','GB',4),
 (20,1642968000000,'LAR','TB',4),
 (20,1642980600000,'BUF','KC',4);
+
+-- 2021 conference championships
+INSERT INTO `pickem_app`.`games` (
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`,
+	`value`
+)
+VALUES
+(21,1643572800000,'CIN','KC',8),
+(21,1643585400000,'SF','LAR',8);
