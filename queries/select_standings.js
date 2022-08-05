@@ -2,6 +2,7 @@
 // given group, season, week (week is string or '%' for any week in the season)
 const select_standings = `
 SELECT 
+    \`user_id\`,
 	\`team_name\`,
     \`initials\`,
     SUM(CASE WHEN \`pick\` = (CASE WHEN \`away_score\` > \`home_score\` THEN 0 WHEN \`away_score\` < \`home_score\` THEN 1 WHEN \`away_score\` = \`home_score\` THEN 2 ELSE NULL END) AND \`pick\` is not null THEN 1 ELSE 0 END) AS \`num_correct\`,
