@@ -23,7 +23,8 @@
 3. Run `git push heroku master` to push latest git commit to Heroku.
    1. Note that it pushes what is in your local master branch (not the remote on GitHub).
    2. Or if you would like to deploy a different branch to heroku, use `git push heroku other-branch:master`. Keep in mind after doing this if you want to push master again you might need to force it using `git push heroku master --force`.
-4. `heroku open` to open the [heroku page](https://hawknation.herokuapp.com) in a browser.
+4. If you get a Windows Security pop up asking you to enter your credentials for something like `http://git.heroku...`, just close it and enter `heroku login`, use a web browser to log in, then try again.
+5. `heroku open` to open the [heroku page](https://hawknation.herokuapp.com) in a browser.
 
 ## Development Checklists
 
