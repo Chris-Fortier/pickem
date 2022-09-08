@@ -46,7 +46,10 @@ function EnterScores({ group_season_week }) {
    return (
       <>
          <NavBar />
-         <div className="my-container" style={{ maxWidth: "630px" }}>
+         <div
+            className="my-container bottom-scroll-fix"
+            style={{ maxWidth: "630px" }}
+         >
             <div className="my-card">
                <div className="card-header">
                   <h2>

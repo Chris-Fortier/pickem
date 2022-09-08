@@ -255,7 +255,7 @@ function Landing({ dispatch, history }) {
    }
 
    return (
-      <div className="my-container">
+      <div className="my-container bottom-scroll-fix">
          <h1>
             Hawk Nation
             <br />

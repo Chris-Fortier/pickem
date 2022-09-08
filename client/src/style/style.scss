@@ -286,6 +286,10 @@ table {
    min-width: 100%; // cjf
 }
 
+.bottom-scroll-fix {
+   margin-bottom: 100px;
+}
+
 // style for this user's row in the standings
 .this-user-standings {
    background-color: rgba($navy, 0.1);

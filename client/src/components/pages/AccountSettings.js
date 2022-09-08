@@ -607,7 +607,7 @@ function AccountSettings({ current_user, history, dispatch }) {
                <Button label="inline danger" danger />
             </div>
          </div> */}
-         <div className="my-container">
+         <div className="my-container bottom-scroll-fix">
             <div className="my-card">
                <div className="card-header">
                   <h2>
