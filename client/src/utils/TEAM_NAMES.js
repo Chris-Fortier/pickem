@@ -65,7 +65,7 @@ const TEAM_NAMES = {
    SEA: "Seahawks",
    TB: "Buccaneers",
    TEN: "Titans",
-   WAS: "Football Team",
+   WAS: "Commanders",
 };
 
 export default TEAM_NAMES;

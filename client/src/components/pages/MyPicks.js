@@ -21,7 +21,7 @@ function MyPicks({ group_season_week, my_picks }) {
    return (
       <>
          <NavBar />
-         <div className="my-container">
+         <div className="my-container bottom-scroll-fix">
             <div className="my-card">
                <div className="card-header">
                   <h2>

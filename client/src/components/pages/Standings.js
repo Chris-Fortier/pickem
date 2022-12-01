@@ -15,7 +15,7 @@ function Standings({ group_season_week, standings, current_user }) {
    return (
       <>
          <NavBar />
-         <div className="my-container">
+         <div className="my-container bottom-scroll-fix">
             <div className="my-card">
                <div className="card-header">
                   <h2>

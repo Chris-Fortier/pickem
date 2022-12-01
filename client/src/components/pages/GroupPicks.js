@@ -23,7 +23,7 @@ function GroupPicks({ group_season_week, group_picks }) {
                   </h2>
                </div>
             </div>
-            <table className="table-dark table-striped">
+            <table className="table-dark table-striped bottom-scroll-fix">
                <tbody>
                   {/* each game of the week has one row */}
                   {group_picks.match_ups.map((match_up) => {
