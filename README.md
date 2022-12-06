@@ -8,4 +8,8 @@
 
 ## Lint
 
-Run `yarn lint`
+1. Run `yarn lint`.
+
+## Run Locally
+
+1. Run `yarn dev`.
