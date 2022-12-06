@@ -36,26 +36,31 @@ export default async (req, res) => {
          .groupBy("user_id")
          .orderBy("num_points", "desc")
          .then((standings) => {
-            // process the standings
-            let current_rank = 1;
-            let prev_points = standings[0].num_points;
-            standings.forEach((standings_item, i) => {
-               standings_item.is_new_rank = i > 0 ? false : true;
-               if (
-                  prev_points !== null &&
-                  standings_item.num_points < prev_points
-               ) {
-                  prev_points = standings_item.num_points;
-                  current_rank = i + 1;
-                  standings_item.is_new_rank = true;
-               }
-               standings_item.rank = current_rank;
-               standings_item.num_behind =
-                  standings_item.num_correct - standings[0].num_correct;
-               standings_item.num_points_behind =
-                  standings_item.num_points - standings[0].num_points;
-            });
-            return res.status(200).json(standings);
+            if (standings.length) {
+               // process the standings
+               let current_rank = 1;
+               let prev_points = standings[0].num_points;
+               standings.forEach((standings_item, i) => {
+                  standings_item.is_new_rank = i > 0 ? false : true;
+                  if (
+                     prev_points !== null &&
+                     standings_item.num_points < prev_points
+                  ) {
+                     prev_points = standings_item.num_points;
+                     current_rank = i + 1;
+                     standings_item.is_new_rank = true;
+                  }
+                  standings_item.rank = current_rank;
+                  standings_item.num_behind =
+                     standings_item.num_correct - standings[0].num_correct;
+                  standings_item.num_points_behind =
+                     standings_item.num_points - standings[0].num_points;
+               });
+               return res.status(200).json(standings);
+            } else {
+               // no standings for this week yet
+               return res.status(200).json([]);
+            }
          })
          .catch((err) => {
             // report error
