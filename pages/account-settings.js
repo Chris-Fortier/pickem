@@ -145,7 +145,7 @@ export default function AccountSettings({ user, set_user }) {
                         <ChangeUserProperty
                            user={user}
                            set_user={set_user}
-                           property="name"
+                           property="user_name"
                         />
                      </Accordion.Body>
                   </Accordion.Item>
