@@ -113,7 +113,7 @@ FROM
     `users` ON `picks`.`user_id` = `users`.`id`
 WHERE
    `group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
-       AND `season` = 2020 AND `week` LIKE '%' AND `pick` is not null
+       AND `season` = 2022 AND `week` LIKE '%' AND `pick` is not null
          GROUP BY `user_id` ORDER BY `num_points` DESC;
 	
 -- see who got the most correct picks in a week
@@ -124,3 +124,13 @@ SELECT * FROM `games`;
 
 -- ChrisDs pick
 INSERT INTO `pickem_app`.`picks` (`user_id`, `game_id`, `group_id`, `pick`) VALUES ('23e3a0cc-588a-4a91-8709-0be31c89ce6e', '3c23381c-5dc1-11ec-a76e-06a4a2a4eb91', '3fd8d78c-8151-4145-b276-aea3559deb76', '0');
+
+-- week 13 2022
+-- show picks
+SELECT `team_name`, (CASE WHEN `pick` = 0 THEN `away_team` WHEN `pick` = 1 THEN `home_team` ELSE NULL END) AS `picked_team` FROM `picks` LEFT JOIN `games` ON `picks`.`game_id` = `games`.`id` RIGHT JOIN `users` ON `picks`.`user_id` = `users`.`id`
+WHERE
+   `group_id` = '3fd8d78c-8151-4145-b276-aea3559deb76'
+       AND `season` = 2022 AND `week` = 13 AND `pick` is not null;
+       
+INSERT INTO `pickem_app`.`picks` (`user_id`, `game_id`, `group_id`, `pick`) VALUES ('6892716e-b129-420a-bd46-57f2239eea53', 'd3bba95c-339d-11ed-b481-06a4a2a4eb91', '3fd8d78c-8151-4145-b276-aea3559deb76', '0'); -- Dad's pick
+INSERT INTO `pickem_app`.`picks` (`user_id`, `game_id`, `group_id`, `pick`) VALUES ('23e3a0cc-588a-4a91-8709-0be31c89ce6e', 'd3bba95c-339d-11ed-b481-06a4a2a4eb91', '3fd8d78c-8151-4145-b276-aea3559deb76', '0'); -- CD's pick
