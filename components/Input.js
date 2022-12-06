@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
 export default function Input({
    name,
    label,
-   type = "text",
-   placeholder = "",
+   type = 'text',
+   placeholder = '',
    max_length, // optional
    error_message,
    style = {},
@@ -18,15 +18,15 @@ export default function Input({
 }) {
    let display_value;
    if (block) {
-      display_value = "flex";
+      display_value = 'flex';
    } else if (inline) {
-      display_value = "inline-block";
+      display_value = 'inline-block';
    }
    return (
       <div
          style={{
             display: display_value,
-            marginBottom: "1rem",
+            marginBottom: '1rem',
             // display: inline && "inline-block",
          }}
       >
@@ -35,8 +35,8 @@ export default function Input({
                htmlFor={`${name}-input`}
                style={{
                   marginBottom: 0,
-                  width: double && "100%",
-                  marginRight: (inline || block) && "10px",
+                  width: double && '100%',
+                  marginRight: (inline || block) && '10px',
                   ...label_style,
                   // marginBottom: double && ".25rem",
                }}
@@ -53,12 +53,12 @@ export default function Input({
             maxLength={max_length}
             style={{
                ...style,
-               width: double && "100%",
+               width: double && '100%',
                flexGrow: block && 1,
-               marginRight: inline && "1rem",
-               padding: ".375rem .75rem",
-               border: "none",
-               background: "#e8f0fe",
+               marginRight: inline && '1rem',
+               padding: '.375rem .75rem',
+               border: 'none',
+               background: '#e8f0fe',
             }}
             defaultValue={default_value}
             min={min}
@@ -68,9 +68,9 @@ export default function Input({
             <div
                className="text-danger"
                style={{
-                  display: inline && "inline-block",
-                  marginRight: inline && "1rem",
-                  marginLeft: block && ".5rem",
+                  display: inline && 'inline-block',
+                  marginRight: inline && '1rem',
+                  marginLeft: block && '.5rem',
                }}
             >
                {error_message}
