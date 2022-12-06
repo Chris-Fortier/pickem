@@ -1,0 +1,32 @@
+// FONTS
+
+@import url("https://fonts.googleapis.com/css2?family=Russo+One&family=Titillium+Web:wght@200;300;400;600;700&display=swap");
+
+// COLORS
+
+$navy: #002244; // college navy
+$white: hsl(0, 0%, 95%);
+$gray: #a5acaf; // wolf gray
+$green: #69be28; // action green
+$red: #aa0000; // 49ers red
+
+$hover-darken: 10;
+$active-darken: 20;
+
+$blend-color: black;
+$hover-blend: 75%;
+$active-blend: 50%;
+
+// DERIVED COLORS
+
+$pick-color: $white; // color to represent picked team
+$non-pick-color: $gray; // color to represent non-picked team
+
+// $hover-darken: 10; // amount to darken the color when hovered
+// $active-darken: 20; // amount the darken the color when clicked
+
+$non-pick-color-hover: mix($non-pick-color, $pick-color, $hover-blend);
+$non-pick-color-active: mix($non-pick-color, $pick-color, $active-blend);
+
+$pick-color-hover: mix($pick-color, $non-pick-color, $hover-blend);
+$pick-color-active: mix($pick-color, $non-pick-color, $active-blend);

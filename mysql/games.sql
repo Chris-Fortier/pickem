@@ -999,3 +999,10 @@ VALUES
 (2022,1,1663028100000,'DEN','SEA');
 
 SELECT * FROM `pickem_app`.`games` WHERE `week` = 1 AND `season` = 2022;
+
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 4 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 12 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 7 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 9 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 12 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 13 AND `season` = 2022;
