@@ -3,9 +3,10 @@ const jwt = require("jsonwebtoken");
 
 // this is a "middleware" function
 module.exports = function validate_jwt(req, res, next) {
-   const accessToken = req.header("x-auth-token");
+   const access_token = req.headers["x-auth-token"];
 
-   if (!accessToken) {
+   if (!access_token) {
+      console.log("No token provided.");
       return res.status(401).json({ authError: "No token provided." });
    }
 
@@ -13,7 +14,7 @@ module.exports = function validate_jwt(req, res, next) {
       // verify the token,
       // if valid, extract the user payload
       const decoded_payload = jwt.verify(
-         accessToken,
+         access_token,
          process.env.JWT_ACCESS_SECRET
       );
 
