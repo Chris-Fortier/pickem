@@ -1,17 +1,17 @@
-import '../styles/master.scss';
-import Head from 'next/head';
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
-import isEmpty from 'lodash/isEmpty';
-import Alert from 'react-bootstrap/Alert';
-import NavBar from '../components/NavBar';
-import log_in from '../utils/log_in';
-import log_out from '../utils/log_out';
+import "../styles/master.scss";
+import Head from "next/head";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import PropTypes from "prop-types";
+import isEmpty from "lodash/isEmpty";
+import Alert from "react-bootstrap/Alert";
+import NavBar from "../components/NavBar";
+import log_in from "../utils/log_in";
+import log_out from "../utils/log_out";
 import {
    DEFAULT_GROUP_SEASON_WEEK,
    SUCCESS_MESSAGE_DURATION,
-} from '../utils/client_helpers';
+} from "../utils/client_helpers";
 
 function MyApp({ Component, pageProps }) {
    const router = useRouter();
@@ -25,13 +25,13 @@ function MyApp({ Component, pageProps }) {
 
    // global state functions
    const set_danger_message = (message) => {
-      set_message({ message: message, variant: 'danger', time: Date.now() });
+      set_message({ message: message, variant: "danger", time: Date.now() });
    };
    const set_warning_message = (message) => {
-      set_message({ message: message, variant: 'warning', time: Date.now() });
+      set_message({ message: message, variant: "warning", time: Date.now() });
    };
    const set_success_message = (message) => {
-      set_message({ message: message, variant: 'success', time: Date.now() });
+      set_message({ message: message, variant: "success", time: Date.now() });
       setTimeout(clear_message, SUCCESS_MESSAGE_DURATION);
    };
    const clear_message = () => {
@@ -40,13 +40,13 @@ function MyApp({ Component, pageProps }) {
 
    // what happens when the site is loaded or refreshed
    useEffect(() => {
-      const access_token = localStorage.getItem('access_token'); // get the auth token from local storage
+      const access_token = localStorage.getItem("access_token"); // get the auth token from local storage
 
       if (access_token) {
-         console.log('Access token found.');
+         console.log("Access token found.");
          log_in({ access_token, router, set_user });
       } else {
-         console.log('No access token.');
+         console.log("No access token.");
          log_out({ set_user, router });
       }
    }, []);
@@ -56,7 +56,7 @@ function MyApp({ Component, pageProps }) {
    return (
       <>
          <Head>
-            <title>Hawk Nation NFL Pick'em</title>
+            <title>Hawk Nation NFL Pick&apos;em</title>
             <link rel="icon" href="/favicon.ico" />
          </Head>
          {!isEmpty(user) && (

@@ -62,7 +62,7 @@ export default function Standings({
                      <p>
                         These are standings for week {group_season_week.week}{" "}
                         only. To see the standings for the entire season, choose
-                        "Entire Season" in the week selector.
+                        &quot;Entire Season&quot; in the week selector.
                      </p>
                   )}
                </div>

@@ -13,7 +13,7 @@ export default function EnterScores({
    set_danger_message,
 }) {
    const [games, set_games] = useState([]);
-   const [message_from_server, set_message_from_server] = useState("");
+   const [message_from_server] = useState("");
    console.log({ games });
 
    useEffect(() => {
@@ -139,6 +139,7 @@ export default function EnterScores({
                                     })
                                     .catch((err) => {
                                        // insert the response error into this game's note
+                                       console.log("Error:", err);
                                        const new_games = [...games];
                                        new_games[game_index].note =
                                           "Something went wrong";

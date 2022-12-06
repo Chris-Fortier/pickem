@@ -1,19 +1,19 @@
-import React from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import Container from "react-bootstrap/Container";
+import Navbar from "react-bootstrap/Navbar";
+import Nav from "react-bootstrap/Nav";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import {
    get_week_or_season_text,
    get_num_regular_season_weeks,
    SEASONS,
    WEEKS,
    DEFAULT_GROUP_SEASON_WEEK,
-} from '../utils/client_helpers';
-import { v4 } from 'uuid';
-import log_out from '../utils/log_out';
+} from "../utils/client_helpers";
+import { v4 } from "uuid";
+import log_out from "../utils/log_out";
 
 export default function NavBar({
    user,
@@ -32,18 +32,6 @@ export default function NavBar({
    // const pathname = window.location.pathname
    const pathname = router.pathname;
 
-   // get the title for the page nav drop down menu
-   let page_nav_title;
-   if (pathname === '/my-picks') {
-      page_nav_title = 'My Picks';
-   } else if (pathname === '/group-picks') {
-      page_nav_title = 'Group Picks';
-   } else if (pathname === '/standings') {
-      page_nav_title = 'Standings';
-   } else if (pathname === '/account-settings') {
-      page_nav_title = 'Picks/Standings';
-   }
-
    return (
       <>
          {/* React-Bootstrap navbar */}
@@ -56,12 +44,12 @@ export default function NavBar({
             // expanded // I adding this so the menu is always expanded, even with a smaller screen size
          >
             <Container fluid>
-               <Navbar.Brand>Hawk Nation NFL Pick 'em</Navbar.Brand>
+               <Navbar.Brand>Hawk Nation NFL Pick &apos;em</Navbar.Brand>
                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                <Navbar.Collapse id="responsive-navbar-nav">
                   <Nav className="ml-auto">
                      <NavDropdown
-                        style={{ right: 0, left: 'auto' }}
+                        style={{ right: 0, left: "auto" }}
                         title={user.user_name}
                         // alignRight
                         className="dropdown-menu-right"
@@ -91,7 +79,7 @@ export default function NavBar({
                </Navbar.Collapse>
             </Container>
          </Navbar>
-         {pathname !== '/account-settings' && (
+         {pathname !== "/account-settings" && (
             <>
                {/* season tabs */}
                <div className="nav-row">
@@ -101,19 +89,19 @@ export default function NavBar({
                         key={v4()}
                         className={`nav-tab${
                            season === group_season_week.season
-                              ? ' nav-tab-current'
-                              : ''
+                              ? " nav-tab-current"
+                              : ""
                         }`}
                         onClick={() => {
                            const new_values = { season: season };
                            // TODO: if they are viewing the entire season, don't change the week
                            if (season === DEFAULT_GROUP_SEASON_WEEK.season) {
                               // if changing to the default season, also change the week to the default week
-                              new_values['week'] =
+                              new_values["week"] =
                                  DEFAULT_GROUP_SEASON_WEEK.week;
                            } else {
                               // if changing to a different season, set the week to "entire season"
-                              new_values['week'] = '%';
+                              new_values["week"] = "%";
                            }
                            change_group_season_week(new_values);
                         }}
@@ -127,7 +115,7 @@ export default function NavBar({
                   <span className="nav-row-title">Week:</span>
                   {WEEKS.filter(
                      (week) =>
-                        week === '%' ||
+                        week === "%" ||
                         week <=
                            get_num_regular_season_weeks(
                               group_season_week.season
@@ -139,8 +127,8 @@ export default function NavBar({
                            key={v4()}
                            className={`nav-tab${
                               week === group_season_week.week
-                                 ? ' nav-tab-current'
-                                 : ''
+                                 ? " nav-tab-current"
+                                 : ""
                            }`}
                            onClick={() => {
                               change_group_season_week({
@@ -164,21 +152,21 @@ export default function NavBar({
             <span className="nav-row-title">View:</span>
             <span
                className={`nav-tab${
-                  pathname === '/my-picks' ? ' nav-tab-current' : ''
+                  pathname === "/my-picks" ? " nav-tab-current" : ""
                }`}
             >
                <Link href="/my-picks">My Picks</Link>
             </span>
             <span
                className={`nav-tab${
-                  pathname === '/group-picks' ? ' nav-tab-current' : ''
+                  pathname === "/group-picks" ? " nav-tab-current" : ""
                }`}
             >
                <Link href="/group-picks">Group Picks</Link>
             </span>
             <span
                className={`nav-tab${
-                  pathname === '/standings' ? ' nav-tab-current' : ''
+                  pathname === "/standings" ? " nav-tab-current" : ""
                }`}
             >
                <Link href="/standings">Standings</Link>
@@ -187,7 +175,7 @@ export default function NavBar({
             {user.is_admin === 1 && (
                <span
                   className={`nav-tab${
-                     pathname === '/enter-scores' ? ' nav-tab-current' : ''
+                     pathname === "/enter-scores" ? " nav-tab-current" : ""
                   }`}
                >
                   <Link href="/enter-scores">Enter Scores</Link>

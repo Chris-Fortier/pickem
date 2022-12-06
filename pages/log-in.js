@@ -67,7 +67,7 @@ export default function Login({ set_user }) {
          <h1>
             Hawk Nation
             <br />
-            NFL Pick 'em
+            NFL Pick &apos;em
          </h1>
          <div className="my-card">
             <div className="card-header">

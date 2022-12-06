@@ -1,8 +1,8 @@
-const knex = require('knex');
-const config = require('../../knexfile');
+const knex = require("knex");
+const config = require("../../knexfile");
 const mysqldb = knex(config);
-require('dotenv').config();
-const validate_jwt = require('../../utils/validate_jwt');
+require("dotenv").config();
+const validate_jwt = require("../../utils/validate_jwt");
 
 export default async (req, res) => {
    // To test in Postman:
@@ -10,33 +10,37 @@ export default async (req, res) => {
    // http://localhost:3000/api/group-week-picks
    // put a name and password in Body tab under x-www-form-urlencoded
    validate_jwt(req, res, async () => {
-      if (req.method === 'GET') {
+      if (req.method === "GET") {
          const user_id = req.user.id; // get the user id from the JWT
-         const { group_id, season, week } = req.query; // grabbing variables from req.query
+         const {
+            // group_id,
+            season,
+            week,
+         } = req.query; // grabbing variables from req.query
 
          // determine if we only want data for a specific week or the entire season
          const where_args = { season };
-         if (week !== '%') {
+         if (week !== "%") {
             where_args.week = week;
          }
 
          mysqldb
             .select(
-               'game_at',
-               'away_team',
-               'home_team',
-               'games.id as game_id',
-               'pick',
-               'away_score',
-               'home_score',
-               'picks.user_id',
-               'users.initials as user_initials'
+               "game_at",
+               "away_team",
+               "home_team",
+               "games.id as game_id",
+               "pick",
+               "away_score",
+               "home_score",
+               "picks.user_id",
+               "users.initials as user_initials"
             )
-            .from('games')
-            .leftJoin('picks', 'games.id', 'picks.game_id')
-            .leftJoin('users', 'picks.user_id', 'users.id')
+            .from("games")
+            .leftJoin("picks", "games.id", "picks.game_id")
+            .leftJoin("users", "picks.user_id", "users.id")
             .where(where_args)
-            .orderBy('game_at', 'asc')
+            .orderBy("game_at", "asc")
             .then((picks) => {
                // successful response
 
@@ -44,7 +48,7 @@ export default async (req, res) => {
                const participating_users = [
                   {
                      user_id: user_id,
-                     initials: 'YOU', // TODO need to get user's initials
+                     initials: "YOU", // TODO need to get user's initials
                      // num_picks: 0,
                   },
                ]; // initialize with the user first
@@ -113,7 +117,7 @@ export default async (req, res) => {
                            pick2.game_id === match_up.game_id
                         );
                      });
-                     let pick_label = '-';
+                     let pick_label = "-";
                      let pick_result = null;
                      if (user_pick) {
                         if (user_pick.pick === 0)
@@ -122,10 +126,10 @@ export default async (req, res) => {
                            pick_label = match_up.home_team;
                         if (
                            user.user_id !== user_id &&
-                           pick_label !== '-' &&
+                           pick_label !== "-" &&
                            match_up.game_at > Date.now()
                         ) {
-                           pick_label = 'X'; // conceal other players' picks until game time
+                           pick_label = "X"; // conceal other players' picks until game time
                         }
                         if (match_up.winner !== null) {
                            pick_result = user_pick.pick === match_up.winner;
@@ -137,7 +141,7 @@ export default async (req, res) => {
                         pick_result: pick_result,
                      };
                   });
-                  match_up['picks'] = match_up_picks;
+                  match_up["picks"] = match_up_picks;
                });
 
                // console.log({ unique_match_ups });
