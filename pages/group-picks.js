@@ -1,17 +1,50 @@
-import React from "react";
-import NavBar from "../ui/NavBar";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import classnames from "classnames";
-import uuid from "uuid";
-import { get_week_or_season_text } from "../../utils/helpers";
+import { v4 } from "uuid";
+import { get_week_or_season_text } from "../utils/client_helpers";
 import toDisplayDate from "date-fns/format";
 
-function GroupPicks({ group_season_week, group_picks }) {
+export default function GroupPicks({
+   group_season_week,
+   set_danger_message,
+   set_warning_message,
+   clear_message,
+   user,
+}) {
+   const [teams, set_teams] = useState([]);
+   const [match_ups, set_match_ups] = useState([]);
+
+   useEffect(() => {
+      if (user) {
+         set_teams([]); // seem to need to clear the teams first due to it rendering columns for teams that haven't participated for one frame
+         // get the group picks
+         set_warning_message(
+            "Getting data from the server... If this takes awhile the server might be waking up."
+         );
+         axios
+            .get(
+               `/api/group-week-picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
+            )
+            .then((res) => {
+               set_match_ups(res.data.match_ups);
+               set_teams(res.data.teams);
+               clear_message();
+            })
+            .catch((err) => {
+               console.log("err", err);
+               set_danger_message(
+                  "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments."
+               );
+            });
+      }
+   }, [group_season_week, user]);
+
    return (
       <>
          <div className="my-table-container">
             <div className="lock-x-pos">
-               <NavBar />
+               {/* <NavBar /> */}
                <div className="card card-header">
                   <h2>
                      Group Picks For&nbsp;{group_season_week.season}
@@ -26,9 +59,9 @@ function GroupPicks({ group_season_week, group_picks }) {
             <table className="table-dark table-striped bottom-scroll-fix">
                <tbody>
                   {/* each game of the week has one row */}
-                  {group_picks.match_ups.map((match_up) => {
+                  {match_ups.map((match_up) => {
                      return (
-                        <React.Fragment key={uuid.v4()}>
+                        <React.Fragment key={v4()}>
                            {/* each new date has a row divider */}
                            {match_up.is_new_date && (
                               <tr>
@@ -41,15 +74,17 @@ function GroupPicks({ group_season_week, group_picks }) {
                                        "EE MM/dd"
                                     )}
                                  </th>
-                                 {group_picks.teams.map((team) => {
+                                 {teams.map((team, i) => {
                                     return (
                                        <th
-                                          key={uuid.v4()}
+                                          key={v4()}
                                           scope="col"
                                           style={{ textAlign: "center" }}
                                           className="top-row"
                                        >
-                                          {team.initials.toUpperCase()}
+                                          {i === 0
+                                             ? user.initials.toUpperCase() // use the user's initials for the first column
+                                             : team.initials.toUpperCase()}
                                        </th>
                                     );
                                  })}
@@ -59,10 +94,10 @@ function GroupPicks({ group_season_week, group_picks }) {
                               <th scope="row" className="left-column">
                                  {match_up.title}
                               </th>
-                              {group_picks.teams.map((team) => {
+                              {teams.map((team) => {
                                  return (
                                     <td
-                                       key={uuid.v4()}
+                                       key={v4()}
                                        className={classnames({
                                           "pregame-pick-group": true,
                                           "locked-pick-group":
@@ -90,13 +125,3 @@ function GroupPicks({ group_season_week, group_picks }) {
       </>
    );
 }
-
-// maps the Redux store/state to props
-function mapStateToProps(state) {
-   return {
-      group_season_week: state.group_season_week,
-      group_picks: state.group_picks,
-   };
-}
-
-export default connect(mapStateToProps)(GroupPicks);

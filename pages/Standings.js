@@ -1,20 +1,50 @@
-import React from "react";
-import NavBar from "../ui/NavBar";
-import { connect } from "react-redux";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import classnames from "classnames";
-import { get_week_or_season_text } from "../../utils/helpers";
-import uuid from "uuid";
+import { get_week_or_season_text } from "../utils/client_helpers";
+import { v4 } from "uuid";
 
 const MEDALS = [
    { user_id: "ba1c83b1-9899-42e0-97f3-561f0643153a", label: "20" },
    { user_id: "23e3a0cc-588a-4a91-8709-0be31c89ce6e", label: "21" },
 ];
 
-function Standings({ group_season_week, standings, current_user }) {
-   console.log(standings);
+export default function Standings({
+   group_season_week,
+   user,
+   set_warning_message,
+   clear_message,
+   set_danger_message,
+}) {
+   // TODO: call api to get standings
+   const [standings, set_standings] = useState([]);
+
+   useEffect(() => {
+      if (user) {
+         // get the group picks
+         set_warning_message(
+            "Getting data from the server... If this takes awhile the server might be waking up."
+         );
+         axios
+            .get(
+               `/api/standings?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
+            )
+            .then((res) => {
+               set_standings(res.data);
+               clear_message();
+            })
+            .catch((err) => {
+               console.log("err", err);
+               set_danger_message(
+                  "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments."
+               );
+            });
+      }
+   }, [group_season_week, user]);
+
    return (
       <>
-         <NavBar />
+         {/* <NavBar /> */}
          <div className="my-container bottom-scroll-fix">
             <div className="my-card">
                <div className="card-header">
@@ -49,30 +79,32 @@ function Standings({ group_season_week, standings, current_user }) {
                            </th>
                            <th style={{ textAlign: "right" }}>PB</th>
                         </tr>
-                        {standings.map((user) => {
-                           const initials = user.initials.toUpperCase();
+                        {standings.map((standings_item) => {
+                           const initials =
+                              standings_item.initials.toUpperCase();
                            return (
                               <tr
-                                 key={uuid.v4()}
+                                 key={v4()}
                                  className={classnames({
-                                    "new-standings-rank": user.is_new_rank,
+                                    "new-standings-rank":
+                                       standings_item.is_new_rank,
                                     "this-user-standings":
                                        user.team_name ===
-                                       current_user.team_name,
+                                       standings_item.team_name,
                                  })}
                               >
-                                 <td>{user.rank}</td>
+                                 <td>{standings_item.rank}</td>
                                  <td>
-                                    {user.team_name}
+                                    {standings_item.team_name}
                                     {/* TODO: need a better way to determine medals than hard-coding */}
                                     {MEDALS.filter((medal) => {
-                                       return medal.user_id === user.user_id;
+                                       return (
+                                          medal.user_id ===
+                                          standings_item.user_id
+                                       );
                                     }).map((medal) => {
                                        return (
-                                          <span
-                                             className="medal"
-                                             key={uuid.v4()}
-                                          >
+                                          <span className="medal" key={v4()}>
                                              {medal.label}
                                           </span>
                                        );
@@ -81,13 +113,13 @@ function Standings({ group_season_week, standings, current_user }) {
                                  <td>{initials}</td>
                                  <td style={{ textAlign: "right" }}>
                                     {group_season_week.season <= 2020
-                                       ? user.num_correct
-                                       : user.num_points}
+                                       ? standings_item.num_correct
+                                       : standings_item.num_points}
                                  </td>
                                  <td style={{ textAlign: "right" }}>
                                     {group_season_week.season <= 2020
-                                       ? user.num_behind
-                                       : user.num_points_behind}
+                                       ? standings_item.num_behind
+                                       : standings_item.num_points_behind}
                                  </td>
                               </tr>
                            );
@@ -117,14 +149,3 @@ function Standings({ group_season_week, standings, current_user }) {
       </>
    );
 }
-
-// maps the Redux store/state to props
-function mapStateToProps(state) {
-   return {
-      group_season_week: state.group_season_week,
-      standings: state.standings,
-      current_user: state.current_user,
-   };
-}
-
-export default connect(mapStateToProps)(Standings);

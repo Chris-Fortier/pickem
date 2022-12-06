@@ -1,26 +1,50 @@
-import React from "react";
-import NavBar from "../ui/NavBar";
-// import actions from "../../store/actions";
-import { connect } from "react-redux";
-// import axios from "axios";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import toDisplayDate from "date-fns/format";
-import Pick from "../ui/Pick";
+import Pick from "../components/Pick";
 // import isEmpty from "lodash/isEmpty";
-import { get_week_or_season_text } from "../../utils/helpers";
-import uuid from "uuid";
+import { get_week_or_season_text } from "../utils/client_helpers";
+import { v4 } from "uuid";
 
-// const group_id = "3fd8d78c-8151-4145-b276-aea3559deb76";
-// const season = 2020;
-// const week = 1;
-
-function MyPicks({ group_season_week, my_picks }) {
+export default function MyPicks({
+   group_season_week,
+   user,
+   set_warning_message,
+   clear_message,
+   set_success_message,
+   set_danger_message,
+}) {
    let rolling_date = 0; // for keeping track when a game is on a new date
    let is_rendering_date = true;
    let is_rendering_time = true;
 
+   const [my_picks, set_my_picks] = useState([]); // TODO: use api to get my picks
+
+   useEffect(() => {
+      if (user) {
+         // get the group picks
+         set_warning_message(
+            "Getting data from the server... If this takes awhile the server might be waking up."
+         );
+         axios
+            .get(
+               `/api/picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
+            )
+            .then((res) => {
+               set_my_picks(res.data);
+               clear_message();
+            })
+            .catch((err) => {
+               console.log("err", err);
+               set_danger_message(
+                  "Could not connect. You might have a connection issue or the server needs to wake up. Try again in a few moments."
+               );
+            });
+      }
+   }, [group_season_week, user]);
+
    return (
       <>
-         <NavBar />
          <div className="my-container bottom-scroll-fix">
             <div className="my-card">
                <div className="card-header">
@@ -53,7 +77,7 @@ function MyPicks({ group_season_week, my_picks }) {
                      }
                      rolling_date = pick.game_at;
                      return (
-                        <span key={uuid.v4()}>
+                        <span key={v4()}>
                            {is_rendering_time && <br />}
                            {is_rendering_date && (
                               <h5 align="center">
@@ -65,7 +89,15 @@ function MyPicks({ group_season_week, my_picks }) {
                                  {toDisplayDate(pick.game_at, "p")}
                               </h6>
                            )}
-                           <Pick pick={pick} />
+                           <Pick
+                              pick={pick}
+                              my_picks={my_picks}
+                              set_my_picks={set_my_picks}
+                              set_warning_message={set_warning_message}
+                              set_success_message={set_success_message}
+                              set_danger_message={set_danger_message}
+                              group_id={group_season_week.group_id}
+                           />
                         </span>
                      );
                   })}
@@ -75,13 +107,3 @@ function MyPicks({ group_season_week, my_picks }) {
       </>
    );
 }
-
-// maps the Redux store/state to props
-function mapStateToProps(state) {
-   return {
-      group_season_week: state.group_season_week,
-      my_picks: state.my_picks,
-   };
-}
-
-export default connect(mapStateToProps)(MyPicks);

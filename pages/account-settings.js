@@ -1,642 +1,241 @@
-import React, { useState, useEffect } from "react";
-import NavBar from "../ui/NavBar";
-import Input from "../ui/Input";
-import actions from "../../store/actions";
-import { connect } from "react-redux";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
-// import jwtDecode from "jwt-decode";
-import isEmpty from "lodash/isEmpty";
-import Button from "../ui/Button";
-import {
-   MAX_USER_NAME_LENGTH,
-   MAX_EMAIL_LENGTH,
-   MAX_TEAM_NAME_LENGTH,
-   MAX_USER_INITIALS_LENGTH,
-   log_out_current_user,
-} from "../../utils/helpers";
+import { Container, Alert, Button, Accordion } from "react-bootstrap";
+import InputWithError from "../components/InputWithError";
+import log_out from "../utils/log_out";
 
-function AccountSettings({ current_user, history, dispatch }) {
-   const [mode, set_mode] = useState("account-settings-menu");
-   const [message_from_server, set_message_from_server] = useState("");
+function ChangeUserProperty({ user, set_user, property, input_type = "text" }) {
+   const [new_value_input, set_new_value_input] = useState(
+      user[property] || ""
+   );
+   const [new_value_error, set_new_value_error] = useState("");
+   const [current_password_input, set_current_password_input] = useState("");
    const [current_password_error, set_current_password_error] = useState("");
-   const [new_user_name_error, set_new_user_name_error] = useState("");
-   const [new_email_error, set_new_email_error] = useState("");
-   const [new_team_name_error, set_new_team_name_error] = useState("");
-   const [new_initials_error, set_new_initials_error] = useState("");
-   const [new_password_error, set_new_password_error] = useState("");
+   const [message, set_message] = useState("");
+   const [current_password_is_validated, set_current_password_is_validated] =
+      useState(false);
+   const [new_value_is_validated, set_new_value_is_validated] = useState(false);
+   const [message_variant, set_message_variant] = useState(""); // variant to use for the alert
 
-   useEffect(() => {
-      // if there is not user logged in
-      if (isEmpty(current_user)) {
-         // send to landing page
-         history.push("/");
-      } else {
-      }
-   }, [current_user, history]);
-
-   function clear_message_and_errors() {
-      set_message_from_server("");
-      set_mode(mode);
-      set_current_password_error("");
-      set_new_user_name_error("");
-      set_new_email_error("");
-      set_new_team_name_error("");
-      set_new_initials_error("");
-      set_new_password_error("");
+   function set_is_validated(value) {
+      set_current_password_is_validated(value);
+      set_new_value_is_validated(value);
    }
 
-   const cancel_sub_menu = () => {
-      set_message_from_server("");
-      set_mode("account-settings-menu");
-      set_current_password_error("");
-      set_new_user_name_error("");
-      set_new_email_error("");
-      set_new_team_name_error("");
-      set_new_initials_error("");
-      set_new_password_error("");
-   };
-
-   const update_message_and_return = (new_message) => {
-      set_message_from_server(new_message);
-      set_mode("account-settings-menu");
-      set_current_password_error("");
-      set_new_user_name_error("");
-      set_new_email_error("");
-      set_new_team_name_error("");
-      set_new_initials_error("");
-      set_new_password_error("");
-   };
-
-   const enter_sub_menu = (sub_menu) => {
-      set_message_from_server("");
-      set_mode(sub_menu);
-      set_current_password_error("");
-      set_new_user_name_error("");
-      set_new_email_error("");
-      set_new_team_name_error("");
-      set_new_initials_error("");
-      set_new_password_error("");
-   };
-
-   // tests if the new user_name and password are valid and if so changes user_name
-   async function validate_and_change_user_name(
-      user_name_input,
-      password_input
-   ) {
-      // create the object that will be the body that is sent
-      const submission = {
-         newUserName: user_name_input,
-         password: password_input, // send the plain text password over secure connection, the server will hash it
-      };
-
-      // post to API
+   // tests if the new user value and password are valid and if so changes user value
+   async function validate_and_change_user_property() {
       axios
-         .put("api/v1/users/set-user-name", submission)
+         .patch(`/api/users/change-${property}`, {
+            new_value: new_value_input,
+            current_password: current_password_input,
+         })
          .then((res) => {
-            const oldUserName = current_user.user_name; // storing old name so I can put it in the message
-            // send the user with new name to Redux
-            current_user.user_name = user_name_input;
-            dispatch({
-               type: actions.UPDATE_CURRENT_USER,
-               payload: current_user,
-            });
-
-            // TODO: local token is not updated with the new user_name, but I don't think I am using that user_name for anything
-            // if they refresh it will put the user_name from token in current_user
-
-            update_message_and_return(
-               `User name changed from "${oldUserName}" to "${user_name_input}"`
-            );
+            // update errors and message from the server
+            const data = res.data;
+            set_new_value_error(data.new_value_error);
+            set_current_password_error(data.current_password_error);
+            set_message(data.message);
+            // update the current user object locally (unless its a password as we don't story that locally)
+            if (input_type !== "password") {
+               const new_user = { ...user };
+               new_user[property] = new_value_input;
+               set_user(new_user);
+            }
+            // clear the password input
+            set_current_password_input("");
+            set_is_validated(true);
+            set_message_variant("success");
          })
          .catch((err) => {
+            // update errors and message from the server
             const data = err.response.data;
-            console.log("err", data);
-
-            // push errors or lack thereof to state
-            set_new_user_name_error(data.new_user_name_error);
+            set_new_value_error(data.new_value_error);
             set_current_password_error(data.current_password_error);
+            set_message(data.message);
+            set_is_validated(true);
+            set_message_variant("danger");
          });
-   }
-
-   // tests if the new email and password are valid and if so changes email
-   async function validate_and_change_email(email_input, password_input) {
-      console.log("current_user", current_user);
-      // create the object that will be the body that is sent
-      const submission = {
-         new_email: email_input,
-         password: password_input, // send the plain text password over secure connection, the server will hash it
-      };
-
-      // post to API
-      axios
-         .put("api/v1/users/set-email", submission)
-         .then((res) => {
-            const old_email = current_user.email; // storing old email so I can put it in the message
-            // send the email with new name to Redux
-            current_user.email = email_input;
-            dispatch({
-               type: actions.UPDATE_CURRENT_USER,
-               payload: current_user,
-            });
-
-            // TODO: local token is not updated with the new email
-            // if they refresh it will put the email from token in current_user
-
-            update_message_and_return(
-               `Email changed from "${old_email}" to "${email_input}"`
-            );
-         })
-         .catch((err) => {
-            const data = err.response.data;
-
-            // push errors or lack thereof to state
-            set_new_email_error(data.new_email_error);
-            set_current_password_error(data.current_password_error);
-         });
-   }
-
-   // tests if the new initials and password are valid and if so changes initials
-   async function validate_and_change_initials(initials_input, password_input) {
-      // TODO: do not allow initials that are already in use
-
-      // create the object that will be the body that is sent
-      const submission = {
-         newInitials: initials_input,
-         password: password_input, // send the plain text password over secure connection, the server will hash it
-      };
-
-      // post to API
-      axios
-         .put("api/v1/users/set-initials", submission)
-         .then((res) => {
-            const oldInitials = current_user.initials; // storing old name so I can put it in the message
-            // send the user with new name to Redux
-            current_user.initials = initials_input;
-            dispatch({
-               type: actions.UPDATE_CURRENT_USER,
-               payload: current_user,
-            });
-
-            // TODO: local token is not updated with the new initials, but I don't think I am using that initials for anything
-            // if they refresh it will put the initials from token in current_user
-
-            update_message_and_return(
-               `User initials changed from "${oldInitials}" to "${initials_input}"`
-            );
-         })
-         .catch((err) => {
-            const data = err.response.data;
-            console.log("err", data);
-
-            // push errors or lack thereof to state
-            set_new_initials_error(data.new_initials_error);
-            set_current_password_error(data.current_password_error);
-         });
-   }
-
-   // tests if the new team name and password are valid and if so changes team name
-   async function validate_and_change_team_name(
-      team_name_input,
-      password_input
-   ) {
-      // create the object that will be the body that is sent
-      const submission = {
-         newTeamName: team_name_input,
-         password: password_input, // send the plain text password over secure connection, the server will hash it
-      };
-
-      // post to API
-      axios
-         .put("api/v1/users/set-team-name", submission)
-         .then((res) => {
-            const oldTeamName = current_user.team_name; // storing old name so I can put it in the message
-            // send the user with new name to Redux
-            current_user.team_name = team_name_input;
-            dispatch({
-               type: actions.UPDATE_CURRENT_USER,
-               payload: current_user,
-            });
-
-            // TODO: local token is not updated with the new team name, but I don't think I am using that team name for anything
-            // if they refresh it will put the team name from token in current_user
-
-            update_message_and_return(
-               `Team name changed from "${oldTeamName}" to "${team_name_input}"`
-            );
-         })
-         .catch((err) => {
-            const data = err.response.data;
-            console.log("err", data);
-
-            // push errors or lack thereof to state
-            set_new_team_name_error(data.new_team_name_error);
-            set_current_password_error(data.current_password_error);
-         });
-   }
-
-   // tests if the old password is valid and if so changes password to new one
-   async function validate_and_change_password(
-      currentPasswordInput,
-      newPasswordInput
-   ) {
-      // create the object that will be the body that is sent
-      const submission = {
-         currentPassword: currentPasswordInput, // send the plain text password over secure connection, the server will hash it
-         newPassword: newPasswordInput, // send the plain text password over secure connection, the server will hash it
-      };
-
-      // post to API
-      axios
-         .put("api/v1/users/set-password", submission)
-         .then((res) => {
-            update_message_and_return("Password changed.");
-
-            // updateState(data); // the data received from server has the same keywords as state variables
-         })
-         .catch((err) => {
-            const data = err.response.data;
-
-            // push errors or lack thereof to state
-            set_new_password_error(data.new_password_error);
-            set_current_password_error(data.current_password_error);
-         });
-   }
-
-   // tests if the password is valid and if so deletes the account
-   async function validate_and_delete_account(currentPasswordInput) {
-      // create the object that will be the body that is sent
-      const submission = {
-         currentPassword: currentPasswordInput, // send the plain text password over secure connection, the server will hash it
-      };
-
-      // post to API
-      axios
-         .put("api/v1/users/delete", submission)
-         .then((res) => {
-            clear_message_and_errors();
-            set_message_from_server("This account has been deleted");
-            set_mode("account-settings-menu");
-            log_out_current_user();
-            history.push("/");
-         })
-         .catch((err) => {
-            const data = err.response.data;
-
-            // push errors or lack thereof to state
-            set_current_password_error(data.current_password_error);
-         });
-   }
-
-   // abstract duplicated jsx
-   function InputCurrentPassword() {
-      return (
-         <Input
-            double
-            name="password"
-            label="Password"
-            type="password"
-            placeholder="Enter your password"
-            error_message={current_password_error}
-         />
-      );
-   }
-
-   function CancelButton() {
-      return (
-         <Button
-            label="Cancel"
-            secondary
-            action={() => {
-               cancel_sub_menu();
-            }}
-            style={{ marginBottom: 0 }} // inline buttons have margins below them that need to be removed if they are the last one in its container
-         />
-      );
-   }
-
-   // renders the account settings menu buttons
-   function render_account_settings_menu() {
-      return (
-         <>
-            <Button
-               label="Change Password..."
-               primary
-               block
-               action={() => {
-                  enter_sub_menu("change-password");
-               }}
-            />
-            <Button
-               label="Change User Name..."
-               secondary
-               block
-               action={() => {
-                  enter_sub_menu("change-user-name");
-               }}
-            />
-            <Button
-               label="Change Email..."
-               secondary
-               block
-               action={() => {
-                  enter_sub_menu("change-email");
-               }}
-            />
-            <Button
-               label="Change Team Name..."
-               secondary
-               block
-               action={() => {
-                  enter_sub_menu("change-team-name");
-               }}
-            />
-            <Button
-               label="Change Initials..."
-               secondary
-               block
-               action={() => {
-                  enter_sub_menu("change-initials");
-               }}
-            />
-            <Button
-               label="Delete Account..."
-               secondary
-               warning
-               block
-               action={() => {
-                  enter_sub_menu("delete-account");
-               }}
-            />
-            <Button
-               label="Log out"
-               secondary
-               action={() => {
-                  log_out_current_user();
-                  history.push("/");
-               }}
-               style={{ marginBottom: 0 }} // inline buttons have margins below them that need to be removed if they are the last one in its container
-            />
-         </>
-      );
-   }
-
-   function render_change_user_name() {
-      return (
-         <>
-            <h5>Change User Name</h5>
-            <form>
-               <Input
-                  double
-                  name="new-user-name"
-                  label="New User Name"
-                  placeholder={current_user.user_name}
-                  max_length={MAX_USER_NAME_LENGTH}
-                  error_message={new_user_name_error}
-               />
-               <InputCurrentPassword />
-               <Button
-                  label="Change User Name"
-                  primary
-                  block
-                  action={() =>
-                     validate_and_change_user_name(
-                        document.getElementById("new-user-name-input").value,
-                        document.getElementById("password-input").value
-                     )
-                  }
-               />
-               <CancelButton />
-            </form>
-         </>
-      );
-   }
-
-   function render_change_email() {
-      return (
-         <>
-            <h5>Change Email Address</h5>
-            <form>
-               <Input
-                  double
-                  name="new-email"
-                  label="New Email Address"
-                  placeholder={current_user.email}
-                  error_message={new_email_error}
-                  max_length={MAX_EMAIL_LENGTH}
-               />
-               <InputCurrentPassword />
-               <Button
-                  label="Change Email"
-                  primary
-                  block
-                  action={() =>
-                     validate_and_change_email(
-                        document.getElementById("new-email-input").value,
-                        document.getElementById("password-input").value
-                     )
-                  }
-               />
-               <CancelButton />
-            </form>
-         </>
-      );
-   }
-
-   function render_change_initials() {
-      return (
-         <>
-            <h5>Change Initials</h5>
-            <form>
-               <Input
-                  double
-                  name="new-initials"
-                  label="New Initials"
-                  placeholder={current_user.initials}
-                  max_length={MAX_USER_INITIALS_LENGTH}
-                  style={{ textTransform: "uppercase" }}
-                  error_message={new_initials_error}
-               />
-               <InputCurrentPassword />
-               <Button
-                  label="Change Initials"
-                  primary
-                  block
-                  action={() =>
-                     validate_and_change_initials(
-                        document
-                           .getElementById("new-initials-input")
-                           .value.toUpperCase(),
-                        document.getElementById("password-input").value
-                     )
-                  }
-               />
-               <CancelButton />
-            </form>
-         </>
-      );
-   }
-
-   function render_change_team_name() {
-      // TODO: do not allow a team name that is already in use
-      return (
-         <>
-            <h5>Change Team Name</h5>
-            <form>
-               <Input
-                  double
-                  name="new-team-name"
-                  label="New Team Name"
-                  placeholder={current_user.team_name}
-                  max_length={MAX_TEAM_NAME_LENGTH}
-                  error_message={new_team_name_error}
-               />
-               <InputCurrentPassword />
-               <Button
-                  label="Change Team Name"
-                  primary
-                  block
-                  action={() =>
-                     validate_and_change_team_name(
-                        document.getElementById("new-team-name-input").value,
-                        document.getElementById("password-input").value
-                     )
-                  }
-               />
-               <CancelButton />
-            </form>
-         </>
-      );
-   }
-
-   function render_change_password() {
-      return (
-         <>
-            <h5>Change Password</h5>
-            <form>
-               <Input
-                  double
-                  name="current-password"
-                  label="Current Password"
-                  type="password"
-                  placeholder="Enter your existing password."
-                  error_message={current_password_error}
-               />
-               <Input
-                  double
-                  name="new-password"
-                  label="New Password"
-                  type="password"
-                  placeholder="Enter a new password"
-                  error_message={new_password_error}
-               />
-               <Button
-                  label="Change Password"
-                  primary
-                  block
-                  action={() =>
-                     validate_and_change_password(
-                        document.getElementById("current-password-input").value,
-                        document.getElementById("new-password-input").value
-                     )
-                  }
-               />
-               <CancelButton />
-            </form>
-         </>
-      );
-   }
-
-   function render_delete_account() {
-      return (
-         <>
-            <h5>Delete Account</h5>
-            <form>
-               <InputCurrentPassword />
-               <p>
-                  Are you sure you want to delete account&nbsp;"
-                  {current_user.user_name}"?
-               </p>
-               <Button
-                  label="Delete Account"
-                  danger
-                  block
-                  action={() =>
-                     validate_and_delete_account(
-                        document.getElementById("password-input").value
-                     )
-                  }
-               />
-               <CancelButton />
-            </form>
-         </>
-      );
    }
 
    return (
       <>
-         <NavBar />
-         {/* input and button testing */}
-         {/* <div
-            className="my-card"
-            style={{ background: "gray", padding: "1rem" }}
-         >
-            <Input label="inline" inline />
-            <Input label="inline" inline />
-            <Input label="block" block />
-            <Input label="block" block />
-            <Input label="inline" inline />
-            <Input label="inline" inline />
-            <Input label="double" double />
-            <Input label="inline" inline error_message="error message" />
-            <Input label="inline" inline error_message="error message" />
-            <Input label="block" block error_message="error message" />
-            <Input label="block" block error_message="error message" />
-            <Input label="inline" inline error_message="error message" />
-            <Input label="inline" inline error_message="error message" />
-            <Input label="double" double error_message="error message" />
-            <Input label="double" double />
-            <Button label="inline primary" primary />
-            <Button label="inline secondary" secondary />
-            <Button label="inline warning" warning secondary />
-            <Button label="inline danger" danger />
-            <Button label="block primary" block primary />
-            <Button label="block secondary" block secondary />
-            <Button label="block warning" block warning secondary />
-            <Button label="block danger" block danger />
-            <div>
-               <Button label="inline danger" danger />
-            </div>
-         </div> */}
-         <div className="my-container bottom-scroll-fix">
-            <div className="my-card">
-               <div className="card-header">
-                  <h2>
-                     Account Settings
-                     {/* &nbsp;for&nbsp;
-                           {current_user.user_name} */}
-                  </h2>
-               </div>
-               <div className="card-body">
-                  {message_from_server && <p>{message_from_server}</p>}
-                  {/* render component based on what mode we are in */}
-                  {mode === "account-settings-menu" &&
-                     render_account_settings_menu()}
-                  {mode === "change-user-name" && render_change_user_name()}
-                  {mode === "change-email" && render_change_email()}
-                  {mode === "change-team-name" && render_change_team_name()}
-                  {mode === "change-initials" && render_change_initials()}
-                  {mode === "change-password" && render_change_password()}
-                  {mode === "delete-account" && render_delete_account()}
-               </div>
-            </div>
+         <h4 style={{ textTransform: "capitalize" }}>Change Your {property}</h4>
+         <InputWithError
+            label="Enter Your Password"
+            input_type="password"
+            input_value={current_password_input}
+            set_value={set_current_password_input}
+            set_error={set_current_password_error}
+            error={current_password_error}
+            is_validated={current_password_is_validated}
+            set_is_validated={set_current_password_is_validated}
+         />
+         <InputWithError
+            label={`Enter a New User ${property}`}
+            input_type={input_type}
+            input_value={new_value_input}
+            set_value={set_new_value_input}
+            set_error={set_new_value_error}
+            error={new_value_error}
+            is_validated={new_value_is_validated}
+            set_is_validated={set_new_value_is_validated}
+         />
+         <div>
+            <Button
+               variant="secondary"
+               onClick={() => validate_and_change_user_property()}
+               style={{ textTransform: "capitalize" }}
+               className="mt-3"
+            >
+               Change {property}
+            </Button>
          </div>
+         {message && (
+            <Alert variant={message_variant} className="mt-3">
+               {message}
+            </Alert>
+         )}
       </>
    );
 }
 
-// maps the Redux store/state to props
-function mapStateToProps(state) {
-   return { current_user: state.current_user };
-}
+export default function AccountSettings({ user, set_user }) {
+   const router = useRouter();
 
-export default connect(mapStateToProps)(AccountSettings);
+   const [
+      current_password_input_for_account_deletion,
+      set_current_password_input_for_account_deletion,
+   ] = useState("");
+   const [
+      current_password_error_for_account_deletion,
+      set_current_password_error_for_account_deletion,
+   ] = useState("");
+   const [current_password_is_validated, set_current_password_is_validated] =
+      useState(false);
+
+   function set_is_validated(value) {
+      set_current_password_is_validated(value);
+   }
+
+   // TODO: can refactor this to map over some data and use auto generated ids for event keys
+
+   return (
+      <Container>
+         <div className="my-card">
+            <div className="card-header">
+               <h2>Account Settings</h2>
+            </div>
+            <div className="card-body">
+               <Accordion>
+                  <Accordion.Item eventKey="0">
+                     <Accordion.Header>Change Password</Accordion.Header>
+                     <Accordion.Body>
+                        <ChangeUserProperty
+                           user={user}
+                           set_user={set_user}
+                           property="password"
+                           input_type="password"
+                        />
+                     </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="1">
+                     <Accordion.Header>Change User Name</Accordion.Header>
+                     <Accordion.Body>
+                        <ChangeUserProperty
+                           user={user}
+                           set_user={set_user}
+                           property="name"
+                        />
+                     </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="2">
+                     <Accordion.Header>Change Email</Accordion.Header>
+                     <Accordion.Body>
+                        <ChangeUserProperty
+                           user={user}
+                           set_user={set_user}
+                           property="email"
+                        />
+                     </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="4">
+                     <Accordion.Header>Change Team Name</Accordion.Header>
+                     <Accordion.Body>
+                        <ChangeUserProperty
+                           user={user}
+                           set_user={set_user}
+                           property="team_name"
+                        />
+                     </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="5">
+                     <Accordion.Header>Change Initials</Accordion.Header>
+                     <Accordion.Body>
+                        <ChangeUserProperty
+                           user={user}
+                           set_user={set_user}
+                           property="initials"
+                        />
+                     </Accordion.Body>
+                  </Accordion.Item>
+                  <Accordion.Item eventKey="3">
+                     <Accordion.Header>Delete Account</Accordion.Header>
+                     <Accordion.Body>
+                        <h4 style={{ textTransform: "capitalize" }}>
+                           Delete Your Account
+                        </h4>
+                        <InputWithError
+                           label="Enter Your Password"
+                           input_type="password"
+                           input_value={
+                              current_password_input_for_account_deletion
+                           }
+                           set_value={
+                              set_current_password_input_for_account_deletion
+                           }
+                           error={current_password_error_for_account_deletion}
+                           set_error={
+                              set_current_password_error_for_account_deletion
+                           }
+                           is_validated={current_password_is_validated}
+                           set_is_validated={set_current_password_is_validated}
+                        />
+                        <Button
+                           variant="danger"
+                           className="mt-3"
+                           onClick={() => {
+                              axios
+                                 .delete(
+                                    "/api/users",
+                                    {
+                                       data: {
+                                          current_password:
+                                             current_password_input_for_account_deletion,
+                                       },
+                                    } // must send payload like this when using delete method
+                                 )
+                                 .then(() => {
+                                    console.log("Account deleted.");
+                                    log_out({ set_user, router }); // log out the user
+                                    set_is_validated(true);
+                                 })
+                                 .catch((err) => {
+                                    console.log("err", err, err.response.data);
+                                    set_current_password_error_for_account_deletion(
+                                       err.response.data.current_password_error
+                                    );
+                                    set_is_validated(true);
+                                 });
+                           }}
+                        >
+                           Delete Account
+                        </Button>
+                     </Accordion.Body>
+                  </Accordion.Item>
+               </Accordion>
+            </div>
+         </div>
+      </Container>
+   );
+}

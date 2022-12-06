@@ -1,78 +1,97 @@
-import React from "react";
+import '../styles/master.scss';
+import Head from 'next/head';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
+import isEmpty from 'lodash/isEmpty';
+import Alert from 'react-bootstrap/Alert';
+import NavBar from '../components/NavBar';
+import log_in from '../utils/log_in';
+import log_out from '../utils/log_out';
+import {
+   DEFAULT_GROUP_SEASON_WEEK,
+   SUCCESS_MESSAGE_DURATION,
+} from '../utils/client_helpers';
 
-import "./style/master.scss";
+function MyApp({ Component, pageProps }) {
+   const router = useRouter();
 
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import jwtDecode from "jwt-decode";
-import store from "./store/store";
-import actions from "./store/actions";
-import axios from "axios";
+   // global state
+   const [user, set_user] = useState({});
+   const [message, set_message] = useState({});
+   const [group_season_week, set_group_season_week] = useState(
+      DEFAULT_GROUP_SEASON_WEEK
+   );
 
-import Landing from "./components/pages/Landing";
-import AccountSettings from "./components/pages/AccountSettings";
-import MyPicks from "./components/pages/MyPicks";
-import GroupPicks from "./components/pages/GroupPicks";
-import Standings from "./components/pages/Standings";
-import NotFound from "./components/pages/NotFound";
-import EnterScores from "./components/pages/EnterScores";
+   // global state functions
+   const set_danger_message = (message) => {
+      set_message({ message: message, variant: 'danger', time: Date.now() });
+   };
+   const set_warning_message = (message) => {
+      set_message({ message: message, variant: 'warning', time: Date.now() });
+   };
+   const set_success_message = (message) => {
+      set_message({ message: message, variant: 'success', time: Date.now() });
+      setTimeout(clear_message, SUCCESS_MESSAGE_DURATION);
+   };
+   const clear_message = () => {
+      set_message({});
+   };
 
-const authToken = localStorage.authToken; // get the auth token from local storage
-if (authToken) {
-   const currentTimeInSec = Date.now() / 1000;
-   const user = jwtDecode(authToken);
+   // what happens when the site is loaded or refreshed
+   useEffect(() => {
+      const access_token = localStorage.getItem('access_token'); // get the auth token from local storage
 
-   if (currentTimeInSec > user.exp || user.this_login_at < 1599508200000) {
-      // user.this_login_at < 1599508200000 to force the user to log in with an old token before change
-      console.log("expired token");
-
-      // remove the current_user from the global state / redux store
-      store.dispatch({
-         type: actions.UPDATE_CURRENT_USER,
-         payload: {},
-      });
-
-      // remove the default headers
-      delete axios.defaults.headers.common["x-auth-token"];
-   } else {
-      // authToken is not expired
-
-      console.log("valid token");
-
-      // store the user in global state / redux store (current_user)
-      store.dispatch({
-         type: actions.UPDATE_CURRENT_USER,
-         payload: user,
-      });
-
-      // set authorization headers for every request
-      axios.defaults.headers.common["x-auth-token"] = authToken;
-
-      // redirect to default page if they are currently logged in, this is in an if statement so it won't keep refreshing forever
-      if (window.location.pathname === "/") {
-         window.location.href = "/my-picks"; // so if the user goes to our website with a valid token, they will go here
+      if (access_token) {
+         console.log('Access token found.');
+         log_in({ access_token, router, set_user });
+      } else {
+         console.log('No access token.');
+         log_out({ set_user, router });
       }
-   }
-} else {
-   console.log("no token");
+   }, []);
 
-   // remove the default headers in the off chance they exist for some reason
-   delete axios.defaults.headers.common["x-auth-token"];
-}
+   console.log({ group_season_week, user });
 
-function App() {
    return (
-      <Router>
-         <Switch>
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/account-settings" component={AccountSettings} />
-            <Route exact path="/my-picks" component={MyPicks} />
-            <Route exact path="/group-picks" component={GroupPicks} />
-            <Route exact path="/standings" component={Standings} />
-            <Route exact path="/enter-scores" component={EnterScores} />
-            <Route component={NotFound} />
-         </Switch>
-      </Router>
+      <>
+         <Head>
+            <title>Hawk Nation NFL Pick'em</title>
+            <link rel="icon" href="/favicon.ico" />
+         </Head>
+         {!isEmpty(user) && (
+            // only show Nav if the user is logged in
+            <NavBar
+               user={user}
+               group_season_week={group_season_week}
+               set_group_season_week={set_group_season_week}
+               set_user={set_user}
+            />
+         )}
+         <Component
+            {...pageProps}
+            user={user}
+            set_user={set_user}
+            group_season_week={group_season_week}
+            message={message}
+            set_danger_message={set_danger_message}
+            set_success_message={set_success_message}
+            set_warning_message={set_warning_message}
+            clear_message={clear_message}
+         />
+         {/* message pop up */}
+         {!isEmpty(message) && (
+            <Alert variant={message.variant} className="message">
+               {message.message}
+            </Alert>
+         )}
+      </>
    );
 }
 
-export default App;
+MyApp.propTypes = {
+   Component: PropTypes.func,
+   pageProps: PropTypes.object,
+};
+
+export default MyApp;
