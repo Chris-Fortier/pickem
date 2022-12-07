@@ -101,7 +101,7 @@ export default function NavBar({
                                  DEFAULT_GROUP_SEASON_WEEK.week;
                            } else {
                               // if changing to a different season, set the week to "entire season"
-                              new_values["week"] = "%";
+                              new_values["week"] = "all";
                            }
                            change_group_season_week(new_values);
                         }}
@@ -115,7 +115,7 @@ export default function NavBar({
                   <span className="nav-row-title">Week:</span>
                   {WEEKS.filter(
                      (week) =>
-                        week === "%" ||
+                        week === "all" ||
                         week <=
                            get_num_regular_season_weeks(
                               group_season_week.season

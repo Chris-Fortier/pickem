@@ -19,12 +19,12 @@ export function get_num_regular_season_weeks(season) {
    return 18;
 }
 
-// input a week number or '%' and return 'Week X' or 'Entire Season'
+// input a week number or 'all' and return 'Week X' or 'Entire Season'
 export function get_week_or_season_text(week, season, is_abbr = false) {
    const num_regular_season_weeks = get_num_regular_season_weeks(season);
 
    if (!is_abbr) {
-      if (week === "%") {
+      if (week === "all") {
          return "Entire Season";
       } else if (week === num_regular_season_weeks + 1) {
          return "Wildcard Round";
@@ -37,7 +37,7 @@ export function get_week_or_season_text(week, season, is_abbr = false) {
       }
       return `Week ${week}`;
    } else {
-      if (week === "%") {
+      if (week === "all") {
          return "Entire Season";
       } else if (week === num_regular_season_weeks + 1) {
          return "WR";
@@ -70,7 +70,7 @@ export const DEFAULT_GROUP_SEASON_WEEK = {
 };
 
 export const WEEKS = [
-   "%",
+   "all",
    ...Array.from({ length: NUM_WEEKS_IN_SEASON }, (_, index) => index + 1),
 ]; // the WEEKS the user can select from
 
