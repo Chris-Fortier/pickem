@@ -12,15 +12,13 @@ export default async (req, res) => {
       // put a name and password in Body tab under x-www-form-urlencoded
       if (req.method === "GET") {
          const user_id = req.user.id; // get the user id from the JWT
-         const {
-            // group_id,
-            season,
-            week,
-         } = req.query; // grabbing variables from req.query
+         const { group_id, season, week } = req.query; // grabbing variables from req.query
+
+         const week_arg = week === "all" ? "%" : week;
 
          mysqldb
             .raw(
-               `SELECT \`game_at\`, \`away_team\`, \`home_team\`, \`games\`.\`id\` AS \`game_id\`, '${"3fd8d78c-8151-4145-b276-aea3559deb76"}' AS \`group_id\`, \`pick\`, (CASE WHEN \`away_score\` > \`home_score\` THEN 0 WHEN  \`away_score\` < \`home_score\` THEN 1 WHEN \`away_score\` = \`home_score\` THEN 2 ELSE NULL END) AS \`winner\` FROM \`picks\` RIGHT JOIN \`games\` ON \`games\`.\`id\` = \`picks\`.\`game_id\` AND \`user_id\` = '${user_id}' WHERE \`season\` = ${season} AND \`week\` LIKE '${week}' ORDER BY \`game_at\` ASC;`
+               `SELECT \`game_at\`, \`away_team\`, \`home_team\`, \`games\`.\`id\` AS \`game_id\`, '${group_id}' AS \`group_id\`, \`pick\`, (CASE WHEN \`away_score\` > \`home_score\` THEN 0 WHEN  \`away_score\` < \`home_score\` THEN 1 WHEN \`away_score\` = \`home_score\` THEN 2 ELSE NULL END) AS \`winner\` FROM \`picks\` RIGHT JOIN \`games\` ON \`games\`.\`id\` = \`picks\`.\`game_id\` AND \`user_id\` = '${user_id}' WHERE \`season\` = ${season} AND \`week\` LIKE '${week_arg}' ORDER BY \`game_at\` ASC;`
             )
             .then((picks) => {
                return res.status(200).json(picks[0]);

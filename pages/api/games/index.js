@@ -12,7 +12,7 @@ export default async (req, res) => {
 
       // determine if we only want data for a specific week or the entire season
       const where_args = { season };
-      if (week !== "%") {
+      if (week !== "all") {
          where_args.week = week;
       }
 

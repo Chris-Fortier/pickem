@@ -58,7 +58,7 @@ export default function Standings({
                      <br />
                      Standings
                   </h2>
-                  {group_season_week.week !== "%" && (
+                  {group_season_week.week !== "all" && (
                      <p>
                         These are standings for week {group_season_week.week}{" "}
                         only. To see the standings for the entire season, choose

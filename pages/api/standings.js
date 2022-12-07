@@ -9,17 +9,15 @@ export default async (req, res) => {
    // http://localhost:3000/api/standings
    // put a name and password in Body tab under x-www-form-urlencoded
    if (req.method === "GET") {
-      const {
-         // group_id,
-         season,
-         week,
-      } = req.query; // grabbing variables from req.query
+      const { group_id, season, week } = req.query; // grabbing variables from req.query
 
       // determine if we only want data for a specific week or the entire season
-      const where_args = { season };
-      if (week !== "%") {
+      const where_args = { group_id, season };
+      if (week !== "all") {
          where_args.week = week;
       }
+
+      console.log("req.query", req.query);
 
       mysqldb
          .select(
@@ -31,7 +29,9 @@ export default async (req, res) => {
             ),
             mysqldb.raw(
                "SUM(CASE WHEN `pick` = (CASE WHEN `away_score` > `home_score` THEN 0 WHEN `away_score` < `home_score` THEN 1 WHEN `away_score` = `home_score` THEN 2 ELSE NULL END) AND `pick` is not null THEN `value` ELSE 0 END) AS `num_points`"
-            )
+            ),
+            mysqldb.raw("COUNT(`pick`) AS `num_picks`"),
+            mysqldb.raw("COUNT(`away_score`) AS `num_finished_games`")
          )
          .from("games")
          .rightJoin("picks", "picks.game_id", "games.id")
@@ -40,10 +40,11 @@ export default async (req, res) => {
          .groupBy("user_id")
          .orderBy("num_points", "desc")
          .then((standings) => {
-            if (standings.length) {
+            if (standings.length && standings[0].num_finished_games) {
                // process the standings
                let current_rank = 1;
                let prev_points = standings[0].num_points;
+               let max_picks = standings[0].num_picks;
                standings.forEach((standings_item, i) => {
                   standings_item.is_new_rank = i > 0 ? false : true;
                   if (
@@ -59,10 +60,17 @@ export default async (req, res) => {
                      standings_item.num_correct - standings[0].num_correct;
                   standings_item.num_points_behind =
                      standings_item.num_points - standings[0].num_points;
+                  if (standings_item.num_picks > max_picks) {
+                     max_picks = standings_item.num_picks;
+                  }
                });
-               return res.status(200).json(standings);
+               // only count users who picked in at least 50% of the games in the standings
+               const filtered_standings = standings.filter((standing_item) => {
+                  return standing_item.num_picks >= max_picks * 0.5;
+               });
+               return res.status(200).json(filtered_standings);
             } else {
-               // no standings for this week yet
+               // no standings for this week yet, either nobody made any picks or no games have finished
                return res.status(200).json([]);
             }
          })
