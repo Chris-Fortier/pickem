@@ -65,7 +65,6 @@ export default async (req, res) => {
                   `
                      )
                      .then((db_res) => {
-                        console.log("pick made");
                         return res.status(200).json(db_res);
                      })
                      .catch((err) => {

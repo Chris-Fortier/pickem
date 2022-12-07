@@ -34,7 +34,6 @@ export default function Login({ set_user }) {
       axios
          .post("/api/users/auth", user)
          .then((res) => {
-            console.log({ res });
             // what happens when the user logs in
             set_current_user_name_error("");
             set_current_password_error("");

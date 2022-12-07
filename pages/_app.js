@@ -51,8 +51,6 @@ function MyApp({ Component, pageProps }) {
       }
    }, []);
 
-   console.log({ group_season_week, user });
-
    return (
       <>
          <Head>

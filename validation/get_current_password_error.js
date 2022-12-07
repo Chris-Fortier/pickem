@@ -4,7 +4,6 @@ const mysqldb = knex(config);
 const bcrypt = require("bcrypt");
 
 module.exports = async function get_current_password_error(password, name) {
-   console.log("get_current_password_error()...");
    if (password === "") {
       // check if password input is blank
       return "Please enter your password.";
