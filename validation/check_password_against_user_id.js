@@ -26,7 +26,6 @@ module.exports = async function check_password_against_user_id(id, password) {
             return await bcrypt
                .compare(password, user.password)
                .then((is_valid_user) => {
-                  console.log("is_valid_user", is_valid_user);
                   return is_valid_user
                      ? ""
                      : "The password you entered is not correct for this user.";

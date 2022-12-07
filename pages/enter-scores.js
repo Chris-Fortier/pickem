@@ -14,7 +14,6 @@ export default function EnterScores({
 }) {
    const [games, set_games] = useState([]);
    const [message_from_server] = useState("");
-   console.log({ games });
 
    useEffect(() => {
       if (user) {
@@ -108,7 +107,6 @@ export default function EnterScores({
                                  game.home_score !== null
                               }
                               action={() => {
-                                 console.log("clicked");
                                  axios
                                     .patch(
                                        `/api/games/update-score?game_id=${
