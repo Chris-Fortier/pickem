@@ -9,11 +9,7 @@ export default async (req, res) => {
    // http://localhost:3000/api/standings
    // put a name and password in Body tab under x-www-form-urlencoded
    if (req.method === "GET") {
-      const {
-         // group_id,
-         season,
-         week,
-      } = req.query; // grabbing variables from req.query
+      const { group_id, season, week } = req.query; // grabbing variables from req.query
 
       // determine if we only want data for a specific week or the entire season
       const where_args = { group_id, season };

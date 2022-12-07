@@ -12,14 +12,10 @@ export default async (req, res) => {
    validate_jwt(req, res, async () => {
       if (req.method === "GET") {
          const user_id = req.user.id; // get the user id from the JWT
-         const {
-            // group_id,
-            season,
-            week,
-         } = req.query; // grabbing variables from req.query
+         const { group_id, season, week } = req.query; // grabbing variables from req.query
 
          // determine if we only want data for a specific week or the entire season
-         const where_args = { season };
+         const where_args = { group_id, season };
          if (week !== "all") {
             where_args.week = week;
          }
