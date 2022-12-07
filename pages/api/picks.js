@@ -18,34 +18,12 @@ export default async (req, res) => {
             week,
          } = req.query; // grabbing variables from req.query
 
-         // determine if we only want data for a specific week or the entire season
-         const where_args = { season, "picks.user_id": user_id };
-         const or_where_args = { season, "picks.user_id": null };
-         if (week !== "%") {
-            where_args.week = week;
-            or_where_args.week = week;
-         }
-
          mysqldb
-            .select(
-               "game_at",
-               "away_team",
-               "home_team",
-               "games.id as game_id",
-               "pick",
-               // 'user_id',
-               mysqldb.raw(
-                  "(CASE WHEN `away_score` > `home_score` THEN 0 WHEN `away_score` < `home_score` THEN 1 WHEN `away_score` = `home_score` THEN 2 ELSE NULL END) AS `winner`"
-               )
+            .raw(
+               `SELECT \`game_at\`, \`away_team\`, \`home_team\`, \`games\`.\`id\` AS \`game_id\`, '${"3fd8d78c-8151-4145-b276-aea3559deb76"}' AS \`group_id\`, \`pick\`, (CASE WHEN \`away_score\` > \`home_score\` THEN 0 WHEN  \`away_score\` < \`home_score\` THEN 1 WHEN \`away_score\` = \`home_score\` THEN 2 ELSE NULL END) AS \`winner\` FROM \`picks\` RIGHT JOIN \`games\` ON \`games\`.\`id\` = \`picks\`.\`game_id\` AND \`user_id\` = '${user_id}' WHERE \`season\` = ${season} AND \`week\` LIKE '${week}' ORDER BY \`game_at\` ASC;`
             )
-            .from("picks")
-            .rightJoin("games", "games.id", "picks.game_id")
-            .where(where_args)
-            .orWhere(or_where_args)
-            .orderBy("game_at", "asc")
             .then((picks) => {
-               console.log({ picks });
-               return res.status(200).json(picks);
+               return res.status(200).json(picks[0]);
             })
             .catch((err) => {
                // report error
