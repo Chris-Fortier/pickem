@@ -13,3 +13,12 @@
 ## Run Locally
 
 1. Run `yarn dev`.
+
+## Deploy
+
+1. Push a commit or MR to the `master` branch, then push up to GitHub.
+
+## Test a Deployment
+
+1. Push up a commit to an MR branch.
+2. Go to the MR in GitHub and there should be a link to a deployment.
