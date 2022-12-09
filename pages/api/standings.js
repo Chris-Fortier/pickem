@@ -37,6 +37,7 @@ export default async (req, res) => {
          .rightJoin("picks", "picks.game_id", "games.id")
          .rightJoin("users", "picks.user_id", "users.id")
          .where(where_args)
+         .whereNotNull("away_score") // user's must pick at least 50% of finished games to appear
          .groupBy("user_id")
          .orderBy("num_points", "desc")
          .then((standings) => {
