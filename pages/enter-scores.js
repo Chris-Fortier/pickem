@@ -83,6 +83,7 @@ export default function EnterScores({
                               default_value={game.away_score}
                               min="0"
                               max="200"
+                              style={{ width: "60px" }}
                               label_style={{ width: "30px" }}
                            />
                            at{" "}
@@ -94,6 +95,7 @@ export default function EnterScores({
                               default_value={game.home_score}
                               min="0"
                               max="200"
+                              style={{ width: "60px" }}
                               label_style={{ width: "30px" }}
                            />
                            <Button
