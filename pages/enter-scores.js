@@ -83,8 +83,7 @@ export default function EnterScores({
                               default_value={game.away_score}
                               min="0"
                               max="200"
-                              style={{ width: "60px" }}
-                              label_style={{ width: "30px" }}
+                              style={{ width: "50px" }}
                            />
                            at{" "}
                            <Input
@@ -95,10 +94,10 @@ export default function EnterScores({
                               default_value={game.home_score}
                               min="0"
                               max="200"
-                              style={{ width: "60px" }}
-                              label_style={{ width: "30px" }}
+                              style={{ width: "50px" }}
                            />
                            <Button
+                              style={{ marginRight: 0 }}
                               label="Update"
                               primary={
                                  game.away_score === null &&
