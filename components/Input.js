@@ -53,7 +53,7 @@ export default function Input({
             maxLength={max_length}
             style={{
                ...style,
-               width: double && "100%",
+               // width: double && "100%",
                flexGrow: block && 1,
                marginRight: inline && "1rem",
                padding: ".375rem .75rem",
