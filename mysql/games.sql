@@ -1006,3 +1006,68 @@ SELECT * FROM `pickem_app`.`games` WHERE `week` = 7 AND `season` = 2022;
 SELECT * FROM `pickem_app`.`games` WHERE `week` = 9 AND `season` = 2022;
 SELECT * FROM `pickem_app`.`games` WHERE `week` = 12 AND `season` = 2022;
 SELECT * FROM `pickem_app`.`games` WHERE `week` = 13 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 14 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 15 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 16 AND `season` = 2022;
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 18 AND `season` = 2022;
+
+-- 2022 WC weekend
+INSERT INTO `pickem_app`.`games` (
+	`season`,
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`,
+	`value`
+)
+VALUES
+(2022,19,1673731800000,'SEA','SF',2),
+(2022,19,1673745300000,'LAC','JAX',2),
+(2022,19,1673805600000,'MIA','BUF',2),
+(2022,19,1673818200000,'NYG','MIN',2),
+(2022,19,1673831700000,'BAL','CIN',2),
+(2022,19,1673918100000,'DAL','TB',2);
+
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 19 AND `season` = 2022;
+
+-- 2022 Div weekend
+INSERT INTO `pickem_app`.`games` (
+	`season`,
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`,
+	`value`
+)
+VALUES
+(2022,20,1674336600000,'JAX','KC',4),
+(2022,20,1674350100000,'NYG','PHI',4),
+(2022,20,1674417600000,'CIN','BUF',4),
+(2022,20,1674430200000,'DAL','SF',4);
+
+-- 2022 CC weekend
+INSERT INTO `pickem_app`.`games` (
+	`season`,
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`,
+	`value`
+)
+VALUES
+(2022,21,1675022400000,'SF','PHI',8),
+(2022,21,1675027800000,'CIN','KC',8);
+
+SELECT * FROM `pickem_app`.`games` WHERE `week` = 21 AND `season` = 2022;
+
+-- 2022 Super Bowl
+INSERT INTO `pickem_app`.`games` (
+	`season`,
+    `week`,
+    `game_at`,
+    `away_team`,
+    `home_team`,
+	`value`
+)
+VALUES
+(2022,22,1676244600000,'KC','PHI',16);

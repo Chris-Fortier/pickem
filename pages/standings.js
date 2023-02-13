@@ -7,6 +7,7 @@ import { v4 } from "uuid";
 const MEDALS = [
    { user_id: "ba1c83b1-9899-42e0-97f3-561f0643153a", label: "20" },
    { user_id: "23e3a0cc-588a-4a91-8709-0be31c89ce6e", label: "21" },
+   { user_id: "8cb742cb-d04c-4714-b11a-a4ca54d7fd30", label: "22" },
 ];
 
 export default function Standings({
