@@ -68,10 +68,6 @@ VALUES
    3. Click **Apply**, then verify and click **Apply** again.
    4. Verify it looks correct in the app.
 
-```sql
-
-```
-
 ## Troubleshooting
 
 ### Cannot See the Nav Bar When Running Locally
