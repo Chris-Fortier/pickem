@@ -129,14 +129,24 @@ export default function Standings({
                   </table>
                </div>
                <div className="card-footer">
-                  {group_season_week.season <= 2020 ? (
+                  {group_season_week.season <= 2020 && (
                      <p>CP = Correct Picks</p>
-                  ) : (
+                  )}{" "}
+                  {(group_season_week.season === 2021 ||
+                     group_season_week.season === 2022) && (
                      <p>
-                        Pts = Points. As of the 2021 season, regular season
-                        correct picks are worth 1 point each, wild-card round 2
-                        points, divisional 4 points, conference championship 8
-                        points and the big game 16 points.
+                        Pts = Points. In the 2021 and 2022 seasons, regular
+                        season correct picks were worth 1 point each, wild-card
+                        round 2 points, divisional 4 points, conference
+                        championship 8 points and the big game 16 points.
+                     </p>
+                  )}
+                  {group_season_week.season >= 2023 && (
+                     <p>
+                        Pts = Points. As of the 2023 season, regular season
+                        correct picks are worth 1 point each, wild-card and
+                        divisional round 2 points, conference championship 4
+                        points and the big game 8 points.
                      </p>
                   )}
                   <p>
