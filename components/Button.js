@@ -12,6 +12,7 @@ export default function Button({
    type = "button",
    style = {},
    className = "",
+   is_enabled = true,
 }) {
    let display_value;
    if (block) {
@@ -37,9 +38,16 @@ export default function Button({
                "btn-secondary": secondary,
                "btn-danger": danger,
                "text-danger": warning,
+               disabled: !is_enabled,
                // "mt-3 mr-2": !block,
             })}
-            onClick={action}
+            onClick={
+               is_enabled
+                  ? action
+                  : () => {
+                       console.log("This button is is disabled.");
+                    }
+            }
          >
             {label}
          </div>

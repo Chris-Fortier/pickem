@@ -171,15 +171,24 @@ export default function NavBar({
             >
                <Link href="/standings">Standings</Link>
             </span>
-            {/* only show this if they are an admin */}
+            {/* only show these if they are an admin */}
             {user.is_admin === 1 && (
-               <span
-                  className={`nav-tab${
-                     pathname === "/enter-scores" ? " nav-tab-current" : ""
-                  }`}
-               >
-                  <Link href="/enter-scores">Enter Scores</Link>
-               </span>
+               <>
+                  <span
+                     className={`nav-tab${
+                        pathname === "/schedule" ? " nav-tab-current" : ""
+                     }`}
+                  >
+                     <Link href="/schedule">Schedule</Link>
+                  </span>
+                  <span
+                     className={`nav-tab${
+                        pathname === "/enter-scores" ? " nav-tab-current" : ""
+                     }`}
+                  >
+                     <Link href="/enter-scores">Enter Scores</Link>
+                  </span>
+               </>
             )}
          </div>
       </>

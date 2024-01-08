@@ -3,7 +3,105 @@ import Button from "../components/Button";
 import Input from "../components/Input";
 import { get_week_or_season_text } from "../utils/client_helpers";
 import axios from "axios";
-import { v4 } from "uuid";
+import { validate_game_score } from "../validation/fe_validation_utils";
+
+const GameScoreEditor = ({ game }) => {
+   // away score
+   const [away_score_default, set_away_score_default] = useState(
+      game.away_score
+   );
+   const [away_score, set_away_score] = useState(game.away_score);
+   const [has_away_score_changed, set_has_away_score_changed] = useState(false);
+   const [is_away_score_valid, set_is_away_score_valid] = useState(true);
+
+   // home score
+   const [home_score_default, set_home_score_default] = useState(
+      game.home_score
+   );
+   const [home_score, set_home_score] = useState(game.home_score);
+   const [has_home_score_changed, set_has_home_score_changed] = useState(false);
+   const [is_home_score_valid, set_is_home_score_valid] = useState(true);
+
+   const [message, set_message] = useState("");
+
+   const is_update_enabled =
+      (has_away_score_changed || has_home_score_changed) &&
+      is_away_score_valid &&
+      is_home_score_valid;
+
+   const update_editor = () => {
+      set_has_away_score_changed(false);
+      set_away_score_default(away_score);
+      set_has_home_score_changed(false);
+      set_home_score_default(home_score);
+   };
+
+   return (
+      <>
+         <Input
+            inline
+            label={game.away_team}
+            type="text"
+            style={{ width: "50px" }}
+            name={`${game.id}-away_score`}
+            default_value={away_score_default}
+            value={away_score}
+            set_value={set_away_score}
+            has_changed={has_away_score_changed}
+            set_has_changed={set_has_away_score_changed}
+            validate={validate_game_score}
+            is_valid={is_away_score_valid}
+            set_is_valid={set_is_away_score_valid}
+         />
+         at{" "}
+         <Input
+            inline
+            label={game.home_team}
+            type="text"
+            style={{ width: "50px" }}
+            name={`${game.id}-home_score`}
+            default_value={home_score_default}
+            value={home_score}
+            set_value={set_home_score}
+            has_changed={has_home_score_changed}
+            set_has_changed={set_has_home_score_changed}
+            validate={validate_game_score}
+            is_valid={is_home_score_valid}
+            set_is_valid={set_is_home_score_valid}
+         />
+         <Button
+            style={{ marginRight: 0 }}
+            label="Update"
+            primary={is_update_enabled}
+            secondary={!is_update_enabled}
+            is_enabled={is_update_enabled}
+            action={() => {
+               const body = {
+                  game_id: game.id,
+                  updates: {
+                     ...(has_away_score_changed && {
+                        away_score: away_score,
+                     }),
+                     ...(has_home_score_changed && {
+                        home_score: home_score,
+                     }),
+                  },
+               };
+               axios
+                  .patch(`/api/games`, body)
+                  .then((res) => {
+                     set_message(res.data);
+                     update_editor();
+                  })
+                  .catch(() => {
+                     set_message("Something went wrong");
+                  });
+            }}
+         />{" "}
+         {message}
+      </>
+   );
+};
 
 export default function EnterScores({
    group_season_week,
@@ -23,12 +121,7 @@ export default function EnterScores({
                `/api/games?season=${group_season_week.season}&week=${group_season_week.week}`
             )
             .then((res) => {
-               set_games(
-                  // initialize each game with a blank note
-                  res.data.map((game) => {
-                     return { ...game, note: "" };
-                  })
-               );
+               set_games(res.data);
                set_success_message(
                   `Received ${res.data.length} games from the server.`
                );
@@ -65,89 +158,24 @@ export default function EnterScores({
                </div>
                <div className="card-body">
                   <p>{message_from_server}</p>
-                  {games.map((game, game_index) => {
+                  {games.map((game, i) => {
                      if (game.game_at + 3600000 >= now) {
                         return (
-                           <p key={v4()}>
+                           <p key={game.id + "-game-score-editor"}>
                               {game.away_team} at {game.home_team}
                            </p>
                         );
                      }
                      return (
-                        <div key={v4()}>
-                           <Input
-                              inline
-                              label={game.away_team}
-                              type="number"
-                              name={`${game.id}-away_score`}
-                              default_value={game.away_score}
-                              min="0"
-                              max="200"
-                              style={{ width: "50px" }}
+                        <>
+                           <GameScoreEditor
+                              game={game}
+                              key={game.id + "-game-score-editor"}
                            />
-                           at{" "}
-                           <Input
-                              inline
-                              label={game.home_team}
-                              type="number"
-                              name={`${game.id}-home_score`}
-                              default_value={game.home_score}
-                              min="0"
-                              max="200"
-                              style={{ width: "50px" }}
-                           />
-                           <Button
-                              style={{ marginRight: 0 }}
-                              label="Update"
-                              primary={
-                                 game.away_score === null &&
-                                 game.home_score === null
-                              }
-                              secondary={
-                                 game.away_score !== null &&
-                                 game.home_score !== null
-                              }
-                              action={() => {
-                                 axios
-                                    .patch(
-                                       `/api/games/update-score?game_id=${
-                                          game.id
-                                       }&away_score=${
-                                          document.getElementById(
-                                             `${game.id}-away_score-input`
-                                          ).value
-                                       }&home_score=${
-                                          document.getElementById(
-                                             `${game.id}-home_score-input`
-                                          ).value
-                                       }`
-                                    )
-                                    .then((res) => {
-                                       // insert the response message into this game's note
-                                       const new_games = [...games];
-                                       new_games[game_index].note = res.data;
-                                       new_games[game_index].away_score =
-                                          document.getElementById(
-                                             `${game.id}-away_score-input`
-                                          ).value;
-                                       new_games[game_index].home_score =
-                                          document.getElementById(
-                                             `${game.id}-home_score-input`
-                                          ).value;
-                                       set_games(new_games);
-                                    })
-                                    .catch((err) => {
-                                       // insert the response error into this game's note
-                                       console.log("Error:", err);
-                                       const new_games = [...games];
-                                       new_games[game_index].note =
-                                          "Something went wrong";
-                                       set_games(new_games);
-                                    });
-                              }}
-                           />{" "}
-                           {game.note}
-                        </div>
+                           {i < games.length - 1 && (
+                              <hr style={{ marginTop: 0 }} />
+                           )}
+                        </>
                      );
                   })}
                </div>
