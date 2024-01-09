@@ -170,7 +170,8 @@ export default function EnterScores({
                      if (game.game_at + 3600000 >= now) {
                         return (
                            <p key={game.id + "-game-score-editor"}>
-                              {game.away_team} at {game.home_team}
+                              {game.away_team} at {game.home_team} (game not
+                              finished)
                            </p>
                         );
                      }

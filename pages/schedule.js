@@ -198,10 +198,10 @@ const GameEditor = ({
             is_valid={is_date_valid}
             set_is_valid={set_is_date_valid}
             on_enter={on_input_enter}
+            placeholder="1/13/24"
          />
          <Input
             inline
-            label="t"
             type="text"
             style={{ width: "70px" }}
             name={`${game.id}-time`}
@@ -214,10 +214,10 @@ const GameEditor = ({
             is_valid={is_time_valid}
             set_is_valid={set_is_time_valid}
             on_enter={on_input_enter}
+            placeholder="1330"
          />
          <Input
             inline
-            label="v"
             type="text"
             style={{ width: "60px" }}
             name={`${game.id}-away_team`}
@@ -230,10 +230,11 @@ const GameEditor = ({
             is_valid={is_away_team_valid}
             set_is_valid={set_is_away_team_valid}
             on_enter={on_input_enter}
+            placeholder="SF"
          />
          <Input
             inline
-            label="h"
+            label="@"
             type="text"
             style={{ width: "60px" }}
             name={`${game.id}-home_team`}
@@ -246,6 +247,7 @@ const GameEditor = ({
             is_valid={is_home_team_valid}
             set_is_valid={set_is_home_team_valid}
             on_enter={on_input_enter}
+            placeholder="SEA"
          />
          <Button
             style={{ marginRight: 0 }}
