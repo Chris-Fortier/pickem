@@ -21,6 +21,7 @@ const GameEditor = ({
    set_games,
    set_success_message,
    set_danger_message,
+   heading,
 }) => {
    // date
    const [date_default, set_date_default] = useState(
@@ -183,6 +184,7 @@ const GameEditor = ({
 
    return (
       <>
+         {heading && <p>{heading}</p>}
          <span style={{ whiteSpace: "nowrap" }}>
             <Input
                inline
@@ -384,6 +386,7 @@ export default function Schedule({
                      set_games={set_games}
                      set_success_message={set_success_message}
                      set_danger_message={set_danger_message}
+                     heading="Make a new game"
                   />
                </div>
             </div>
