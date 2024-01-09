@@ -34,6 +34,36 @@ const GameScoreEditor = ({ game, set_success_message, set_danger_message }) => {
       set_home_score_default(home_score);
    };
 
+   const action = () => {
+      const body = {
+         // update scores
+         game_id: game.id,
+         updates: {
+            ...(has_away_score_changed && {
+               away_score: away_score,
+            }),
+            ...(has_home_score_changed && {
+               home_score: home_score,
+            }),
+         },
+      };
+      axios
+         .patch(`/api/games`, body)
+         .then((res) => {
+            set_success_message(res.data);
+            update_editor();
+         })
+         .catch(() => {
+            set_danger_message("Something went wrong");
+         });
+   };
+
+   const on_input_enter = () => {
+      if (is_update_enabled) {
+         action();
+      }
+   };
+
    return (
       <>
          <Input
@@ -50,6 +80,7 @@ const GameScoreEditor = ({ game, set_success_message, set_danger_message }) => {
             validate={validate_game_score}
             is_valid={is_away_score_valid}
             set_is_valid={set_is_away_score_valid}
+            on_enter={on_input_enter}
          />
          at{" "}
          <Input
@@ -66,6 +97,7 @@ const GameScoreEditor = ({ game, set_success_message, set_danger_message }) => {
             validate={validate_game_score}
             is_valid={is_home_score_valid}
             set_is_valid={set_is_home_score_valid}
+            on_enter={on_input_enter}
          />
          <Button
             style={{ marginRight: 0 }}
@@ -73,28 +105,7 @@ const GameScoreEditor = ({ game, set_success_message, set_danger_message }) => {
             primary={is_update_enabled}
             secondary={!is_update_enabled}
             is_enabled={is_update_enabled}
-            action={() => {
-               const body = {
-                  game_id: game.id,
-                  updates: {
-                     ...(has_away_score_changed && {
-                        away_score: away_score,
-                     }),
-                     ...(has_home_score_changed && {
-                        home_score: home_score,
-                     }),
-                  },
-               };
-               axios
-                  .patch(`/api/games`, body)
-                  .then((res) => {
-                     set_success_message(res.data);
-                     update_editor();
-                  })
-                  .catch(() => {
-                     set_danger_message("Something went wrong");
-                  });
-            }}
+            action={action}
          />{" "}
       </>
    );
@@ -164,7 +175,7 @@ export default function EnterScores({
                         );
                      }
                      return (
-                        <div key={game.id + "-game-score-editor"}>
+                        <React.Fragment key={game.id + "-game-score-editor"}>
                            <GameScoreEditor
                               game={game}
                               set_success_message={set_success_message}
@@ -173,7 +184,7 @@ export default function EnterScores({
                            {i < games.length - 1 && (
                               <hr style={{ marginTop: 0 }} />
                            )}
-                        </div>
+                        </React.Fragment>
                      );
                   })}
                </div>

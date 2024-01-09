@@ -77,6 +77,8 @@ VALUES
 
 ## To do
 
--  [ ] make pressing enter on any inputs in the editors be the same as clicking update/create
--  [ ] make the update/create button tabable to
--  [ ] make the invalid color yellow or a light pink
+-  [x] make pressing enter on any inputs in the editors be the same as clicking update/create
+   -  [x] schedule
+   -  [x] scores
+-  [x] make the update/create button tabable to
+-  [x] make the invalid color yellow or a light pink

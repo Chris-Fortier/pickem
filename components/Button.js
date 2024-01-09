@@ -41,6 +41,7 @@ export default function Button({
                disabled: !is_enabled,
                // "mt-3 mr-2": !block,
             })}
+            tabIndex={is_enabled ? 0 : null}
             onClick={
                is_enabled
                   ? action
@@ -48,6 +49,11 @@ export default function Button({
                        console.log("This button is is disabled.");
                     }
             }
+            onKeyDown={(e) => {
+               if (e.key === "Enter" && is_enabled) {
+                  action();
+               }
+            }}
          >
             {label}
          </div>

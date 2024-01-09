@@ -1,8 +1,8 @@
 const knex = require("knex");
-const config = require("../../../knexfile");
+const config = require("../../knexfile");
 const mysqldb = knex(config);
 require("dotenv").config();
-const validate_jwt = require("../../../utils/validate_jwt");
+const validate_jwt = require("../../utils/validate_jwt");
 const uuid = require("uuid");
 
 export default async (req, res) => {

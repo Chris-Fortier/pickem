@@ -22,6 +22,7 @@ export default function Input({
    validate = () => true,
    is_valid = true,
    set_is_valid = () => {},
+   on_enter = () => {},
 }) {
    let display_value;
    if (block) {
@@ -78,6 +79,11 @@ export default function Input({
             defaultValue={default_value}
             min={min}
             max={max}
+            onKeyDown={(e) => {
+               if (e.key === "Enter") {
+                  on_enter();
+               }
+            }}
             onChange={() => {
                // validate new value
                const new_value = document.getElementById(`${name}-input`).value;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import toDisplayDate from "date-fns/format";
+import { v4 } from "uuid";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { get_week_or_season_text } from "../utils/client_helpers";
@@ -9,7 +10,7 @@ import {
    validate_team_abbr,
    convert_date_string_to_ms,
    convert_to_tod_ms,
-   test,
+   // test,
 } from "../validation/fe_validation_utils";
 import axios from "axios";
 
@@ -102,6 +103,84 @@ const GameEditor = ({
       set_is_home_team_valid(false);
    };
 
+   const action = () => {
+      if (!is_create) {
+         // update game
+         const body = {
+            game_id: game.id,
+            updates: {
+               ...((has_date_changed || has_time_changed) && {
+                  game_at:
+                     convert_date_string_to_ms(date) + convert_to_tod_ms(time),
+               }),
+               ...(has_away_team_changed && {
+                  away_team: away_team.toUpperCase(),
+               }),
+               ...(has_home_team_changed && {
+                  home_team: home_team.toUpperCase(),
+               }),
+            },
+         };
+         axios
+            .patch(`/api/games`, body)
+            .then((res) => {
+               set_success_message(res.data);
+               refresh_editor();
+            })
+            .catch(() => {
+               set_danger_message("Something went wrong");
+            });
+      } else {
+         // create game
+         let value = 1;
+         if (game.week >= 19) {
+            value = 2;
+         }
+         if (game.week == 21) {
+            value = 4;
+         }
+         if (game.week == 22) {
+            value = 8;
+         }
+         const body = {
+            new_game: {
+               season: game.season,
+               week: game.week,
+               game_at:
+                  convert_date_string_to_ms(date) + convert_to_tod_ms(time),
+               value,
+               away_team: away_team.toUpperCase(),
+               home_team: home_team.toUpperCase(),
+            },
+         };
+         axios
+            .post(`/api/games`, body)
+            .then((res) => {
+               set_success_message(res.data.message);
+               // add the new game locally
+               const new_games = [
+                  ...games,
+                  {
+                     ...body.new_game,
+                     id: res.data.new_game_id,
+                  },
+               ];
+               set_games(new_games);
+               clear_editor();
+            })
+            .catch((e) => {
+               set_danger_message("Something went wrong");
+               console.log(e);
+            });
+      }
+   };
+
+   const on_input_enter = () => {
+      if (is_update_enabled) {
+         action();
+      }
+   };
+
    return (
       <>
          <Input
@@ -118,6 +197,7 @@ const GameEditor = ({
             validate={validate_game_date}
             is_valid={is_date_valid}
             set_is_valid={set_is_date_valid}
+            on_enter={on_input_enter}
          />
          <Input
             inline
@@ -133,6 +213,7 @@ const GameEditor = ({
             validate={validate_time}
             is_valid={is_time_valid}
             set_is_valid={set_is_time_valid}
+            on_enter={on_input_enter}
          />
          <Input
             inline
@@ -148,6 +229,7 @@ const GameEditor = ({
             validate={validate_team_abbr}
             is_valid={is_away_team_valid}
             set_is_valid={set_is_away_team_valid}
+            on_enter={on_input_enter}
          />
          <Input
             inline
@@ -163,6 +245,7 @@ const GameEditor = ({
             validate={validate_team_abbr}
             is_valid={is_home_team_valid}
             set_is_valid={set_is_home_team_valid}
+            on_enter={on_input_enter}
          />
          <Button
             style={{ marginRight: 0 }}
@@ -170,80 +253,7 @@ const GameEditor = ({
             primary={is_update_enabled}
             secondary={!is_update_enabled}
             is_enabled={is_update_enabled}
-            action={() => {
-               if (!is_create) {
-                  // update game
-                  const body = {
-                     game_id: game.id,
-                     updates: {
-                        ...((has_date_changed || has_time_changed) && {
-                           game_at:
-                              convert_date_string_to_ms(date) +
-                              convert_to_tod_ms(time),
-                        }),
-                        ...(has_away_team_changed && {
-                           away_team: away_team.toUpperCase(),
-                        }),
-                        ...(has_home_team_changed && {
-                           home_team: home_team.toUpperCase(),
-                        }),
-                     },
-                  };
-                  axios
-                     .patch(`/api/games`, body)
-                     .then((res) => {
-                        set_success_message(res.data);
-                        refresh_editor();
-                     })
-                     .catch(() => {
-                        set_danger_message("Something went wrong");
-                     });
-               } else {
-                  // create game
-                  let value = 1;
-                  if (game.week >= 19) {
-                     value = 2;
-                  }
-                  if (game.week == 21) {
-                     value = 4;
-                  }
-                  if (game.week == 22) {
-                     value = 8;
-                  }
-                  const body = {
-                     new_game: {
-                        season: game.season,
-                        week: game.week,
-                        game_at:
-                           convert_date_string_to_ms(date) +
-                           convert_to_tod_ms(time),
-                        value,
-                        away_team: away_team.toUpperCase(),
-                        home_team: home_team.toUpperCase(),
-                     },
-                  };
-                  console.log("sending", body);
-                  axios
-                     .post(`/api/games`, body)
-                     .then((res) => {
-                        set_success_message(res.data.message);
-                        // add the new game locally
-                        const new_games = [
-                           ...games,
-                           {
-                              ...body.new_game,
-                              id: res.data.new_game_id,
-                           },
-                        ];
-                        set_games(new_games);
-                        clear_editor();
-                     })
-                     .catch((e) => {
-                        set_danger_message("Something went wrong");
-                        console.log(e);
-                     });
-               }
-            }}
+            action={action}
          />
          {(delete_step === "waiting" || delete_step === "confirmation") && (
             <Button
@@ -264,7 +274,6 @@ const GameEditor = ({
                label={"Press to delete"}
                danger
                action={() => {
-                  console.log("will delete");
                   // delete game
                   axios
                      .delete(`/api/games?game_id=${game.id}`)
@@ -346,17 +355,18 @@ export default function Schedule({
                   <p>{message_from_server}</p>
                   {games.map((game, i) => {
                      return (
-                        <>
+                        <React.Fragment
+                           key={game.id + "-game-editor-container"}
+                        >
                            <GameEditor
                               game={game}
-                              key={game.id + "-game-editor-container"}
                               games={games}
                               set_games={set_games}
                               set_success_message={set_success_message}
                               set_danger_message={set_danger_message}
                            />
                            {i < games.length && <hr style={{ marginTop: 0 }} />}
-                        </>
+                        </React.Fragment>
                      );
                   })}
                   <GameEditor
@@ -364,7 +374,7 @@ export default function Schedule({
                         season: group_season_week.season,
                         week: group_season_week.week,
                      }}
-                     key={"create-game-editor-container"}
+                     key={v4()} // use a uuid so it recreates the editor after a new game is created and no residual input data is here
                      is_create
                      games={games}
                      set_games={set_games}
