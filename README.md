@@ -76,9 +76,3 @@ VALUES
 -  Try clearing the local storage from https://localhost:3000, then refresh the page.
 
 ## To do
-
--  [x] make pressing enter on any inputs in the editors be the same as clicking update/create
-   -  [x] schedule
-   -  [x] scores
--  [x] make the update/create button tabable to
--  [x] make the invalid color yellow or a light pink

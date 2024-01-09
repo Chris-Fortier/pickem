@@ -55,8 +55,10 @@ const GameEditor = ({
    const [has_home_team_changed, set_has_home_team_changed] = useState(false);
    const [is_home_team_valid, set_is_home_team_valid] = useState(!is_create);
 
+   // delete button
+   // only show if the game has not already started
    const [delete_step, set_delete_step] = useState(
-      !is_create ? "waiting" : "disabled"
+      !is_create && game.game_at >= Date.now() ? "waiting" : "disabled"
    );
 
    const is_update_enabled =
@@ -274,29 +276,29 @@ const GameEditor = ({
                   }}
                />
             )}
-            {delete_step === "confirmation" && (
-               <Button
-                  label={"Press to delete"}
-                  danger
-                  action={() => {
-                     // delete game
-                     axios
-                        .delete(`/api/games?game_id=${game.id}`)
-                        .then((res) => {
-                           set_success_message(res.data);
-                           // remove the game locally
-                           const new_games = games.filter(
-                              (game_2) => game_2.id !== game.id
-                           );
-                           set_games(new_games);
-                        })
-                        .catch(() => {
-                           set_danger_message("Something went wrong");
-                        });
-                  }}
-               />
-            )}
          </span>
+         {delete_step === "confirmation" && (
+            <Button
+               label={"Press to delete"}
+               danger
+               action={() => {
+                  // delete game
+                  axios
+                     .delete(`/api/games?game_id=${game.id}`)
+                     .then((res) => {
+                        set_success_message(res.data);
+                        // remove the game locally
+                        const new_games = games.filter(
+                           (game_2) => game_2.id !== game.id
+                        );
+                        set_games(new_games);
+                     })
+                     .catch(() => {
+                        set_danger_message("Something went wrong");
+                     });
+               }}
+            />
+         )}
       </>
    );
 };
