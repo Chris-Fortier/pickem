@@ -183,116 +183,118 @@ const GameEditor = ({
 
    return (
       <>
-         <Input
-            inline
-            label="d"
-            type="text"
-            style={{ width: "110px" }}
-            name={`${game.id}-date`}
-            default_value={date_default}
-            value={date}
-            set_value={set_date}
-            has_changed={has_date_changed}
-            set_has_changed={set_has_date_changed}
-            validate={validate_game_date}
-            is_valid={is_date_valid}
-            set_is_valid={set_is_date_valid}
-            on_enter={on_input_enter}
-            placeholder="1/13/24"
-         />
-         <Input
-            inline
-            type="text"
-            style={{ width: "70px" }}
-            name={`${game.id}-time`}
-            default_value={time_default}
-            value={time}
-            set_value={set_time}
-            has_changed={has_time_changed}
-            set_has_changed={set_has_time_changed}
-            validate={validate_time}
-            is_valid={is_time_valid}
-            set_is_valid={set_is_time_valid}
-            on_enter={on_input_enter}
-            placeholder="1330"
-         />
-         <Input
-            inline
-            type="text"
-            style={{ width: "60px" }}
-            name={`${game.id}-away_team`}
-            default_value={away_team_default}
-            value={away_team}
-            set_value={set_away_team}
-            has_changed={has_away_team_changed}
-            set_has_changed={set_has_away_team_changed}
-            validate={validate_team_abbr}
-            is_valid={is_away_team_valid}
-            set_is_valid={set_is_away_team_valid}
-            on_enter={on_input_enter}
-            placeholder="SF"
-         />
-         <Input
-            inline
-            label="@"
-            type="text"
-            style={{ width: "60px" }}
-            name={`${game.id}-home_team`}
-            default_value={home_team_default}
-            value={home_team}
-            set_value={set_home_team}
-            has_changed={has_home_team_changed}
-            set_has_changed={set_has_home_team_changed}
-            validate={validate_team_abbr}
-            is_valid={is_home_team_valid}
-            set_is_valid={set_is_home_team_valid}
-            on_enter={on_input_enter}
-            placeholder="SEA"
-         />
-         <Button
-            style={{ marginRight: 0 }}
-            label={!is_create ? "Update" : "Create"}
-            primary={is_update_enabled}
-            secondary={!is_update_enabled}
-            is_enabled={is_update_enabled}
-            action={action}
-         />
-         {(delete_step === "waiting" || delete_step === "confirmation") && (
-            <Button
-               style={{ marginRight: 0 }}
-               label={delete_step === "waiting" ? "Delete..." : "Cancel"}
-               danger={delete_step === "waiting"}
-               secondary={delete_step === "confirmation"}
-               action={() => {
-                  delete_step === "waiting"
-                     ? set_delete_step("confirmation")
-                     : set_delete_step("waiting");
-               }}
+         <span style={{ whiteSpace: "nowrap" }}>
+            <Input
+               inline
+               type="text"
+               style={{ width: "110px" }}
+               name={`${game.id}-date`}
+               default_value={date_default}
+               value={date}
+               set_value={set_date}
+               has_changed={has_date_changed}
+               set_has_changed={set_has_date_changed}
+               validate={validate_game_date}
+               is_valid={is_date_valid}
+               set_is_valid={set_is_date_valid}
+               on_enter={on_input_enter}
+               placeholder="1/13/24"
             />
-         )}
-         {delete_step === "confirmation" && (
-            <Button
-               style={{ marginRight: 0 }}
-               label={"Press to delete"}
-               danger
-               action={() => {
-                  // delete game
-                  axios
-                     .delete(`/api/games?game_id=${game.id}`)
-                     .then((res) => {
-                        set_success_message(res.data);
-                        // remove the game locally
-                        const new_games = games.filter(
-                           (game_2) => game_2.id !== game.id
-                        );
-                        set_games(new_games);
-                     })
-                     .catch(() => {
-                        set_danger_message("Something went wrong");
-                     });
-               }}
+            <Input
+               inline
+               type="text"
+               style={{ width: "70px" }}
+               name={`${game.id}-time`}
+               default_value={time_default}
+               value={time}
+               set_value={set_time}
+               has_changed={has_time_changed}
+               set_has_changed={set_has_time_changed}
+               validate={validate_time}
+               is_valid={is_time_valid}
+               set_is_valid={set_is_time_valid}
+               on_enter={on_input_enter}
+               placeholder="1330"
             />
-         )}
+         </span>
+         <span style={{ whiteSpace: "nowrap" }}>
+            <Input
+               inline
+               type="text"
+               style={{ width: "60px" }}
+               name={`${game.id}-away_team`}
+               default_value={away_team_default}
+               value={away_team}
+               set_value={set_away_team}
+               has_changed={has_away_team_changed}
+               set_has_changed={set_has_away_team_changed}
+               validate={validate_team_abbr}
+               is_valid={is_away_team_valid}
+               set_is_valid={set_is_away_team_valid}
+               on_enter={on_input_enter}
+               placeholder="SF"
+            />
+            <Input
+               inline
+               label="@"
+               type="text"
+               style={{ width: "60px" }}
+               name={`${game.id}-home_team`}
+               default_value={home_team_default}
+               value={home_team}
+               set_value={set_home_team}
+               has_changed={has_home_team_changed}
+               set_has_changed={set_has_home_team_changed}
+               validate={validate_team_abbr}
+               is_valid={is_home_team_valid}
+               set_is_valid={set_is_home_team_valid}
+               on_enter={on_input_enter}
+               placeholder="SEA"
+            />
+         </span>
+         <span style={{ whiteSpace: "nowrap" }}>
+            <Button
+               label={!is_create ? "Update" : "Create"}
+               primary={is_update_enabled}
+               secondary={!is_update_enabled}
+               is_enabled={is_update_enabled}
+               action={action}
+            />
+            {(delete_step === "waiting" || delete_step === "confirmation") && (
+               <Button
+                  label={delete_step === "waiting" ? "Delete..." : "Cancel"}
+                  danger={delete_step === "waiting"}
+                  secondary={delete_step === "confirmation"}
+                  action={() => {
+                     delete_step === "waiting"
+                        ? set_delete_step("confirmation")
+                        : set_delete_step("waiting");
+                  }}
+               />
+            )}
+            {delete_step === "confirmation" && (
+               <Button
+                  label={"Press to delete"}
+                  danger
+                  action={() => {
+                     // delete game
+                     axios
+                        .delete(`/api/games?game_id=${game.id}`)
+                        .then((res) => {
+                           set_success_message(res.data);
+                           // remove the game locally
+                           const new_games = games.filter(
+                              (game_2) => game_2.id !== game.id
+                           );
+                           set_games(new_games);
+                        })
+                        .catch(() => {
+                           set_danger_message("Something went wrong");
+                        });
+                  }}
+               />
+            )}
+         </span>
       </>
    );
 };
@@ -339,7 +341,7 @@ export default function Schedule({
       <>
          <div
             className="my-container bottom-scroll-fix"
-            style={{ maxWidth: "630px" }}
+            style={{ maxWidth: "680px" }}
          >
             <div className="my-card">
                <div className="card-header">
