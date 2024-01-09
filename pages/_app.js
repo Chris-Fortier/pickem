@@ -76,13 +76,14 @@ function MyApp({ Component, pageProps }) {
             set_success_message={set_success_message}
             set_warning_message={set_warning_message}
             clear_message={clear_message}
+            key="main-component"
          />
          {/* message pop up */}
-         {!isEmpty(message) && (
-            <Alert variant={message.variant} className="message">
-               {message.message}
-            </Alert>
-         )}
+         {/* {!isEmpty(message) && ( */}
+         <Alert variant={message.variant} className="message">
+            {message.message}
+         </Alert>
+         {/* )} */}
       </>
    );
 }

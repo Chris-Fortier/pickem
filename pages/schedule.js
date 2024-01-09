@@ -388,7 +388,10 @@ export default function Schedule({
                      set_games={set_games}
                      set_success_message={set_success_message}
                      set_danger_message={set_danger_message}
-                     heading="Make a new game"
+                     heading={`Make a new ${get_week_or_season_text(
+                        group_season_week.week,
+                        group_season_week.season
+                     ).toLowerCase()} game:`}
                   />
                </div>
             </div>
