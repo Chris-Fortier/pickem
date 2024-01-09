@@ -382,7 +382,7 @@ export default function Schedule({
                         season: group_season_week.season,
                         week: group_season_week.week,
                      }}
-                     key={v4()} // use a uuid so it recreates the editor after a new game is created and no residual input data is here
+                     key={"make-a-new-game-editor-" + games.length} // use the count of the games so it recreates the editor after a new game is created, but not a uuid so a re-render won't remove focus
                      is_create
                      games={games}
                      set_games={set_games}
