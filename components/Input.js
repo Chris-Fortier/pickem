@@ -95,14 +95,15 @@ export default function Input({
                set_value(new_value);
             }}
             onBlur={() => {
-               // if not valid, set back to default value
                if (!is_valid) {
-                  set_value(default_value);
-                  set_has_changed(false);
-                  set_is_valid(true);
+                  if (validate(default_value)) {
+                     // set back to default value
+                     set_value(default_value);
+                     set_has_changed(false);
+                     set_is_valid(true);
+                  }
                }
             }}
-            // value={"hello"}
          />
          {error_message && (
             <div

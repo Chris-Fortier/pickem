@@ -13,36 +13,49 @@ import {
 } from "../validation/fe_validation_utils";
 import axios from "axios";
 
-const GameEditor = ({ game }) => {
+const GameEditor = ({
+   game,
+   is_create = false,
+   games,
+   set_games,
+   set_success_message,
+   set_danger_message,
+}) => {
    // date
    const [date_default, set_date_default] = useState(
-      toDisplayDate(game.game_at, "MM/dd/yyyy")
+      game.game_at ? toDisplayDate(game.game_at, "MM/dd/yyyy") : ""
    );
-   const [date, set_date] = useState(toDisplayDate(game.game_at, "MM/dd/yyyy"));
+   const [date, set_date] = useState(
+      game.game_at ? toDisplayDate(game.game_at, "MM/dd/yyyy") : ""
+   );
    const [has_date_changed, set_has_date_changed] = useState(false);
-   const [is_date_valid, set_is_date_valid] = useState(true);
+   const [is_date_valid, set_is_date_valid] = useState(!is_create);
 
    // time
    const [time_default, set_time_default] = useState(
-      toDisplayDate(game.game_at, "HH:mm")
+      game.game_at ? toDisplayDate(game.game_at, "HH:mm") : ""
    );
-   const [time, set_time] = useState(toDisplayDate(game.game_at, "HH:mm"));
+   const [time, set_time] = useState(
+      game.game_at ? toDisplayDate(game.game_at, "HH:mm") : ""
+   );
    const [has_time_changed, set_has_time_changed] = useState(false);
-   const [is_time_valid, set_is_time_valid] = useState(true);
+   const [is_time_valid, set_is_time_valid] = useState(!is_create);
 
    // away team
    const [away_team_default, set_away_team_default] = useState(game.away_team);
    const [away_team, set_away_team] = useState(game.away_team);
    const [has_away_team_changed, set_has_away_team_changed] = useState(false);
-   const [is_away_team_valid, set_is_away_team_valid] = useState(true);
+   const [is_away_team_valid, set_is_away_team_valid] = useState(!is_create);
 
    // home team
    const [home_team_default, set_home_team_default] = useState(game.home_team);
    const [home_team, set_home_team] = useState(game.home_team);
    const [has_home_team_changed, set_has_home_team_changed] = useState(false);
-   const [is_home_team_valid, set_is_home_team_valid] = useState(true);
+   const [is_home_team_valid, set_is_home_team_valid] = useState(!is_create);
 
-   const [message, set_message] = useState("");
+   const [delete_step, set_delete_step] = useState(
+      !is_create ? "waiting" : "disabled"
+   );
 
    const is_update_enabled =
       (has_date_changed ||
@@ -54,7 +67,7 @@ const GameEditor = ({ game }) => {
       is_away_team_valid &&
       is_home_team_valid;
 
-   const update_editor = () => {
+   const refresh_editor = () => {
       set_has_date_changed(false);
       set_date_default(date);
       set_has_time_changed(false);
@@ -65,9 +78,32 @@ const GameEditor = ({ game }) => {
       set_home_team_default(home_team);
    };
 
+   const clear_editor = () => {
+      // clear the create editor for the next one
+
+      set_has_date_changed(false);
+      set_date_default("");
+      set_date("");
+      set_is_date_valid(false);
+
+      set_has_time_changed(false);
+      set_time_default(time);
+      set_time("");
+      set_is_time_valid(false);
+
+      set_has_away_team_changed(false);
+      set_away_team_default(away_team);
+      set_away_team("");
+      set_is_away_team_valid(false);
+
+      set_has_home_team_changed(false);
+      set_home_team_default(home_team);
+      set_home_team("");
+      set_is_home_team_valid(false);
+   };
+
    return (
       <>
-         {/* <p>{game.id}</p> */}
          <Input
             inline
             label="d"
@@ -130,40 +166,122 @@ const GameEditor = ({ game }) => {
          />
          <Button
             style={{ marginRight: 0 }}
-            label="Update"
+            label={!is_create ? "Update" : "Create"}
             primary={is_update_enabled}
             secondary={!is_update_enabled}
             is_enabled={is_update_enabled}
             action={() => {
-               const body = {
-                  game_id: game.id,
-                  updates: {
-                     ...(has_date_changed ||
-                        (has_time_changed && {
+               if (!is_create) {
+                  // update game
+                  const body = {
+                     game_id: game.id,
+                     updates: {
+                        ...((has_date_changed || has_time_changed) && {
                            game_at:
                               convert_date_string_to_ms(date) +
                               convert_to_tod_ms(time),
-                        })),
-                     ...(has_away_team_changed && {
+                        }),
+                        ...(has_away_team_changed && {
+                           away_team: away_team.toUpperCase(),
+                        }),
+                        ...(has_home_team_changed && {
+                           home_team: home_team.toUpperCase(),
+                        }),
+                     },
+                  };
+                  axios
+                     .patch(`/api/games`, body)
+                     .then((res) => {
+                        set_success_message(res.data);
+                        refresh_editor();
+                     })
+                     .catch(() => {
+                        set_danger_message("Something went wrong");
+                     });
+               } else {
+                  // create game
+                  let value = 1;
+                  if (game.week >= 19) {
+                     value = 2;
+                  }
+                  if (game.week == 21) {
+                     value = 4;
+                  }
+                  if (game.week == 22) {
+                     value = 8;
+                  }
+                  const body = {
+                     new_game: {
+                        season: game.season,
+                        week: game.week,
+                        game_at:
+                           convert_date_string_to_ms(date) +
+                           convert_to_tod_ms(time),
+                        value,
                         away_team: away_team.toUpperCase(),
-                     }),
-                     ...(has_home_team_changed && {
                         home_team: home_team.toUpperCase(),
-                     }),
-                  },
-               };
-               axios
-                  .patch(`/api/games`, body)
-                  .then((res) => {
-                     set_message(res.data);
-                     update_editor();
-                  })
-                  .catch(() => {
-                     set_message("Something went wrong");
-                  });
+                     },
+                  };
+                  console.log("sending", body);
+                  axios
+                     .post(`/api/games`, body)
+                     .then((res) => {
+                        set_success_message(res.data.message);
+                        // add the new game locally
+                        const new_games = [
+                           ...games,
+                           {
+                              ...body.new_game,
+                              id: res.data.new_game_id,
+                           },
+                        ];
+                        set_games(new_games);
+                        clear_editor();
+                     })
+                     .catch((e) => {
+                        set_danger_message("Something went wrong");
+                        console.log(e);
+                     });
+               }
             }}
-         />{" "}
-         {message}
+         />
+         {(delete_step === "waiting" || delete_step === "confirmation") && (
+            <Button
+               style={{ marginRight: 0 }}
+               label={delete_step === "waiting" ? "Delete..." : "Cancel"}
+               danger={delete_step === "waiting"}
+               secondary={delete_step === "confirmation"}
+               action={() => {
+                  delete_step === "waiting"
+                     ? set_delete_step("confirmation")
+                     : set_delete_step("waiting");
+               }}
+            />
+         )}
+         {delete_step === "confirmation" && (
+            <Button
+               style={{ marginRight: 0 }}
+               label={"Press to delete"}
+               danger
+               action={() => {
+                  console.log("will delete");
+                  // delete game
+                  axios
+                     .delete(`/api/games?game_id=${game.id}`)
+                     .then((res) => {
+                        set_success_message(res.data);
+                        // remove the game locally
+                        const new_games = games.filter(
+                           (game_2) => game_2.id !== game.id
+                        );
+                        set_games(new_games);
+                     })
+                     .catch(() => {
+                        set_danger_message("Something went wrong");
+                     });
+               }}
+            />
+         )}
       </>
    );
 };
@@ -178,27 +296,31 @@ export default function Schedule({
    const [games, set_games] = useState([]);
    const [message_from_server] = useState("");
 
-   useEffect(() => {
-      test();
-      if (user) {
-         set_warning_message("Getting games from the server...");
-         axios
-            .get(
-               `/api/games?season=${group_season_week.season}&week=${group_season_week.week}`
-            )
-            .then((res) => {
-               set_games(res.data);
-               set_success_message(
-                  `Received ${res.data.length} games from the server.`
-               );
-            })
-            .catch((err) => {
-               console.log("err", err);
+   const get_games = () => {
+      set_warning_message("Getting games from the server...");
+      axios
+         .get(
+            `/api/games?season=${group_season_week.season}&week=${group_season_week.week}`
+         )
+         .then((res) => {
+            set_games(res.data);
+            set_success_message(
+               `Received ${res.data.length} games from the server.`
+            );
+         })
+         .catch((err) => {
+            console.log("err", err);
 
-               set_danger_message(
-                  "There was a problem getting games from the server."
-               );
-            });
+            set_danger_message(
+               "There was a problem getting games from the server."
+            );
+         });
+   };
+
+   useEffect(() => {
+      // test(); // run tests for the validation utility functions
+      if (user) {
+         get_games();
       }
    }, [group_season_week]);
 
@@ -228,13 +350,27 @@ export default function Schedule({
                            <GameEditor
                               game={game}
                               key={game.id + "-game-editor-container"}
+                              games={games}
+                              set_games={set_games}
+                              set_success_message={set_success_message}
+                              set_danger_message={set_danger_message}
                            />
-                           {i < games.length - 1 && (
-                              <hr style={{ marginTop: 0 }} />
-                           )}
+                           {i < games.length && <hr style={{ marginTop: 0 }} />}
                         </>
                      );
                   })}
+                  <GameEditor
+                     game={{
+                        season: group_season_week.season,
+                        week: group_season_week.week,
+                     }}
+                     key={"create-game-editor-container"}
+                     is_create
+                     games={games}
+                     set_games={set_games}
+                     set_success_message={set_success_message}
+                     set_danger_message={set_danger_message}
+                  />
                </div>
             </div>
          </div>

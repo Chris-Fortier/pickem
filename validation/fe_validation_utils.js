@@ -9,17 +9,28 @@ export const validate_game_week = (input) => {
 };
 
 export const convert_date_string_to_ms = (input) => {
+   if (input.split("/").length !== 3) {
+      return null;
+   } else if (
+      input.split("/")[2].length !== 2 &&
+      input.split("/")[2].length !== 4
+   ) {
+      return null;
+   }
    const date = new Date(input);
+   if (isNaN(date)) {
+      return null;
+   }
    return date.getTime();
 };
 
 export const validate_game_date = (input) => {
-   let dateObj = new Date(input);
+   const date = convert_date_string_to_ms(input);
 
-   if (!isNaN(dateObj)) {
-      return true;
+   if (date === null) {
+      return false;
    }
-   return false;
+   return true;
 };
 
 export const convert_to_tod_ms = (input) => {
@@ -70,7 +81,7 @@ export const validate_time = (input) => {
 };
 
 export const validate_team_abbr = (input) => {
-   if (TEAM_NAMES.hasOwnProperty(input.toUpperCase())) {
+   if (input && TEAM_NAMES.hasOwnProperty(input.toUpperCase())) {
       return true;
    }
    return false;
@@ -129,9 +140,39 @@ export const test = () => {
          expected_result: false,
       },
       {
+         function: validate_game_date,
+         arguments: "1/1/1",
+         expected_result: false,
+      },
+      {
+         function: validate_game_date,
+         arguments: "10/10/1",
+         expected_result: false,
+      },
+      {
          function: convert_date_string_to_ms,
          arguments: "1/8/2024",
          expected_result: 1704700800000,
+      },
+      {
+         function: convert_date_string_to_ms,
+         arguments: "5/5/5",
+         expected_result: null,
+      },
+      {
+         function: convert_date_string_to_ms,
+         arguments: "5/5/50",
+         expected_result: -620413200000,
+      },
+      {
+         function: convert_date_string_to_ms,
+         arguments: "5/5/500",
+         expected_result: null,
+      },
+      {
+         function: convert_date_string_to_ms,
+         arguments: "5/5",
+         expected_result: null,
       },
       {
          function: convert_to_tod_ms,
