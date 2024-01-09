@@ -1,4 +1,3 @@
-// require("dotenv").config();
 import TEAM_NAMES from "../utils/TEAM_NAMES";
 
 export const validate_game_week = (input) => {
