@@ -30,12 +30,12 @@ export default function Input({
       display_value = "inline-block";
    }
 
-   let input_background = "#e8f0fe";
+   let input_class = "input-no-change";
    if (has_changed) {
       if (is_valid) {
-         input_background = "#69be28";
+         input_class = "input-change";
       } else {
-         input_background = "#aa0000";
+         input_class = "input-invalid";
       }
    }
 
@@ -63,7 +63,7 @@ export default function Input({
          )}
          <input
             type={type}
-            className="iphone-fix"
+            className={"iphone-fix" + (input_class ? " " + input_class : "")}
             id={`${name}-input`}
             placeholder={placeholder}
             maxLength={max_length}
@@ -73,7 +73,6 @@ export default function Input({
                marginRight: inline && "1rem",
                padding: ".375rem .75rem",
                border: "none",
-               background: input_background,
             }}
             value={value}
             defaultValue={default_value}

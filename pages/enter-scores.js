@@ -5,7 +5,7 @@ import { get_week_or_season_text } from "../utils/client_helpers";
 import axios from "axios";
 import { validate_game_score } from "../validation/fe_validation_utils";
 
-const GameScoreEditor = ({ game }) => {
+const GameScoreEditor = ({ game, set_success_message, set_danger_message }) => {
    // away score
    const [away_score_default, set_away_score_default] = useState(
       game.away_score
@@ -21,8 +21,6 @@ const GameScoreEditor = ({ game }) => {
    const [home_score, set_home_score] = useState(game.home_score);
    const [has_home_score_changed, set_has_home_score_changed] = useState(false);
    const [is_home_score_valid, set_is_home_score_valid] = useState(true);
-
-   const [message, set_message] = useState("");
 
    const is_update_enabled =
       (has_away_score_changed || has_home_score_changed) &&
@@ -90,15 +88,14 @@ const GameScoreEditor = ({ game }) => {
                axios
                   .patch(`/api/games`, body)
                   .then((res) => {
-                     set_message(res.data);
+                     set_success_message(res.data);
                      update_editor();
                   })
                   .catch(() => {
-                     set_message("Something went wrong");
+                     set_danger_message("Something went wrong");
                   });
             }}
          />{" "}
-         {message}
       </>
    );
 };
@@ -167,15 +164,16 @@ export default function EnterScores({
                         );
                      }
                      return (
-                        <>
+                        <div key={game.id + "-game-score-editor"}>
                            <GameScoreEditor
                               game={game}
-                              key={game.id + "-game-score-editor"}
+                              set_success_message={set_success_message}
+                              set_danger_message={set_danger_message}
                            />
                            {i < games.length - 1 && (
                               <hr style={{ marginTop: 0 }} />
                            )}
-                        </>
+                        </div>
                      );
                   })}
                </div>

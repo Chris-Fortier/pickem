@@ -411,3 +411,15 @@ table {
 .accordion-button {
    background-color: #fff0;
 }
+
+.input-no-change {
+   background-color: #e8f0fe;
+}
+
+.input-invalid {
+   background-color: $invalid;
+}
+
+.input-change {
+   background-color: $change;
+}
