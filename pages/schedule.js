@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import toDisplayDate from "date-fns/format";
-import { v4 } from "uuid";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { get_week_or_season_text } from "../utils/client_helpers";
