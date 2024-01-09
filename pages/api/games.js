@@ -42,34 +42,76 @@ export default async (req, res) => {
          const user_id = req.user.id; // get the user id from the JWT
          const body = req.body; // grabbing variables from req.query
 
-         mysqldb
-            .select()
-            .from("users")
-            .where({ id: user_id })
-            .then((users) => {
-               if (users[0].is_admin === 1) {
-                  // this user is an admin
-                  const new_game_id = uuid.v4();
-                  mysqldb("games")
-                     .insert({ id: new_game_id, ...body.new_game })
-                     .then(() => {
-                        // return a success message
-                        return res
-                           .status(200)
-                           .json({ message: "Game added.", new_game_id });
-                     })
-                     .catch((err) => {
-                        // return the error
-                        return res.status(400).json(err);
-                     });
-               } else {
-                  // this user is not an admin
-                  return res.status(400).json("This user is not an admin.");
-               }
-            })
-            .catch((err) => {
-               console.log("err", err);
+         if (body.new_game.away_team === body.new_game.home_team) {
+            return res.status(400).json({
+               message: "A game must have two different teams.",
             });
+         } else {
+            mysqldb
+               .select()
+               .from("users")
+               .where({ id: user_id })
+               .then((users) => {
+                  if (users[0].is_admin === 1) {
+                     // this user is an admin
+                     const new_game_id = uuid.v4();
+                     mysqldb("games")
+                        .select()
+                        .where({
+                           season: body.new_game.season,
+                           week: body.new_game.week,
+                           away_team: body.new_game.away_team,
+                        })
+                        .orWhere({
+                           season: body.new_game.season,
+                           week: body.new_game.week,
+                           away_team: body.new_game.home_team,
+                        })
+                        .orWhere({
+                           season: body.new_game.season,
+                           week: body.new_game.week,
+                           home_team: body.new_game.away_team,
+                        })
+                        .orWhere({
+                           season: body.new_game.season,
+                           week: body.new_game.week,
+                           home_team: body.new_game.home_team,
+                        })
+                        .then((existing_games) => {
+                           if (existing_games.length) {
+                              return res.status(400).json({
+                                 message:
+                                    "A game this week with this team already exists.",
+                              });
+                           } else {
+                              mysqldb("games")
+                                 .insert({ id: new_game_id, ...body.new_game })
+                                 .then(() => {
+                                    // return a success message
+                                    return res.status(200).json({
+                                       message: "Game added.",
+                                       new_game_id,
+                                    });
+                                 })
+                                 .catch((err) => {
+                                    // return the error
+                                    return res.status(400).json(err);
+                                 });
+                           }
+                        })
+                        .catch((err) => {
+                           // return the error
+                           return res.status(400).json(err);
+                        });
+                  } else {
+                     // this user is not an admin
+                     return res.status(400).json("This user is not an admin.");
+                  }
+               })
+               .catch((err) => {
+                  console.log("err", err);
+               });
+         }
       }
 
       if (req.method === "PATCH") {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import _ from "lodash";
 import toDisplayDate from "date-fns/format";
 import Button from "../components/Button";
 import Input from "../components/Input";
@@ -171,7 +172,9 @@ const GameEditor = ({
                clear_editor();
             })
             .catch((e) => {
-               set_danger_message("Something went wrong");
+               set_danger_message(
+                  _.get(e, "response.data.message") || "Something went wrong"
+               );
                console.log(e);
             });
       }
