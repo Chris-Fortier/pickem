@@ -338,7 +338,7 @@ export default function Schedule({
       if (user) {
          get_games();
       }
-   }, [group_season_week]);
+   }, [group_season_week, user]);
 
    return (
       <>

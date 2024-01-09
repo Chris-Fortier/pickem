@@ -142,7 +142,7 @@ export default function EnterScores({
                );
             });
       }
-   }, [group_season_week]);
+   }, [group_season_week, user]);
 
    const now = Date.now();
 
