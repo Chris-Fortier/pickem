@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import _ from "lodash";
+import isEmpty from "lodash/isEmpty";
 import toDisplayDate from "date-fns/format";
 import Button from "../components/Button";
 import Input from "../components/Input";
@@ -338,7 +339,7 @@ export default function Schedule({
 
    useEffect(() => {
       // test(); // run tests for the validation utility functions
-      if (user) {
+      if (!isEmpty(user)) {
          get_games();
       }
    }, [group_season_week, user]);

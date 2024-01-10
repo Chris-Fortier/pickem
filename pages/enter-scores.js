@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import isEmpty from "lodash/isEmpty";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { get_week_or_season_text } from "../utils/client_helpers";
@@ -122,7 +123,7 @@ export default function EnterScores({
    const [message_from_server] = useState("");
 
    useEffect(() => {
-      if (user) {
+      if (!isEmpty(user)) {
          set_warning_message("Getting games from the server...");
          axios
             .get(
