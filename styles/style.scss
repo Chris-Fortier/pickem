@@ -110,7 +110,18 @@ textarea,
 }
 
 .card {
-   background-color: $gray;
+   background-color: $gray !important; // needed to add !important after upgrading project
+}
+
+// needed to add after upgrading project
+.card-header {
+   padding: 0.5rem 1rem;
+   margin-bottom: 0;
+   background-color: rgba(0, 0, 0, 0.03);
+   border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+.card-body {
+   padding: 1rem;
 }
 
 .form-control,
@@ -406,6 +417,7 @@ table {
 
 .accordion-item {
    background-color: #fff0;
+   border: 1px solid rgba(0, 0, 0, 0.125); // needed to add !important after upgrading project
 }
 
 .accordion-button {
