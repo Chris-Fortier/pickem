@@ -16,7 +16,7 @@
 
 ## Deploy
 
-1. Push a commit or MR to the `master` branch, then push up to GitHub.
+1. Push a commit directly to the `master` branch, then push up to GitHub, or merge an MR to master in GitHub.
 
 ## Test a Deployment
 
@@ -74,5 +74,35 @@ VALUES
 
 -  You might not be logged in.
 -  Try clearing the local storage from https://localhost:3000, then refresh the page.
+
+### When running `yarn dev`: Error: error:0308010C:digital envelope routines::unsupported
+
+This started happening during 2023 season. I couldn't run the app locally, but my changes worked when deployed.
+
+Following [this](https://stackoverflow.com/questions/69692842/error-message-error0308010cdigital-envelope-routinesunsupported).
+
+-  ran `npm update`, didn't help
+-  then ran `npm audit fix --force`
+   -  Now when running `yarn dev` I get: Error: Next.js requires react >= 18.2.0 to be installed.
+-  Edited `package.json` to have `"react": "18.2.0",`, then ran `yarn`.
+-  Different problems when running now. Happens when I try to load the page in a browser.
+   -  Can't find module `react-dom/client`.
+   -  Error: ENOENT: no such file or directory, open 'D:\Projects\web\pickem\.next\fallback-build-manifest.json'
+   -  Ran `yarn add react-dom`.
+-  App seems like it works now, except some margins/padding is messed up.
+   -  Some classes like `card-header` and `card-body` come from a library that now seems to now be working after upgrading other stuff in the project.
+   -  Some changes when comparing my local app to currently deployed app:
+      -  My Picks (and all pages with cards)
+         -  Card formatting looks different.
+      -  Group Picks
+         -  slightly different rounding on the top corners of header
+         -  Title text different color (e.g. Sun 02/11). Actually, I think this is more correct.
+         -  Accordion border colors changed.
+-  When checking test deployment in my branch, it failed. It was lint errors I could reproduce with `yarn lint`.
+   -  fixed them
+
+### `yarn lint` doesn't' work
+
+-  Make sure you are using Git Bash instead of PowerShell.
 
 ## To do
