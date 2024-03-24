@@ -98,5 +98,11 @@ Following [this](https://stackoverflow.com/questions/69692842/error-message-erro
          -  slightly different rounding on the top corners of header
          -  Title text different color (e.g. Sun 02/11). Actually, I think this is more correct.
          -  Accordion border colors changed.
+-  When checking test deployment in my branch, it failed. It was lint errors I could reproduce with `yarn lint`.
+   -  fixed them
+
+### `yarn lint` doesn't' work
+
+-  Make sure you are using Git Bash instead of PowerShell.
 
 ## To do
