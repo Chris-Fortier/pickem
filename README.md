@@ -13,6 +13,7 @@
 ## Run Locally
 
 1. Run `yarn dev`.
+2. Open this [link](http://localhost:3000/) in a browser if it doesn't open automatically.
 
 ## Deploy
 
