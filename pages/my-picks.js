@@ -80,12 +80,12 @@ export default function MyPicks({
                         <span key={v4()}>
                            {is_rendering_time && <br />}
                            {is_rendering_date && (
-                              <h5 align="center">
+                              <h5 style={{ textAlign: "center" }}>
                                  {toDisplayDate(pick.game_at, "EEE MMM dd")}
                               </h5>
                            )}
                            {is_rendering_time && (
-                              <h6 align="center">
+                              <h6 style={{ textAlign: "center" }}>
                                  {toDisplayDate(pick.game_at, "p")}
                               </h6>
                            )}

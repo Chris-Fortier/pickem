@@ -80,6 +80,7 @@ export const validate_time = (input) => {
 };
 
 export const validate_team_abbr = (input) => {
+   // eslint-disable-next-line no-prototype-builtins
    if (input && TEAM_NAMES.hasOwnProperty(input.toUpperCase())) {
       return true;
    }
