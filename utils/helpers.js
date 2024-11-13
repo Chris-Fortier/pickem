@@ -8,6 +8,11 @@ const mysqldb = knex(config);
 // this file is for short functions we will use throughout the app on the server side
 
 module.exports = {
+   // server side constants
+   EMAIL_REGEX:
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+   TOKEN_EXPIRE_DURATION: "1h",
+
    // returns a hashed version of a given plain text string
    get_hash(plain_text) {
       const SALT_ROUNDS = 12;
@@ -36,13 +41,10 @@ module.exports = {
    // returns json web token for a given user
    get_jwt(user) {
       const new_user = { id: user.id, created_at: user.created_at }; // only store user values that cannot change in the jwt so the jwt is never out of sync with other other properties
-      return jwt.sign(new_user, process.env.JWT_ACCESS_SECRET);
+      return jwt.sign(new_user, process.env.JWT_ACCESS_SECRET, {
+         expiresIn: TOKEN_EXPIRE_DURATION,
+      });
    },
-
-   // server side constants
-   EMAIL_REGEX:
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-   // TOKEN_EXPIRE_TIME: '3h',
 
    get_human_readable_duration(milliseconds) {
       const seconds = milliseconds / 1000;
