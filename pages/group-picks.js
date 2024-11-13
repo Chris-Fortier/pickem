@@ -16,7 +16,8 @@ export default function GroupPicks({
    const [match_ups, set_match_ups] = useState([]);
 
    useEffect(() => {
-      if (user) {
+      if (user?.id) {
+         // note: just checking for user doesn't work because {} is true
          set_teams([]); // seem to need to clear the teams first due to it rendering columns for teams that haven't participated for one frame
          // get the group picks
          set_warning_message(

@@ -21,7 +21,8 @@ export default function MyPicks({
    const [my_picks, set_my_picks] = useState([]); // TODO: use api to get my picks
 
    useEffect(() => {
-      if (user) {
+      if (user?.id) {
+         // note: just checking for user doesn't work because {} is true
          // get the group picks
          set_warning_message(
             "Getting data from the server... If this takes awhile the server might be waking up."
