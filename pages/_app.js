@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }) {
    const router = useRouter();
 
    // global state
-   const [user, set_user] = useState(null); // make it default to null so I can test if user exists before making some calls
+   const [user, set_user] = useState({});
    const [message, set_message] = useState({});
    const [group_season_week, set_group_season_week] = useState(
       DEFAULT_GROUP_SEASON_WEEK
