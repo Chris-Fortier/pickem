@@ -20,9 +20,12 @@ export default function Standings({
 }) {
    // TODO: call api to get standings
    const [standings, set_standings] = useState([]);
+   const [is_loading, set_is_loading] = useState(true);
 
    useEffect(() => {
       if (user) {
+         set_standings([]); // clear the shown standings until new ones load
+         set_is_loading(true);
          // get the group picks
          set_warning_message(
             "Getting data from the server... If this takes awhile the server might be waking up."
@@ -34,6 +37,7 @@ export default function Standings({
             .then((res) => {
                set_standings(res.data);
                clear_message();
+               set_is_loading(false);
             })
             .catch((err) => {
                console.log("err", err);
@@ -60,7 +64,7 @@ export default function Standings({
                      <br />
                      Standings
                   </h2>
-                  {group_season_week.week !== "all" && (
+                  {!is_loading && group_season_week.week !== "all" && (
                      <p>
                         These are standings for week {group_season_week.week}{" "}
                         only. To see the standings for the entire season, choose
@@ -69,93 +73,102 @@ export default function Standings({
                   )}
                </div>
                <div className="card-body">
-                  <table style={{ width: "100%" }}>
-                     <tbody>
-                        <tr>
-                           {/* <th>Rank</th> */}
-                           <th>Rk</th>
-                           <th>Team</th>
-                           <th>Abbr</th>
-                           <th style={{ textAlign: "right" }}>
-                              {group_season_week.season <= 2020 ? "CP" : "Pts"}
-                           </th>
-                           <th style={{ textAlign: "right" }}>PB</th>
-                        </tr>
-                        {standings.map((standings_item) => {
-                           const initials =
-                              standings_item.initials.toUpperCase();
-                           return (
-                              <tr
-                                 key={v4()}
-                                 className={classnames({
-                                    "new-standings-rank":
-                                       standings_item.is_new_rank,
-                                    "this-user-standings":
-                                       user.team_name ===
-                                       standings_item.team_name,
-                                 })}
-                              >
-                                 <td>{standings_item.rank}</td>
-                                 <td>
-                                    {standings_item.team_name}
-                                    {/* TODO: need a better way to determine medals than hard-coding */}
-                                    {MEDALS.filter((medal) => {
-                                       return (
-                                          medal.user_id ===
-                                          standings_item.user_id
-                                       );
-                                    }).map((medal) => {
-                                       return (
-                                          <span className="medal" key={v4()}>
-                                             {medal.label}
-                                          </span>
-                                       );
+                  {is_loading ? (
+                     <p>Loading...</p>
+                  ) : (
+                     <table style={{ width: "100%" }}>
+                        <tbody>
+                           <tr>
+                              {/* <th>Rank</th> */}
+                              <th>Rk</th>
+                              <th>Team</th>
+                              <th>Abbr</th>
+                              <th style={{ textAlign: "right" }}>
+                                 {group_season_week.season <= 2020
+                                    ? "CP"
+                                    : "Pts"}
+                              </th>
+                              <th style={{ textAlign: "right" }}>PB</th>
+                           </tr>
+                           {standings.map((standings_item) => {
+                              const initials =
+                                 standings_item.initials.toUpperCase();
+                              return (
+                                 <tr
+                                    key={v4()}
+                                    className={classnames({
+                                       "new-standings-rank":
+                                          standings_item.is_new_rank,
+                                       "this-user-standings":
+                                          user.team_name ===
+                                          standings_item.team_name,
                                     })}
-                                 </td>
-                                 <td>{initials}</td>
-                                 <td style={{ textAlign: "right" }}>
-                                    {group_season_week.season <= 2020
-                                       ? standings_item.num_correct
-                                       : standings_item.num_points}
-                                 </td>
-                                 <td style={{ textAlign: "right" }}>
-                                    {group_season_week.season <= 2020
-                                       ? standings_item.num_behind
-                                       : standings_item.num_points_behind}
-                                 </td>
-                              </tr>
-                           );
-                        })}
-                     </tbody>
-                  </table>
-               </div>
-               <div className="card-footer">
-                  {group_season_week.season <= 2020 && (
-                     <p>CP = Correct Picks</p>
-                  )}{" "}
-                  {(group_season_week.season === 2021 ||
-                     group_season_week.season === 2022) && (
-                     <p>
-                        Pts = Points. In the 2021 and 2022 seasons, regular
-                        season correct picks were worth 1 point each, wild-card
-                        round 2 points, divisional 4 points, conference
-                        championship 8 points and the big game 16 points.
-                     </p>
+                                 >
+                                    <td>{standings_item.rank}</td>
+                                    <td>
+                                       {standings_item.team_name}
+                                       {/* TODO: need a better way to determine medals than hard-coding */}
+                                       {MEDALS.filter((medal) => {
+                                          return (
+                                             medal.user_id ===
+                                             standings_item.user_id
+                                          );
+                                       }).map((medal) => {
+                                          return (
+                                             <span className="medal" key={v4()}>
+                                                {medal.label}
+                                             </span>
+                                          );
+                                       })}
+                                    </td>
+                                    <td>{initials}</td>
+                                    <td style={{ textAlign: "right" }}>
+                                       {group_season_week.season <= 2020
+                                          ? standings_item.num_correct
+                                          : standings_item.num_points}
+                                    </td>
+                                    <td style={{ textAlign: "right" }}>
+                                       {group_season_week.season <= 2020
+                                          ? standings_item.num_behind
+                                          : standings_item.num_points_behind}
+                                    </td>
+                                 </tr>
+                              );
+                           })}
+                        </tbody>
+                     </table>
                   )}
-                  {group_season_week.season >= 2023 && (
-                     <p>
-                        Pts = Points. As of the 2023 season, regular season
-                        correct picks are worth 1 point each, wild-card and
-                        divisional round 2 points, conference championship 4
-                        points and the big game 8 points.
-                     </p>
-                  )}
-                  <p>
-                     PB = how many{" "}
-                     {group_season_week.season <= 2020 ? "picks" : "points"}{" "}
-                     this player is behind the leader.
-                  </p>
                </div>
+               {!is_loading && (
+                  <div className="card-footer">
+                     {group_season_week.season <= 2020 && (
+                        <p>CP = Correct Picks</p>
+                     )}{" "}
+                     {(group_season_week.season === 2021 ||
+                        group_season_week.season === 2022) && (
+                        <p>
+                           Pts = Points. In the 2021 and 2022 seasons, regular
+                           season correct picks were worth 1 point each,
+                           wild-card round 2 points, divisional 4 points,
+                           conference championship 8 points and the big game 16
+                           points.
+                        </p>
+                     )}
+                     {group_season_week.season >= 2023 && (
+                        <p>
+                           Pts = Points. As of the 2023 season, regular season
+                           correct picks are worth 1 point each, wild-card and
+                           divisional round 2 points, conference championship 4
+                           points and the big game 8 points.
+                        </p>
+                     )}
+                     <p>
+                        PB = how many{" "}
+                        {group_season_week.season <= 2020 ? "picks" : "points"}{" "}
+                        this player is behind the leader.
+                     </p>
+                  </div>
+               )}
             </div>
          </div>
       </>
