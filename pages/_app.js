@@ -79,7 +79,10 @@ function MyApp({ Component, pageProps }) {
          />
          {/* message pop up */}
          {!isEmpty(message) && (
-            <Alert variant={message.variant} className="message">
+            <Alert
+               variant={message.variant}
+               className={`message message-${message.variant}`}
+            >
                {message.message}
             </Alert>
          )}
