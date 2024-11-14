@@ -14,10 +14,12 @@ export default function GroupPicks({
 }) {
    const [teams, set_teams] = useState([]);
    const [match_ups, set_match_ups] = useState([]);
+   const [is_loading, set_is_loading] = useState(true);
 
    useEffect(() => {
       if (user?.id) {
          // note: just checking for user doesn't work because {} is true
+         set_is_loading(true);
          set_teams([]); // seem to need to clear the teams first due to it rendering columns for teams that haven't participated for one frame
          // get the group picks
          set_warning_message(
@@ -31,6 +33,7 @@ export default function GroupPicks({
                set_match_ups(res.data.match_ups);
                set_teams(res.data.teams);
                clear_message();
+               set_is_loading(false);
             })
             .catch((err) => {
                console.log("err", err);
@@ -55,8 +58,10 @@ export default function GroupPicks({
                         group_season_week.season
                      )}
                   </h2>
+                  {is_loading && <p>Loading...</p>}
                </div>
             </div>
+            {!is_loading && (
             <table className="table-dark table-striped bottom-scroll-fix">
                <tbody>
                   {/* each game of the week has one row */}
@@ -112,7 +117,10 @@ export default function GroupPicks({
                                        })}
                                        style={{ textAlign: "center" }}
                                     >
-                                       {match_up.picks[team.user_id].pick_label}
+                                          {
+                                             match_up.picks[team.user_id]
+                                                .pick_label
+                                          }
                                     </td>
                                  );
                               })}
@@ -122,6 +130,7 @@ export default function GroupPicks({
                   })}
                </tbody>
             </table>
+            )}
          </div>
       </>
    );

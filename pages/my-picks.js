@@ -19,10 +19,13 @@ export default function MyPicks({
    let is_rendering_time = true;
 
    const [my_picks, set_my_picks] = useState([]); // TODO: use api to get my picks
+   const [is_loading, set_is_loading] = useState(true);
 
    useEffect(() => {
       if (user?.id) {
          // note: just checking for user doesn't work because {} is true
+         set_my_picks([]);
+         set_is_loading(true);
          // get the group picks
          set_warning_message(
             "Getting data from the server... If this takes awhile the server might be waking up."
@@ -34,6 +37,7 @@ export default function MyPicks({
             .then((res) => {
                set_my_picks(res.data);
                clear_message();
+               set_is_loading(false);
             })
             .catch((err) => {
                console.log("err", err);
@@ -60,48 +64,57 @@ export default function MyPicks({
                   </h2>
                </div>
                <div className="card-body">
-                  <p>
-                     Each pick is saved as soon as it is selected. You can
-                     change your pick for a game as many times as you want until
-                     the game starts.
-                  </p>
-                  {my_picks.map((pick) => {
-                     if (pick.game_at > rolling_date + 43200000) {
-                        is_rendering_date = true;
-                        is_rendering_time = true;
-                     } else if (pick.game_at > rolling_date) {
-                        is_rendering_date = false;
-                        is_rendering_time = true;
-                     } else {
-                        is_rendering_date = false;
-                        is_rendering_time = false;
-                     }
-                     rolling_date = pick.game_at;
-                     return (
-                        <span key={v4()}>
-                           {is_rendering_time && <br />}
-                           {is_rendering_date && (
-                              <h5 style={{ textAlign: "center" }}>
-                                 {toDisplayDate(pick.game_at, "EEE MMM dd")}
-                              </h5>
-                           )}
-                           {is_rendering_time && (
-                              <h6 style={{ textAlign: "center" }}>
-                                 {toDisplayDate(pick.game_at, "p")}
-                              </h6>
-                           )}
-                           <Pick
-                              pick={pick}
-                              my_picks={my_picks}
-                              set_my_picks={set_my_picks}
-                              set_warning_message={set_warning_message}
-                              set_success_message={set_success_message}
-                              set_danger_message={set_danger_message}
-                              group_id={group_season_week.group_id}
-                           />
-                        </span>
-                     );
-                  })}
+                  {is_loading ? (
+                     <p>Loading...</p>
+                  ) : (
+                     <>
+                        <p>
+                           Each pick is saved as soon as it is selected. You can
+                           change your pick for a game as many times as you want
+                           until the game starts.
+                        </p>
+                        {my_picks.map((pick) => {
+                           if (pick.game_at > rolling_date + 43200000) {
+                              is_rendering_date = true;
+                              is_rendering_time = true;
+                           } else if (pick.game_at > rolling_date) {
+                              is_rendering_date = false;
+                              is_rendering_time = true;
+                           } else {
+                              is_rendering_date = false;
+                              is_rendering_time = false;
+                           }
+                           rolling_date = pick.game_at;
+                           return (
+                              <span key={v4()}>
+                                 {is_rendering_time && <br />}
+                                 {is_rendering_date && (
+                                    <h5 style={{ textAlign: "center" }}>
+                                       {toDisplayDate(
+                                          pick.game_at,
+                                          "EEE MMM dd"
+                                       )}
+                                    </h5>
+                                 )}
+                                 {is_rendering_time && (
+                                    <h6 style={{ textAlign: "center" }}>
+                                       {toDisplayDate(pick.game_at, "p")}
+                                    </h6>
+                                 )}
+                                 <Pick
+                                    pick={pick}
+                                    my_picks={my_picks}
+                                    set_my_picks={set_my_picks}
+                                    set_warning_message={set_warning_message}
+                                    set_success_message={set_success_message}
+                                    set_danger_message={set_danger_message}
+                                    group_id={group_season_week.group_id}
+                                 />
+                              </span>
+                           );
+                        })}
+                     </>
+                  )}
                </div>
             </div>
          </div>
