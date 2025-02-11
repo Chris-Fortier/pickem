@@ -9,6 +9,7 @@ const MEDALS = [
    { user_id: "23e3a0cc-588a-4a91-8709-0be31c89ce6e", label: "21" },
    { user_id: "8cb742cb-d04c-4714-b11a-a4ca54d7fd30", label: "22" },
    { user_id: "8cb742cb-d04c-4714-b11a-a4ca54d7fd30", label: "23" },
+   { user_id: "23e3a0cc-588a-4a91-8709-0be31c89ce6e", label: "24" },
 ];
 
 export default function Standings({
