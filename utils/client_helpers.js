@@ -53,7 +53,7 @@ export function get_week_or_season_text(week, season, is_abbr = false) {
 }
 
 export const NUM_WEEKS_IN_SEASON = 22; // includes playoffs and superbowl, not preseason
-const WED_BEFORE_GAME_1 = 1725346800000; // time of the Wednesday before first game this season
+const WED_BEFORE_GAME_1 = 1756882800000; // time of the Wednesday before first game this season
 export const SEASONS = [2020, 2021, 2022, 2023, 2024, 2025];
 
 // sets the users position when they refresh the page
