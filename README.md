@@ -106,4 +106,13 @@ Following [this](https://stackoverflow.com/questions/69692842/error-message-erro
 
 -  Make sure you are using Git Bash instead of PowerShell.
 
+### 9/11/2025 Couldn't deploy to Vercel
+
+-  Changed to 22.x in Vercel project settings.
+-  Redeploying the previous deployment attempt using Vercel dashboard.
+
+### 11/2/2025 Daylight Savings Time Issue
+
+-  We couldn't correct times for today's games. Its because of the way dates were being converted from a date plus time to Unix timestamp. If you get a date object for 11/2/2025, it will be in DST, even though DST ended today. It's because at midnight on 11/2, it was still DST. To fix this, I had to add some hours to the date object, then subtract them after it converts it to Unix time.
+
 ## To do

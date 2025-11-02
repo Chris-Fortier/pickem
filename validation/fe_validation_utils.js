@@ -16,11 +16,16 @@ export const convert_date_string_to_ms = (input) => {
    ) {
       return null;
    }
-   const date = new Date(input);
+   const splitDate = input.split("/");
+   const month = Number(splitDate[0]) - 1;
+   const day = splitDate[1];
+   const year = splitDate[2];
+   const date = new Date(year, month, day, 12); // add 12 hours to the date to ensure that the date has the correct DST status if since DST status won't change until after midnight
+
    if (isNaN(date)) {
       return null;
    }
-   return date.getTime();
+   return date.getTime() - 43200000; // subtract the 12 hours, DST status in the Date object should be maintained
 };
 
 export const validate_game_date = (input) => {
