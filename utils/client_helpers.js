@@ -70,7 +70,6 @@ export const DEFAULT_GROUP_SEASON_WEEK = {
 };
 
 export const WEEKS = [
-   "all",
    ...Array.from({ length: NUM_WEEKS_IN_SEASON }, (_, index) => index + 1),
 ]; // the WEEKS the user can select from
 
