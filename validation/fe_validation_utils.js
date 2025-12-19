@@ -17,6 +17,9 @@ export const convert_date_string_to_ms = (input) => {
       return null;
    }
    const splitDate = input.split("/");
+   if (splitDate[2].length === 2) {
+      splitDate[2] = `20${splitDate[2]}`; // add 20 prefix to 2-digit years
+   }
    const month = Number(splitDate[0]) - 1;
    const day = splitDate[1];
    const year = splitDate[2];
