@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import classnames from "classnames";
-import { get_week_or_season_text } from "../utils/client_helpers";
 import { v4 } from "uuid";
 
 const MEDALS = [
