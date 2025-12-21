@@ -22,7 +22,7 @@
       "jwt-decode": "^4.0.0",
       "knex": "^3.1.0",
       "mysql": "^2.18.1",
-      "next": "^15.5.3",
+      "next": "^16.1.0",
       "react": "19.1.1",
       "react-bootstrap": "^2.10.10",
       "react-dom": "^19.1.1",
