@@ -139,13 +139,15 @@ export default function Standings({
       <>
          {/* <NavBar /> */}
          <div className="my-container bottom-scroll-fix">
-            <StandingsCard
-               standings={standings_week}
-               season={group_season_week.season}
-               week={group_season_week.week}
-               is_loading={is_loading}
-               user={user}
-            />
+            {group_season_week.week !== "all" && (
+               <StandingsCard
+                  standings={standings_week}
+                  season={group_season_week.season}
+                  week={group_season_week.week}
+                  is_loading={is_loading}
+                  user={user}
+               />
+            )}
             <StandingsCard
                standings={standings_season}
                season={group_season_week.season}
