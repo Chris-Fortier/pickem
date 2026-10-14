@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import classnames from "classnames";
 import { v4 } from "uuid";
+import { SEASONS } from "../utils/client_helpers";
 
 const MEDALS = [
    { user_id: "ba1c83b1-9899-42e0-97f3-561f0643153a", label: "20" },
@@ -104,6 +105,7 @@ export default function Standings({
    const [standings_season, set_standings_season] = useState([]);
    const [standings_week, set_standings_week] = useState([]);
    const [is_loading, set_is_loading] = useState(true);
+   const [winners, set_winners] = useState({});
 
    const get_standings = (set_standings, week) => {
       if (user) {
@@ -135,6 +137,31 @@ export default function Standings({
       get_standings(set_standings_season, "all"); // get standings for season
       get_standings(set_standings_week, group_season_week.week); // get standings for week
    }, [group_season_week, user]);
+
+   // get the team names and initials of the season winners
+   useEffect(() => {
+      const ids = [...new Set(MEDALS.map((medal) => medal.user_id))];
+      axios
+         .get(`/api/users/team-names?ids=${ids.join(",")}`)
+         .then((res) => {
+            const winners_by_id = {};
+            res.data.forEach((winner) => {
+               winners_by_id[winner.id] = winner;
+            });
+            set_winners(winners_by_id);
+         })
+         .catch((err) => {
+            console.log("err", err);
+         });
+   }, []);
+
+   // the seasons that have a winner, along with the winner's medal
+   const season_winners = SEASONS.map((season) => ({
+      season,
+      medal: MEDALS.find(
+         (medal) => medal.label === String(season).slice(-2)
+      ),
+   })).filter(({ medal }) => medal); // no winner for this season yet
 
    return (
       <>
@@ -188,6 +215,56 @@ export default function Standings({
                   </div>
                </div>
             )}
+            <div className="my-card">
+               <div className="card-header">
+                  <h2>Season Winners</h2>
+               </div>
+               <div className="card-body">
+                  <table style={{ width: "100%" }}>
+                     <tbody>
+                        <tr>
+                           <th>Season</th>
+                           <th>Team</th>
+                           <th>Abbr</th>
+                        </tr>
+                        {season_winners.map(({ season, medal }, i) => {
+                           const winner = winners[medal.user_id];
+                           return (
+                              <tr
+                                 key={season}
+                                 className={classnames({
+                                    // only draw a line when the winner changes to separate "dynasties"
+                                    "new-standings-rank":
+                                       i === 0 ||
+                                       medal.user_id !==
+                                          season_winners[i - 1].medal.user_id,
+                                    "this-user-standings":
+                                       "user && user.id" === medal.user_id,
+                                 })}
+                              >
+                                 <td>
+                                    <span
+                                       className="medal"
+                                       style={{ marginLeft: 0 }}
+                                    >
+                                       {String(season).slice(-2)}
+                                    </span>
+                                 </td>
+                                 <td>
+                                    {winner ? winner.team_name : medal.user_id}
+                                 </td>
+                                 <td>
+                                    {winner
+                                       ? winner.initials.toUpperCase()
+                                       : ""}
+                                 </td>
+                              </tr>
+                           );
+                        })}
+                     </tbody>
+                  </table>
+               </div>
+            </div>
          </div>
       </>
    );
