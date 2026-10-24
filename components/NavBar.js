@@ -14,6 +14,7 @@ import {
 } from "../utils/client_helpers";
 import { v4 } from "uuid";
 import log_out from "../utils/log_out";
+import { confirm_discard_unsaved_changes } from "../utils/unsaved_changes";
 
 export default function NavBar({
    user,
@@ -26,6 +27,9 @@ export default function NavBar({
    // pass it an object with any of these properties: group_id, season and/or week
    // any values it has will be pushed to group_season_week in Redux
    function change_group_season_week(new_values = {}) {
+      if (!confirm_discard_unsaved_changes()) {
+         return; // the user wants to stay and keep their unsaved changes
+      }
       set_group_season_week({ ...group_season_week, ...new_values });
    }
 
@@ -68,7 +72,11 @@ export default function NavBar({
                         <NavDropdown.Item
                            className="dropdown-item"
                            href="/log-in"
-                           onClick={() => {
+                           onClick={(e) => {
+                              if (!confirm_discard_unsaved_changes()) {
+                                 e.preventDefault(); // stay logged in and keep the unsaved changes
+                                 return;
+                              }
                               log_out({ set_user, router });
                            }}
                         >

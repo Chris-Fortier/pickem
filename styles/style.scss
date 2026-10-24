@@ -184,6 +184,29 @@ td {
    border: 3px solid $pick-color-active;
 }
 
+// style for a game on my picks where the pick has been changed but not saved yet
+.pick-changed {
+   background-color: transparentize($change, 0.75);
+   box-shadow: 0 0 0 3px transparentize($change, 0.75);
+   margin-bottom: 4px;
+}
+.pick-changed .team-choice {
+   margin-bottom: 0;
+}
+
+// the pick counter and save buttons on my picks when there are unsaved changes
+// sticky keeps it below the picks normally, but pins it to the bottom of the screen if that is scrolled out of view
+.pick-actions-sticky {
+   position: sticky;
+   bottom: 0;
+   z-index: 1;
+   background: $gray; // same as the card so the picks don't show through
+   margin-left: -1rem; // stretch across the card padding
+   margin-right: -1rem;
+   padding: 0.5rem 1rem; // bottom padding keeps the last element's margin inside so it isn't against the bottom of the screen
+   box-shadow: 0 -4px 6px -4px rgba(0, 0, 0, 0.5);
+}
+
 // style for any game that has started
 .team-choice.started {
    font-weight: bold;
