@@ -181,7 +181,7 @@ export default function MyPicks({
 
    return (
       <>
-         <div className="my-container bottom-scroll-fix">
+         <div className="my-container">
             <div className="my-card">
                <div className="card-header">
                   <h2>
