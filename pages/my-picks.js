@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/router";
 import toDisplayDate from "date-fns/format";
 import Pick from "../components/Pick";
 import Button from "../components/Button";
 // import isEmpty from "lodash/isEmpty";
 import { get_week_or_season_text } from "../utils/client_helpers";
 import TEAM_NAMES from "../utils/TEAM_NAMES";
-import {
-   UNSAVED_CHANGES_MESSAGE,
-   set_has_unsaved_changes,
-   get_has_unsaved_changes,
-} from "../utils/unsaved_changes";
+import use_unsaved_changes_warning from "../utils/use_unsaved_changes_warning";
 
 export default function MyPicks({
    group_season_week,
@@ -21,8 +16,6 @@ export default function MyPicks({
    set_success_message,
    set_danger_message,
 }) {
-   const router = useRouter();
-
    let rolling_date = 0; // for keeping track when a game is on a new date
    let is_rendering_date = true;
    let is_rendering_time = true;
@@ -72,40 +65,8 @@ export default function MyPicks({
       }
    }, [group_season_week, user]);
 
-   // let the rest of the app know if there are unsaved changes
-   useEffect(() => {
-      set_has_unsaved_changes(has_changes);
-   }, [has_changes]);
-   useEffect(() => {
-      return () => set_has_unsaved_changes(false); // leaving the page
-   }, []);
-
    // warn the user if they try to leave the page with unsaved changes
-   useEffect(() => {
-      // refreshing, closing the tab or going to another site
-      const handle_before_unload = (e) => {
-         if (get_has_unsaved_changes()) {
-            e.preventDefault();
-            e.returnValue = ""; // needed for some browsers to show the warning
-         }
-      };
-      // going to another page in the app
-      const handle_route_change_start = () => {
-         if (
-            get_has_unsaved_changes() &&
-            !window.confirm(UNSAVED_CHANGES_MESSAGE)
-         ) {
-            router.events.emit("routeChangeError");
-            throw "Route change cancelled because of unsaved changes.";
-         }
-      };
-      window.addEventListener("beforeunload", handle_before_unload);
-      router.events.on("routeChangeStart", handle_route_change_start);
-      return () => {
-         window.removeEventListener("beforeunload", handle_before_unload);
-         router.events.off("routeChangeStart", handle_route_change_start);
-      };
-   }, [router]);
+   use_unsaved_changes_warning(has_changes);
 
    // stage a pick in the browser, picking the team that is already picked cancels the pick
    const stage_pick = (pick, pick_choice) => {
@@ -248,7 +209,7 @@ export default function MyPicks({
                         <div
                            className={
                               has_changes || has_missing_picks
-                                 ? "pick-actions-sticky"
+                                 ? "sticky-save-bar"
                                  : undefined
                            }
                         >
