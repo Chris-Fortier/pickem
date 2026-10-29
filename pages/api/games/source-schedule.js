@@ -3,73 +3,8 @@ const config = require("../../../knexfile");
 const mysqldb = knex(config);
 require("dotenv").config();
 const validate_jwt = require("../../../utils/validate_jwt");
-import TEAM_NAMES from "../../../utils/TEAM_NAMES";
-import {
-   get_num_regular_season_weeks,
-   get_game_value,
-} from "../../../utils/client_helpers";
-
-// ESPN's public (but unofficial and undocumented) scoreboard feed
-const ESPN_SCOREBOARD_URL =
-   "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard";
-
-// ESPN team abbreviations that are different from ours
-const ESPN_TEAM_ABBRS = {
-   WSH: "WAS",
-};
-
-// get the ESPN season type and week(s) to look up for one of our weeks
-// our weeks after the regular season are the playoffs: wild-card, divisional, conference and the big game
-const get_espn_weeks = (season, week) => {
-   const num_regular_season_weeks = get_num_regular_season_weeks(season);
-   if (week <= num_regular_season_weeks) {
-      return { season_type: 2, espn_weeks: [week] };
-   }
-   const postseason_week = week - num_regular_season_weeks;
-   if (postseason_week === 4) {
-      // the big game has been ESPN postseason week 5 when there was a Pro Bowl week before it, so check both
-      return { season_type: 3, espn_weeks: [4, 5] };
-   }
-   return { season_type: 3, espn_weeks: [postseason_week] };
-};
-
-const get_espn_events = async (season, week) => {
-   const { season_type, espn_weeks } = get_espn_weeks(season, week);
-   const events = [];
-   for (const espn_week of espn_weeks) {
-      const response = await fetch(
-         `${ESPN_SCOREBOARD_URL}?dates=${season}&seasontype=${season_type}&week=${espn_week}`,
-         { signal: AbortSignal.timeout(10000) }
-      );
-      if (!response.ok) {
-         throw new Error(`ESPN responded with ${response.status}.`);
-      }
-      const data = await response.json();
-      events.push(...(data.events || []));
-   }
-   return events;
-};
-
-// convert an ESPN event to a game in our format
-// team abbreviations are null if they are not a known team (TBD, Pro Bowl teams, etc.)
-const convert_espn_event = (event) => {
-   const competition = event.competitions[0];
-   const get_team = (home_away) => {
-      const competitor = competition.competitors.find(
-         (competitor) => competitor.homeAway === home_away
-      );
-      const espn_abbr = competitor?.team?.abbreviation;
-      const abbr = ESPN_TEAM_ABBRS[espn_abbr] || espn_abbr;
-      return TEAM_NAMES[abbr] ? abbr : null;
-   };
-   return {
-      name: event.name,
-      away_team: get_team("away"),
-      home_team: get_team("home"),
-      game_at: Date.parse(event.date),
-      is_time_confirmed: competition.timeValid !== false,
-   };
-};
+import { get_game_value } from "../../../utils/client_helpers";
+import { get_espn_games, match_espn_game } from "../../../utils/espn";
 
 export default async (req, res) => {
    validate_jwt(req, res, async () => {
@@ -99,9 +34,7 @@ export default async (req, res) => {
 
             let source_games;
             try {
-               source_games = (await get_espn_events(season, week)).map(
-                  convert_espn_event
-               );
+               source_games = await get_espn_games(season, week);
             } catch (err) {
                console.log(err);
                return res
@@ -135,15 +68,9 @@ export default async (req, res) => {
                   return;
                }
 
-               const game = our_games.find(
-                  (our_game) =>
-                     our_game.away_team === source_game.away_team &&
-                     our_game.home_team === source_game.home_team
-               );
-               const swapped_game = our_games.find(
-                  (our_game) =>
-                     our_game.away_team === source_game.home_team &&
-                     our_game.home_team === source_game.away_team
+               const { game, swapped_game } = match_espn_game(
+                  source_game,
+                  our_games
                );
                if (game) {
                   matched_game_ids.push(game.id);

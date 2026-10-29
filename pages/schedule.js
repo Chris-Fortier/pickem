@@ -329,7 +329,7 @@ const SourceSchedulePreview = ({
    const has_changes = adds.length > 0 || updates.length > 0;
 
    return (
-      <div className="source-schedule-preview">
+      <div className="espn-preview">
          <h5>Schedule from ESPN</h5>
          {!has_changes && <p>No games to add or update.</p>}
          {adds.length > 0 && (

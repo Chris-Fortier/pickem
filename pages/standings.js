@@ -155,13 +155,15 @@ export default function Standings({
          });
    }, []);
 
-   // the seasons that have a winner, along with the winner's medal
+   // the seasons that have a winner, along with the winner's medal, most recent season first
    const season_winners = SEASONS.map((season) => ({
       season,
       medal: MEDALS.find(
          (medal) => medal.label === String(season).slice(-2)
       ),
-   })).filter(({ medal }) => medal); // no winner for this season yet
+   }))
+      .filter(({ medal }) => medal) // no winner for this season yet
+      .sort((a, b) => b.season - a.season);
 
    return (
       <>
