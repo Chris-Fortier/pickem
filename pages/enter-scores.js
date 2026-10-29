@@ -1,114 +1,56 @@
 import React, { useEffect, useState } from "react";
 import isEmpty from "lodash/isEmpty";
+import classnames from "classnames";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { get_week_or_season_text } from "../utils/client_helpers";
 import axios from "axios";
 import { validate_game_score } from "../validation/fe_validation_utils";
+import use_unsaved_changes_warning from "../utils/use_unsaved_changes_warning";
 
-const GameScoreEditor = ({ game, set_success_message, set_danger_message }) => {
-   // away score
-   const [away_score_default, set_away_score_default] = useState(
-      game.away_score
-   );
-   const [away_score, set_away_score] = useState(game.away_score);
-   const [has_away_score_changed, set_has_away_score_changed] = useState(false);
-   const [is_away_score_valid, set_is_away_score_valid] = useState(true);
+const SCORE_FIELDS = ["away_score", "home_score"];
 
-   // home score
-   const [home_score_default, set_home_score_default] = useState(
-      game.home_score
-   );
-   const [home_score, set_home_score] = useState(game.home_score);
-   const [has_home_score_changed, set_has_home_score_changed] = useState(false);
-   const [is_home_score_valid, set_is_home_score_valid] = useState(true);
+// the id of the input for a score, used to move to the next score box when pressing enter
+const get_score_input_name = (game, field) => `${game.id}-${field}`;
 
-   const is_update_enabled =
-      (has_away_score_changed || has_home_score_changed) &&
-      is_away_score_valid &&
-      is_home_score_valid;
+// a score as it is saved on the server, as a string for the input
+const get_saved_score = (game, field) =>
+   game[field] === null ? "" : String(game[field]);
 
-   const update_editor = () => {
-      set_has_away_score_changed(false);
-      set_away_score_default(away_score);
-      set_has_home_score_changed(false);
-      set_home_score_default(home_score);
-   };
-
-   const action = () => {
-      const body = {
-         // update scores
-         game_id: game.id,
-         updates: {
-            ...(has_away_score_changed && {
-               away_score: away_score,
-            }),
-            ...(has_home_score_changed && {
-               home_score: home_score,
-            }),
-         },
-      };
-      axios
-         .patch(`/api/games`, body)
-         .then((res) => {
-            set_success_message(res.data);
-            update_editor();
-         })
-         .catch(() => {
-            set_danger_message("Something went wrong");
-         });
-   };
-
-   const on_input_enter = () => {
-      if (is_update_enabled) {
-         action();
-      }
+const GameScoreEditor = ({ game, staged_scores, stage_score, on_enter }) => {
+   const get_score_input = (field, label) => {
+      const is_changed = field in staged_scores;
+      const value = is_changed
+         ? staged_scores[field]
+         : get_saved_score(game, field);
+      return (
+         <Input
+            inline
+            label={label}
+            type="text"
+            style={{ width: "50px" }}
+            name={get_score_input_name(game, field)}
+            default_value={get_saved_score(game, field)}
+            value={value}
+            set_value={(new_value) => stage_score(game, field, new_value)}
+            has_changed={is_changed}
+            validate={validate_game_score}
+            is_valid={!is_changed || validate_game_score(value)}
+            on_enter={() => on_enter(game, field)}
+         />
+      );
    };
 
    return (
-      <>
-         <Input
-            inline
-            label={game.away_team}
-            type="text"
-            style={{ width: "50px" }}
-            name={`${game.id}-away_score`}
-            default_value={away_score_default}
-            value={away_score}
-            set_value={set_away_score}
-            has_changed={has_away_score_changed}
-            set_has_changed={set_has_away_score_changed}
-            validate={validate_game_score}
-            is_valid={is_away_score_valid}
-            set_is_valid={set_is_away_score_valid}
-            on_enter={on_input_enter}
-         />
+      <div
+         className={classnames({
+            "game-score-changed": !isEmpty(staged_scores),
+         })}
+      >
+         {get_score_input("away_score", game.away_team)}
          at{" "}
-         <Input
-            inline
-            label={game.home_team}
-            type="text"
-            style={{ width: "50px" }}
-            name={`${game.id}-home_score`}
-            default_value={home_score_default}
-            value={home_score}
-            set_value={set_home_score}
-            has_changed={has_home_score_changed}
-            set_has_changed={set_has_home_score_changed}
-            validate={validate_game_score}
-            is_valid={is_home_score_valid}
-            set_is_valid={set_is_home_score_valid}
-            on_enter={on_input_enter}
-         />
-         <Button
-            style={{ marginRight: 0 }}
-            label="Update"
-            primary={is_update_enabled}
-            secondary={!is_update_enabled}
-            is_enabled={is_update_enabled}
-            action={action}
-         />{" "}
-      </>
+         {get_score_input("home_score", game.home_team)}
+      </div>
    );
 };
 
@@ -119,11 +61,14 @@ export default function EnterScores({
    set_success_message,
    set_danger_message,
 }) {
-   const [games, set_games] = useState([]);
+   const [games, set_games] = useState([]); // the games as they are saved on the server
+   const [staged_scores, set_staged_scores] = useState({}); // scores changed in the browser but not saved yet, by game id then field
+   const [is_saving, set_is_saving] = useState(false);
    const [message_from_server] = useState("");
 
    useEffect(() => {
       if (!isEmpty(user)) {
+         set_staged_scores({}); // any unsaved changes are for the previous week
          set_warning_message("Getting games from the server...");
          axios
             .get(
@@ -146,13 +91,118 @@ export default function EnterScores({
    }, [group_season_week, user]);
 
    const now = Date.now();
+   const is_game_finished = (game) => game.game_at + 3600000 < now;
+   const finished_games = games.filter(is_game_finished);
+
+   const num_changes = Object.keys(staged_scores).length;
+   const has_changes = num_changes > 0;
+   const has_invalid_scores = Object.values(staged_scores).some((scores) =>
+      Object.values(scores).some((score) => !validate_game_score(score))
+   );
+
+   // the score to show for a game, which is the staged score if there is one
+   const get_shown_score = (game, field) =>
+      field in (staged_scores[game.id] || {})
+         ? staged_scores[game.id][field]
+         : get_saved_score(game, field);
+
+   const num_missing_scores = finished_games.filter((game) =>
+      SCORE_FIELDS.some((field) => get_shown_score(game, field) === "")
+   ).length;
+
+   // warn the user if they try to leave the page with unsaved changes
+   use_unsaved_changes_warning(has_changes);
+
+   // stage a score in the browser, a score that is back to its saved value is no longer a change
+   const stage_score = (game, field, value) => {
+      const new_staged_scores = { ...staged_scores };
+      const game_scores = { ...(new_staged_scores[game.id] || {}) };
+      if (value === get_saved_score(game, field)) {
+         delete game_scores[field];
+      } else {
+         game_scores[field] = value;
+      }
+      if (isEmpty(game_scores)) {
+         delete new_staged_scores[game.id];
+      } else {
+         new_staged_scores[game.id] = game_scores;
+      }
+      set_staged_scores(new_staged_scores);
+   };
+
+   // pressing enter in a score box moves to the next score box
+   const focus_next_score_input = (game, field) => {
+      const score_input_names = finished_games.flatMap((finished_game) =>
+         SCORE_FIELDS.map((score_field) =>
+            get_score_input_name(finished_game, score_field)
+         )
+      );
+      const next_name =
+         score_input_names[
+            score_input_names.indexOf(get_score_input_name(game, field)) + 1
+         ];
+      if (next_name) {
+         document.getElementById(`${next_name}-input`).focus();
+      } else {
+         document.activeElement.blur(); // last score box
+      }
+   };
+
+   const save_changes = () => {
+      set_is_saving(true);
+      set_warning_message("Sending scores to the server...");
+      axios
+         .patch("/api/games/batch", {
+            games: Object.entries(staged_scores).map(([game_id, scores]) => {
+               const game = { game_id };
+               Object.entries(scores).forEach(([field, score]) => {
+                  game[field] = parseInt(score);
+               });
+               return game;
+            }),
+         })
+         .then((res) => {
+            const { updated } = res.data;
+
+            // the updated scores are now what is on the server
+            set_games(
+               games.map((game) => {
+                  if (!updated.includes(game.id)) {
+                     return game;
+                  }
+                  const new_game = { ...game };
+                  Object.entries(staged_scores[game.id]).forEach(
+                     ([field, score]) => {
+                        new_game[field] = parseInt(score);
+                     }
+                  );
+                  return new_game;
+               })
+            );
+            const new_staged_scores = { ...staged_scores };
+            updated.forEach((game_id) => delete new_staged_scores[game_id]);
+            set_staged_scores(new_staged_scores);
+
+            set_success_message("Scores saved.");
+         })
+         .catch((err) => {
+            console.log("error!", err, err.response);
+            set_danger_message(
+               "Could not save the scores. You might have a connection issue or the server needs to wake up. Try again in a few moments."
+            );
+         })
+         .finally(() => {
+            set_is_saving(false);
+         });
+   };
+
+   const discard_changes = () => {
+      set_staged_scores({});
+   };
 
    return (
       <>
-         <div
-            className="my-container bottom-scroll-fix"
-            style={{ maxWidth: "630px" }}
-         >
+         <div className="my-container" style={{ maxWidth: "630px" }}>
             <div className="my-card">
                <div className="card-header">
                   <h2>
@@ -166,9 +216,13 @@ export default function EnterScores({
                   </h2>
                </div>
                <div className="card-body">
+                  <p>
+                     Changed scores are highlighted and are not saved until
+                     you click Save Changes.
+                  </p>
                   <p>{message_from_server}</p>
                   {games.map((game, i) => {
-                     if (game.game_at + 3600000 >= now) {
+                     if (!is_game_finished(game)) {
                         return (
                            <p key={game.id + "-game-score-editor"}>
                               {game.away_team} at {game.home_team} (game not
@@ -180,8 +234,9 @@ export default function EnterScores({
                         <React.Fragment key={game.id + "-game-score-editor"}>
                            <GameScoreEditor
                               game={game}
-                              set_success_message={set_success_message}
-                              set_danger_message={set_danger_message}
+                              staged_scores={staged_scores[game.id] || {}}
+                              stage_score={stage_score}
+                              on_enter={focus_next_score_input}
                            />
                            {i < games.length - 1 && (
                               <hr style={{ marginTop: 0 }} />
@@ -189,6 +244,49 @@ export default function EnterScores({
                         </React.Fragment>
                      );
                   })}
+                  {/* sticks to the bottom of the screen when there are unsaved changes or missing scores and it is scrolled out of view */}
+                  <div
+                     className={
+                        has_changes || num_missing_scores
+                           ? "sticky-save-bar"
+                           : undefined
+                     }
+                  >
+                     <p>
+                        <strong>
+                           {num_missing_scores
+                              ? `${num_missing_scores} finished ${
+                                   num_missing_scores === 1
+                                      ? "game still needs"
+                                      : "games still need"
+                                } scores`
+                              : "All finished games have scores"}
+                        </strong>
+                        {has_invalid_scores && (
+                           <>
+                              <br />
+                              Scores must be whole numbers from 0 to 100.
+                           </>
+                        )}
+                     </p>
+                     {/* only show the buttons when there is something to save */}
+                     {has_changes && (
+                        <>
+                           <Button
+                              label={`Save Changes (${num_changes})`}
+                              action={save_changes}
+                              primary
+                              is_enabled={!is_saving && !has_invalid_scores}
+                           />
+                           <Button
+                              label="Discard"
+                              action={discard_changes}
+                              secondary
+                              is_enabled={!is_saving}
+                           />
+                        </>
+                     )}
+                  </div>
                </div>
             </div>
          </div>

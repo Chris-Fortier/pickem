@@ -18,7 +18,8 @@ export default async (req, res) => {
 
          mysqldb
             .raw(
-               `SELECT \`game_at\`, \`away_team\`, \`home_team\`, \`games\`.\`id\` AS \`game_id\`, '${group_id}' AS \`group_id\`, \`pick\`, (CASE WHEN \`away_score\` > \`home_score\` THEN 0 WHEN  \`away_score\` < \`home_score\` THEN 1 WHEN \`away_score\` = \`home_score\` THEN 2 ELSE NULL END) AS \`winner\` FROM \`picks\` RIGHT JOIN \`games\` ON \`games\`.\`id\` = \`picks\`.\`game_id\` AND \`user_id\` = '${user_id}' WHERE \`season\` = ${season} AND \`week\` LIKE '${week_arg}' ORDER BY \`game_at\` ASC;`
+               "SELECT `game_at`, `away_team`, `home_team`, `games`.`id` AS `game_id`, ? AS `group_id`, `pick`, (CASE WHEN `away_score` > `home_score` THEN 0 WHEN  `away_score` < `home_score` THEN 1 WHEN `away_score` = `home_score` THEN 2 ELSE NULL END) AS `winner` FROM `picks` RIGHT JOIN `games` ON `games`.`id` = `picks`.`game_id` AND `user_id` = ? WHERE `season` = ? AND `week` LIKE ? ORDER BY `game_at` ASC;",
+               [group_id, user_id, season, week_arg]
             )
             .then((picks) => {
                return res.status(200).json(picks[0]);
@@ -38,6 +39,8 @@ export default async (req, res) => {
          let new_pick = pick;
          if (pick === "null") {
             new_pick = null;
+         } else if (pick !== "0" && pick !== "1") {
+            return res.status(400).json("Invalid pick.");
          }
 
          // make sure that this game hasn't already started
@@ -53,14 +56,15 @@ export default async (req, res) => {
                   mysqldb
                      .raw(
                         `
-                  INSERT INTO \`pickem_app\`.\`picks\` 
-                  SET 
-                      \`user_id\` = '${user_id}',
-                      \`game_id\` = '${game_id}',
-                      \`group_id\` = '${group_id}',
-                      \`pick\` = ${new_pick}
-                  ON DUPLICATE KEY UPDATE \`pick\` = ${new_pick}, \`last_change_at\` = UNIX_TIMESTAMP() * 1000;
-                  `
+                  INSERT INTO \`pickem_app\`.\`picks\`
+                  SET
+                      \`user_id\` = ?,
+                      \`game_id\` = ?,
+                      \`group_id\` = ?,
+                      \`pick\` = ?
+                  ON DUPLICATE KEY UPDATE \`pick\` = VALUES(\`pick\`), \`last_change_at\` = UNIX_TIMESTAMP() * 1000;
+                  `,
+                        [user_id, game_id, group_id, new_pick]
                      )
                      .then((db_res) => {
                         return res.status(200).json(db_res);
