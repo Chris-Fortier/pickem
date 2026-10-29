@@ -19,6 +19,20 @@ export function get_num_regular_season_weeks(season) {
    return 18;
 }
 
+// how many points a correct pick is worth for a game in this week
+export function get_game_value(week) {
+   if (week == 22) {
+      return 8; // the big game
+   }
+   if (week == 21) {
+      return 4; // conference championship
+   }
+   if (week >= 19) {
+      return 2; // wild-card and divisional
+   }
+   return 1;
+}
+
 // input a week number or 'all' and return 'Week X' or 'Entire Season'
 export function get_week_or_season_text(week, season, is_abbr = false) {
    const num_regular_season_weeks = get_num_regular_season_weeks(season);

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import _ from "lodash";
 import isEmpty from "lodash/isEmpty";
 import classnames from "classnames";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { get_week_or_season_text } from "../utils/client_helpers";
 import axios from "axios";
+import TEAM_NAMES from "../utils/TEAM_NAMES";
 import { validate_game_score } from "../validation/fe_validation_utils";
 import use_unsaved_changes_warning from "../utils/use_unsaved_changes_warning";
 
@@ -54,6 +56,127 @@ const GameScoreEditor = ({ game, staged_scores, stage_score, on_enter }) => {
    );
 };
 
+const format_matchup = (game) =>
+   `${TEAM_NAMES[game.away_team]} @ ${TEAM_NAMES[game.home_team]}`;
+
+const format_score = (game) =>
+   `${game.away_team} ${game.away_score}, ${game.home_team} ${game.home_score}`;
+
+// shows what would change from checking the scores so it can be applied
+const SourceScoresPreview = ({
+   source_scores,
+   on_update,
+   on_cancel,
+   is_updating,
+}) => {
+   const { fills, differs, num_unchanged, skipped, swapped, not_in_ours } =
+      source_scores;
+
+   return (
+      <div className="espn-preview">
+         <h5>Scores from ESPN</h5>
+         {!fills.length && <p>No scores to fill in.</p>}
+         {fills.length > 0 && (
+            <>
+               <p>
+                  <strong>Scores to fill in ({fills.length}):</strong>
+               </p>
+               <ul>
+                  {fills.map((game) => (
+                     <li key={game.game_id}>{format_score(game)}</li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {num_unchanged > 0 && (
+            <p>
+               {num_unchanged} {num_unchanged === 1 ? "score is" : "scores are"}{" "}
+               already correct.
+            </p>
+         )}
+         {skipped.length > 0 && (
+            <>
+               <p>
+                  <strong>Skipped ({skipped.length}):</strong>
+               </p>
+               <ul>
+                  {skipped.map((game, i) => (
+                     <li key={i}>
+                        {game.name}: {game.reason}
+                     </li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {differs.length > 0 && (
+            <>
+               <p className="text-danger">
+                  <strong>
+                     Saved scores that are different from ESPN&apos;s (
+                     {differs.length}), not changed:
+                  </strong>
+               </p>
+               <ul>
+                  {differs.map((game) => (
+                     <li key={game.game_id}>
+                        {game.away_team} {game.saved_away_score ?? "-"},{" "}
+                        {game.home_team} {game.saved_home_score ?? "-"} saved,
+                        ESPN has {game.away_score}, {game.home_score}
+                     </li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {swapped.length > 0 && (
+            <>
+               <p className="text-danger">
+                  <strong>
+                     Home and away teams are the other way around on ESPN (
+                     {swapped.length}), not changed:
+                  </strong>
+               </p>
+               <ul>
+                  {swapped.map((game) => (
+                     <li key={game.game_id}>{format_matchup(game)}</li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {not_in_ours.length > 0 && (
+            <>
+               <p className="text-danger">
+                  <strong>
+                     On ESPN but not in our schedule ({not_in_ours.length}),
+                     not changed:
+                  </strong>
+               </p>
+               <ul>
+                  {not_in_ours.map((game) => (
+                     <li key={`${game.away_team}-${game.home_team}`}>
+                        {format_score(game)}
+                     </li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {fills.length > 0 && (
+            <Button
+               label={is_updating ? "Updating..." : "Update"}
+               action={on_update}
+               primary
+               is_enabled={!is_updating}
+            />
+         )}
+         <Button
+            label="Cancel"
+            action={on_cancel}
+            secondary
+            is_enabled={!is_updating}
+         />
+      </div>
+   );
+};
+
 export default function EnterScores({
    group_season_week,
    user,
@@ -65,8 +188,12 @@ export default function EnterScores({
    const [staged_scores, set_staged_scores] = useState({}); // scores changed in the browser but not saved yet, by game id then field
    const [is_saving, set_is_saving] = useState(false);
    const [message_from_server] = useState("");
+   const [source_scores, set_source_scores] = useState(null); // what would change from checking ESPN's scores
+   const [is_checking_scores, set_is_checking_scores] = useState(false);
+   const [is_updating_scores, set_is_updating_scores] = useState(false);
 
    useEffect(() => {
+      set_source_scores(null); // the checked scores are for the previous week
       if (!isEmpty(user)) {
          set_staged_scores({}); // any unsaved changes are for the previous week
          set_warning_message("Getting games from the server...");
@@ -200,6 +327,96 @@ export default function EnterScores({
       set_staged_scores({});
    };
 
+   // a game that started at least 2.5 hours ago could be final on ESPN
+   const has_possibly_final_game = games.some(
+      (game) => game.game_at + 9000000 <= now
+   );
+
+   // only check scores for a single week, and not while there are unsaved changes so they don't overwrite each other
+   const is_check_scores_enabled =
+      group_season_week.week !== "all" &&
+      has_possibly_final_game &&
+      !has_changes &&
+      !is_saving &&
+      !is_checking_scores &&
+      !is_updating_scores;
+
+   const check_source_scores = () => {
+      set_is_checking_scores(true);
+      set_source_scores(null);
+      set_warning_message("Checking the scores on ESPN...");
+      axios
+         .get(
+            `/api/games/source-scores?season=${group_season_week.season}&week=${group_season_week.week}`
+         )
+         .then((res) => {
+            set_source_scores(res.data);
+            set_success_message("Checked the scores on ESPN.");
+         })
+         .catch((err) => {
+            console.log("err", err);
+            set_danger_message(
+               _.get(err, "response.data") ||
+                  "There was a problem getting the scores from ESPN."
+            );
+         })
+         .finally(() => {
+            set_is_checking_scores(false);
+         });
+   };
+
+   const update_from_source_scores = () => {
+      set_is_updating_scores(true);
+      set_warning_message("Updating the scores...");
+      axios
+         .patch("/api/games/batch", {
+            games: source_scores.fills.map(
+               ({ game_id, away_score, home_score }) => ({
+                  game_id,
+                  away_score,
+                  home_score,
+               })
+            ),
+         })
+         .then((res) => {
+            const { updated } = res.data;
+
+            // the updated scores are now what is on the server
+            set_games(
+               games.map((game) => {
+                  const fill = source_scores.fills.find(
+                     (fill) =>
+                        fill.game_id === game.id && updated.includes(game.id)
+                  );
+                  return fill
+                     ? {
+                          ...game,
+                          away_score: fill.away_score,
+                          home_score: fill.home_score,
+                       }
+                     : game;
+               })
+            );
+            set_source_scores(null);
+
+            set_success_message(
+               `Filled in ${updated.length} ${
+                  updated.length === 1 ? "score" : "scores"
+               }.`
+            );
+         })
+         .catch((err) => {
+            console.log("err", err);
+            set_danger_message(
+               _.get(err, "response.data") ||
+                  "There was a problem updating the scores."
+            );
+         })
+         .finally(() => {
+            set_is_updating_scores(false);
+         });
+   };
+
    return (
       <>
          <div className="my-container" style={{ maxWidth: "630px" }}>
@@ -220,6 +437,26 @@ export default function EnterScores({
                      Changed scores are highlighted and are not saved until
                      you click Save Changes.
                   </p>
+                  <Button
+                     label={
+                        is_checking_scores ? "Checking scores..." : "Check scores"
+                     }
+                     action={check_source_scores}
+                     primary={is_check_scores_enabled}
+                     secondary={!is_check_scores_enabled}
+                     is_enabled={is_check_scores_enabled}
+                  />
+                  {has_changes && (
+                     <p>Save or discard your changes to check scores.</p>
+                  )}
+                  {source_scores && (
+                     <SourceScoresPreview
+                        source_scores={source_scores}
+                        on_update={update_from_source_scores}
+                        on_cancel={() => set_source_scores(null)}
+                        is_updating={is_updating_scores}
+                     />
+                  )}
                   <p>{message_from_server}</p>
                   {games.map((game, i) => {
                      if (!is_game_finished(game)) {
