@@ -4,7 +4,12 @@ import isEmpty from "lodash/isEmpty";
 import toDisplayDate from "date-fns/format";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { get_week_or_season_text } from "../utils/client_helpers";
+import {
+   get_week_or_season_text,
+   get_game_value,
+   DEFAULT_GROUP_SEASON_WEEK,
+} from "../utils/client_helpers";
+import TEAM_NAMES from "../utils/TEAM_NAMES";
 import {
    validate_game_date,
    validate_time,
@@ -130,22 +135,23 @@ const GameEditor = ({
             .then((res) => {
                set_success_message(res.data);
                refresh_editor();
+               // update the game locally too so the page's list of games matches the server
+               set_games(
+                  games
+                     .map((game_2) =>
+                        game_2.id === game.id
+                           ? { ...game_2, ...body.updates }
+                           : game_2
+                     )
+                     .sort((a, b) => a.game_at - b.game_at)
+               );
             })
             .catch(() => {
                set_danger_message("Something went wrong");
             });
       } else {
          // create game
-         let value = 1;
-         if (game.week >= 19) {
-            value = 2;
-         }
-         if (game.week == 21) {
-            value = 4;
-         }
-         if (game.week == 22) {
-            value = 8;
-         }
+         const value = get_game_value(game.week);
          const body = {
             new_game: {
                season: game.season,
@@ -306,6 +312,127 @@ const GameEditor = ({
    );
 };
 
+const format_game_at = (game_at) => toDisplayDate(game_at, "EEE MM/dd p");
+
+const format_matchup = (game) =>
+   `${TEAM_NAMES[game.away_team]} @ ${TEAM_NAMES[game.home_team]}`;
+
+// shows what would change from checking the schedule so it can be applied
+const SourceSchedulePreview = ({
+   source_schedule,
+   on_update,
+   on_cancel,
+   is_updating,
+}) => {
+   const { adds, updates, num_unchanged, skipped, swapped, not_in_source } =
+      source_schedule;
+   const has_changes = adds.length > 0 || updates.length > 0;
+
+   return (
+      <div className="source-schedule-preview">
+         <h5>Schedule from ESPN</h5>
+         {!has_changes && <p>No games to add or update.</p>}
+         {adds.length > 0 && (
+            <>
+               <p>
+                  <strong>Games to add ({adds.length}):</strong>
+               </p>
+               <ul>
+                  {adds.map((game) => (
+                     <li key={`${game.away_team}-${game.home_team}`}>
+                        {format_game_at(game.game_at)} {format_matchup(game)}
+                     </li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {updates.length > 0 && (
+            <>
+               <p>
+                  <strong>Games with a new time ({updates.length}):</strong>
+               </p>
+               <ul>
+                  {updates.map((game) => (
+                     <li key={game.game_id}>
+                        {format_matchup(game)}: {format_game_at(game.old_game_at)}{" "}
+                        &rarr; {format_game_at(game.game_at)}
+                     </li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {num_unchanged > 0 && (
+            <p>
+               {num_unchanged} {num_unchanged === 1 ? "game is" : "games are"}{" "}
+               already up to date.
+            </p>
+         )}
+         {skipped.length > 0 && (
+            <>
+               <p>
+                  <strong>Skipped ({skipped.length}):</strong>
+               </p>
+               <ul>
+                  {skipped.map((game, i) => (
+                     <li key={i}>
+                        {game.name}: {game.reason}
+                     </li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {swapped.length > 0 && (
+            <>
+               <p className="text-danger">
+                  <strong>
+                     Home and away teams are the other way around on ESPN (
+                     {swapped.length}), not changed:
+                  </strong>
+               </p>
+               <ul>
+                  {swapped.map((game) => (
+                     <li key={game.game_id}>
+                        {format_game_at(game.game_at)} {format_matchup(game)}
+                     </li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {not_in_source.length > 0 && (
+            <>
+               <p className="text-danger">
+                  <strong>
+                     In our schedule but not ESPN&apos;s ({not_in_source.length}
+                     ), not changed:
+                  </strong>
+               </p>
+               <ul>
+                  {not_in_source.map((game) => (
+                     <li key={game.game_id}>
+                        {format_game_at(game.game_at)} {format_matchup(game)}
+                     </li>
+                  ))}
+               </ul>
+            </>
+         )}
+         {has_changes && (
+            <Button
+               label={is_updating ? "Updating..." : "Update"}
+               action={on_update}
+               primary
+               is_enabled={!is_updating}
+            />
+         )}
+         <Button
+            label="Cancel"
+            action={on_cancel}
+            secondary
+            is_enabled={!is_updating}
+         />
+      </div>
+   );
+};
+
 export default function Schedule({
    group_season_week,
    user,
@@ -315,6 +442,95 @@ export default function Schedule({
 }) {
    const [games, set_games] = useState([]);
    const [message_from_server] = useState("");
+   const [source_schedule, set_source_schedule] = useState(null); // what would change from looking up ESPN's schedule
+   const [is_getting_schedule, set_is_getting_schedule] = useState(false);
+   const [is_updating_schedule, set_is_updating_schedule] = useState(false);
+
+   // only check the schedule for the current week or a future week this season
+   const is_check_schedule_enabled =
+      group_season_week.season === DEFAULT_GROUP_SEASON_WEEK.season &&
+      group_season_week.week !== "all" &&
+      group_season_week.week >= DEFAULT_GROUP_SEASON_WEEK.week &&
+      !is_getting_schedule &&
+      !is_updating_schedule;
+
+   const get_source_schedule = () => {
+      set_is_getting_schedule(true);
+      set_source_schedule(null);
+      set_warning_message("Checking the schedule on ESPN...");
+      axios
+         .get(
+            `/api/games/source-schedule?season=${group_season_week.season}&week=${group_season_week.week}`
+         )
+         .then((res) => {
+            set_source_schedule(res.data);
+            set_success_message("Checked the schedule on ESPN.");
+         })
+         .catch((err) => {
+            console.log("err", err);
+            set_danger_message(
+               _.get(err, "response.data") ||
+                  "There was a problem getting the schedule from ESPN."
+            );
+         })
+         .finally(() => {
+            set_is_getting_schedule(false);
+         });
+   };
+
+   const update_from_source_schedule = () => {
+      set_is_updating_schedule(true);
+      set_warning_message("Updating the schedule...");
+      axios
+         .post("/api/games/schedule-updates", {
+            season: group_season_week.season,
+            week: group_season_week.week,
+            adds: source_schedule.adds.map(
+               ({ away_team, home_team, game_at }) => ({
+                  away_team,
+                  home_team,
+                  game_at,
+               })
+            ),
+            updates: source_schedule.updates.map(({ game_id, game_at }) => ({
+               game_id,
+               game_at,
+            })),
+         })
+         .then((res) => {
+            const { added, updated } = res.data;
+
+            // update the games locally
+            const new_games = games.map((game) => {
+               const update = updated.find(
+                  (update) => update.game_id === game.id
+               );
+               return update ? { ...game, game_at: update.game_at } : game;
+            });
+            set_games(
+               [...new_games, ...added].sort((a, b) => a.game_at - b.game_at)
+            );
+            set_source_schedule(null);
+
+            set_success_message(
+               `Added ${added.length} ${
+                  added.length === 1 ? "game" : "games"
+               } and changed the time of ${updated.length} ${
+                  updated.length === 1 ? "game" : "games"
+               }.`
+            );
+         })
+         .catch((err) => {
+            console.log("err", err);
+            set_danger_message(
+               _.get(err, "response.data") ||
+                  "There was a problem updating the schedule."
+            );
+         })
+         .finally(() => {
+            set_is_updating_schedule(false);
+         });
+   };
 
    const get_games = () => {
       set_warning_message("Getting games from the server...");
@@ -339,6 +555,7 @@ export default function Schedule({
 
    useEffect(() => {
       // test(); // run tests for the validation utility functions
+      set_source_schedule(null); // the looked up schedule is for the previous week
       if (!isEmpty(user)) {
          get_games();
       }
@@ -363,11 +580,30 @@ export default function Schedule({
                   </h2>
                </div>
                <div className="card-body">
+                  <Button
+                     label={
+                        is_getting_schedule
+                           ? "Checking schedule..."
+                           : "Check schedule"
+                     }
+                     action={get_source_schedule}
+                     primary={is_check_schedule_enabled}
+                     secondary={!is_check_schedule_enabled}
+                     is_enabled={is_check_schedule_enabled}
+                  />
+                  {source_schedule && (
+                     <SourceSchedulePreview
+                        source_schedule={source_schedule}
+                        on_update={update_from_source_schedule}
+                        on_cancel={() => set_source_schedule(null)}
+                        is_updating={is_updating_schedule}
+                     />
+                  )}
                   <p>{message_from_server}</p>
                   {games.map((game, i) => {
                      return (
                         <React.Fragment
-                           key={game.id + "-game-editor-container"}
+                           key={`${game.id}-${game.game_at}-game-editor-container`} // include the time so the editor shows a new time from updating the schedule
                         >
                            <GameEditor
                               game={game}
