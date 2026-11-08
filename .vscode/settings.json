@@ -1,3 +1,8 @@
 {
-   "cSpell.ignoreWords": ["pickable", "teamname", "datetime"]
+   "cSpell.ignoreWords": [
+      "pickable",
+      "teamname",
+      "datetime"
+   ],
+   "python.terminal.useEnvFile": true
 }

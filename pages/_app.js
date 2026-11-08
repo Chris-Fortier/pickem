@@ -8,6 +8,7 @@ import Alert from "react-bootstrap/Alert";
 import NavBar from "../components/NavBar";
 import log_in from "../utils/log_in";
 import log_out from "../utils/log_out";
+import use_auto_update_scores from "../utils/use_auto_update_scores";
 import {
    DEFAULT_GROUP_SEASON_WEEK,
    SUCCESS_MESSAGE_DURATION,
@@ -37,6 +38,10 @@ function MyApp({ Component, pageProps }) {
    const clear_message = () => {
       set_message({});
    };
+
+   // fill in new scores from ESPN when pages are loaded, with its own message so the pages' messages don't replace it
+   const { scores_updated_at, score_check_message } =
+      use_auto_update_scores(user);
 
    // what happens when the site is loaded or refreshed
    useEffect(() => {
@@ -76,16 +81,27 @@ function MyApp({ Component, pageProps }) {
             set_success_message={set_success_message}
             set_warning_message={set_warning_message}
             clear_message={clear_message}
+            scores_updated_at={scores_updated_at}
          />
-         {/* message pop up */}
-         {!isEmpty(message) && (
-            <Alert
-               variant={message.variant}
-               className={`message message-${message.variant}`}
-            >
-               {message.message}
-            </Alert>
-         )}
+         {/* message pop ups */}
+         <div className="messages">
+            {!isEmpty(score_check_message) && (
+               <Alert
+                  variant={score_check_message.variant}
+                  className={`message message-${score_check_message.variant}`}
+               >
+                  {score_check_message.message}
+               </Alert>
+            )}
+            {!isEmpty(message) && (
+               <Alert
+                  variant={message.variant}
+                  className={`message message-${message.variant}`}
+               >
+                  {message.message}
+               </Alert>
+            )}
+         </div>
       </>
    );
 }
