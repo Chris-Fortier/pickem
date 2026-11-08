@@ -3,6 +3,7 @@ import axios from "axios";
 import classnames from "classnames";
 import { v4 } from "uuid";
 import { SEASONS } from "../utils/client_helpers";
+import { use_on_scores_updated } from "../utils/use_auto_update_scores";
 
 const MEDALS = [
    { user_id: "ba1c83b1-9899-42e0-97f3-561f0643153a", label: "20" },
@@ -101,11 +102,17 @@ export default function Standings({
    set_warning_message,
    clear_message,
    set_danger_message,
+   scores_updated_at,
 }) {
    const [standings_season, set_standings_season] = useState([]);
    const [standings_week, set_standings_week] = useState([]);
    const [is_loading, set_is_loading] = useState(true);
    const [winners, set_winners] = useState({});
+
+   const fetch_standings = (week) =>
+      axios.get(
+         `/api/standings?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${week}`
+      );
 
    const get_standings = (set_standings, week) => {
       if (user) {
@@ -115,10 +122,7 @@ export default function Standings({
          set_warning_message(
             "Getting data from the server... If this takes awhile the server might be waking up."
          );
-         axios
-            .get(
-               `/api/standings?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${week}`
-            )
+         fetch_standings(week)
             .then((res) => {
                set_standings(res.data);
                clear_message();
@@ -137,6 +141,22 @@ export default function Standings({
       get_standings(set_standings_season, "all"); // get standings for season
       get_standings(set_standings_week, group_season_week.week); // get standings for week
    }, [group_season_week, user]);
+
+   // update the standings with new scores, without clearing them while they load
+   use_on_scores_updated(scores_updated_at, () => {
+      [
+         [set_standings_season, "all"],
+         [set_standings_week, group_season_week.week],
+      ].forEach(([set_standings, week]) => {
+         fetch_standings(week)
+            .then((res) => {
+               set_standings(res.data);
+            })
+            .catch((err) => {
+               console.log("err", err);
+            });
+      });
+   });
 
    // get the team names and initials of the season winners
    useEffect(() => {

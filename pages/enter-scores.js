@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import _ from "lodash";
 import isEmpty from "lodash/isEmpty";
 import classnames from "classnames";
+import toDisplayDate from "date-fns/format";
+import { Accordion } from "react-bootstrap";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { get_week_or_season_text } from "../utils/client_helpers";
@@ -9,6 +11,7 @@ import axios from "axios";
 import TEAM_NAMES from "../utils/TEAM_NAMES";
 import { validate_game_score } from "../validation/fe_validation_utils";
 import use_unsaved_changes_warning from "../utils/use_unsaved_changes_warning";
+import { use_on_scores_updated } from "../utils/use_auto_update_scores";
 
 const SCORE_FIELDS = ["away_score", "home_score"];
 
@@ -177,12 +180,127 @@ const SourceScoresPreview = ({
    );
 };
 
+const pluralize = (count, singular, plural) =>
+   `${count} ${count === 1 ? singular : plural}`;
+
+// the things a score check found that weren't changed and need an admin to look at
+const get_score_check_problems = (score_check) => {
+   const { differs = [], swapped = [], not_in_ours = [] } =
+      score_check.details || {};
+   return [
+      differs.length &&
+         `${pluralize(
+            differs.length,
+            "saved score is",
+            "saved scores are"
+         )} different from ESPN's`,
+      swapped.length &&
+         `${pluralize(
+            swapped.length,
+            "game has",
+            "games have"
+         )} the home and away teams the other way around`,
+      not_in_ours.length &&
+         `${pluralize(
+            not_in_ours.length,
+            "game is",
+            "games are"
+         )} on ESPN but not in our schedule`,
+   ].filter(Boolean);
+};
+
+const format_score_check_heading = (score_check) =>
+   `${toDisplayDate(score_check.checked_at, "EEE M/d p")}, ${
+      score_check.season
+   } ${get_week_or_season_text(score_check.week, score_check.season)}`;
+
+const format_score_check_result = (score_check) => {
+   if (score_check.error) {
+      return `could not check ESPN (${score_check.error})`;
+   }
+   return score_check.num_filled
+      ? `filled in ${pluralize(score_check.num_filled, "score", "scores")}`
+      : "nothing new";
+};
+
+// the most recent automatic and manual checks of ESPN's scores
+const ScoreChecks = ({ score_checks }) => {
+   if (!score_checks.length) {
+      return <p>Scores haven&apos;t been checked on ESPN yet.</p>;
+   }
+
+   const last_score_check = score_checks[0];
+   const last_problems = get_score_check_problems(last_score_check);
+
+   return (
+      <>
+         <p>
+            Last checked for scores {format_score_check_heading(last_score_check)}
+            : {format_score_check_result(last_score_check)}.
+         </p>
+         {last_problems.length > 0 && (
+            <p className="text-danger">
+               <strong>
+                  The last check found that {last_problems.join(", ")}. Use
+                  Check scores on that week to see them.
+               </strong>
+            </p>
+         )}
+         <Accordion className="mb-3">
+            <Accordion.Item eventKey="0">
+               <Accordion.Header>Recent score checks</Accordion.Header>
+               <Accordion.Body>
+                  <ul className="mb-0">
+                     {score_checks.map((score_check) => {
+                        const fills = score_check.details?.fills || [];
+                        const skipped = score_check.details?.skipped || [];
+                        const problems = get_score_check_problems(score_check);
+                        return (
+                           <li key={score_check.id}>
+                              <strong>
+                                 {format_score_check_heading(score_check)}
+                              </strong>{" "}
+                              ({score_check.check_type}
+                              {(score_check.team_name ||
+                                 score_check.user_name) &&
+                                 `, ${
+                                    score_check.team_name ||
+                                    score_check.user_name
+                                 }`}
+                              ): {format_score_check_result(score_check)}
+                              {fills.length > 0 &&
+                                 ` (${fills.map(format_score).join("; ")})`}
+                              .
+                              {skipped.length > 0 &&
+                                 ` ${pluralize(
+                                    skipped.length,
+                                    "game",
+                                    "games"
+                                 )} skipped.`}
+                              {problems.length > 0 && (
+                                 <span className="text-danger">
+                                    {" "}
+                                    {_.upperFirst(problems.join(", "))}.
+                                 </span>
+                              )}
+                           </li>
+                        );
+                     })}
+                  </ul>
+               </Accordion.Body>
+            </Accordion.Item>
+         </Accordion>
+      </>
+   );
+};
+
 export default function EnterScores({
    group_season_week,
    user,
    set_warning_message,
    set_success_message,
    set_danger_message,
+   scores_updated_at,
 }) {
    const [games, set_games] = useState([]); // the games as they are saved on the server
    const [staged_scores, set_staged_scores] = useState({}); // scores changed in the browser but not saved yet, by game id then field
@@ -191,16 +309,36 @@ export default function EnterScores({
    const [source_scores, set_source_scores] = useState(null); // what would change from checking ESPN's scores
    const [is_checking_scores, set_is_checking_scores] = useState(false);
    const [is_updating_scores, set_is_updating_scores] = useState(false);
+   const [score_checks, set_score_checks] = useState(null); // the most recent checks of ESPN's scores, null until loaded
+
+   const get_games = () =>
+      axios.get(
+         `/api/games?season=${group_season_week.season}&week=${group_season_week.week}`
+      );
+
+   const get_score_checks = () => {
+      axios
+         .get("/api/games/score-checks")
+         .then((res) => {
+            set_score_checks(res.data);
+         })
+         .catch((err) => {
+            console.log("err", err);
+         });
+   };
+
+   useEffect(() => {
+      if (!isEmpty(user)) {
+         get_score_checks();
+      }
+   }, [user]);
 
    useEffect(() => {
       set_source_scores(null); // the checked scores are for the previous week
       if (!isEmpty(user)) {
          set_staged_scores({}); // any unsaved changes are for the previous week
          set_warning_message("Getting games from the server...");
-         axios
-            .get(
-               `/api/games?season=${group_season_week.season}&week=${group_season_week.week}`
-            )
+         get_games()
             .then((res) => {
                set_games(res.data);
                set_success_message(
@@ -216,6 +354,34 @@ export default function EnterScores({
             });
       }
    }, [group_season_week, user]);
+
+   // show new scores, keeping any unsaved changes that are still different from them
+   use_on_scores_updated(scores_updated_at, () => {
+      get_games()
+         .then((res) => {
+            const new_games = res.data;
+            set_games(new_games);
+            set_staged_scores((staged_scores) => {
+               const new_staged_scores = {};
+               Object.entries(staged_scores).forEach(([game_id, scores]) => {
+                  const game = new_games.find((game) => game.id === game_id);
+                  const changed_scores = _.pickBy(
+                     scores,
+                     (score, field) =>
+                        !game || score !== get_saved_score(game, field)
+                  );
+                  if (!isEmpty(changed_scores)) {
+                     new_staged_scores[game_id] = changed_scores;
+                  }
+               });
+               return new_staged_scores;
+            });
+         })
+         .catch((err) => {
+            console.log("err", err);
+         });
+      get_score_checks();
+   });
 
    const now = Date.now();
    const is_game_finished = (game) => game.game_at + 3600000 < now;
@@ -368,26 +534,19 @@ export default function EnterScores({
    const update_from_source_scores = () => {
       set_is_updating_scores(true);
       set_warning_message("Updating the scores...");
+      // the server checks ESPN again and fills in the missing scores, so it is recorded with the other score checks
       axios
-         .patch("/api/games/batch", {
-            games: source_scores.fills.map(
-               ({ game_id, away_score, home_score }) => ({
-                  game_id,
-                  away_score,
-                  home_score,
-               })
-            ),
+         .post("/api/games/source-scores", {
+            season: group_season_week.season,
+            week: group_season_week.week,
          })
          .then((res) => {
-            const { updated } = res.data;
+            const { filled } = res.data;
 
-            // the updated scores are now what is on the server
+            // the filled in scores are now what is on the server
             set_games(
                games.map((game) => {
-                  const fill = source_scores.fills.find(
-                     (fill) =>
-                        fill.game_id === game.id && updated.includes(game.id)
-                  );
+                  const fill = filled.find((fill) => fill.game_id === game.id);
                   return fill
                      ? {
                           ...game,
@@ -398,11 +557,10 @@ export default function EnterScores({
                })
             );
             set_source_scores(null);
+            get_score_checks();
 
             set_success_message(
-               `Filled in ${updated.length} ${
-                  updated.length === 1 ? "score" : "scores"
-               }.`
+               `Filled in ${pluralize(filled.length, "score", "scores")}.`
             );
          })
          .catch((err) => {
@@ -437,6 +595,7 @@ export default function EnterScores({
                      Changed scores are highlighted and are not saved until
                      you click Save Changes.
                   </p>
+                  {score_checks && <ScoreChecks score_checks={score_checks} />}
                   <Button
                      label={
                         is_checking_scores ? "Checking scores..." : "Check scores"

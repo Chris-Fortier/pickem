@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import { get_week_or_season_text } from "../utils/client_helpers";
 import TEAM_NAMES from "../utils/TEAM_NAMES";
 import use_unsaved_changes_warning from "../utils/use_unsaved_changes_warning";
+import { use_on_scores_updated } from "../utils/use_auto_update_scores";
 
 export default function MyPicks({
    group_season_week,
@@ -15,6 +16,7 @@ export default function MyPicks({
    clear_message,
    set_success_message,
    set_danger_message,
+   scores_updated_at,
 }) {
    let rolling_date = 0; // for keeping track when a game is on a new date
    let is_rendering_date = true;
@@ -37,6 +39,11 @@ export default function MyPicks({
    ).length;
    const has_missing_picks = num_picks_made < my_picks.length;
 
+   const get_picks = () =>
+      axios.get(
+         `/api/picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
+      );
+
    useEffect(() => {
       if (user?.id) {
          // note: just checking for user doesn't work because {} is true
@@ -47,10 +54,7 @@ export default function MyPicks({
          set_warning_message(
             "Getting data from the server... If this takes awhile the server might be waking up."
          );
-         axios
-            .get(
-               `/api/picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
-            )
+         get_picks()
             .then((res) => {
                set_my_picks(res.data);
                clear_message();
@@ -64,6 +68,17 @@ export default function MyPicks({
             });
       }
    }, [group_season_week, user]);
+
+   // show the results of new scores, keeping any unsaved changes
+   use_on_scores_updated(scores_updated_at, () => {
+      get_picks()
+         .then((res) => {
+            set_my_picks(res.data);
+         })
+         .catch((err) => {
+            console.log("err", err);
+         });
+   });
 
    // warn the user if they try to leave the page with unsaved changes
    use_unsaved_changes_warning(has_changes);

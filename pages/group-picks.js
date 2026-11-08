@@ -4,6 +4,7 @@ import classnames from "classnames";
 import { v4 } from "uuid";
 import { get_week_or_season_text } from "../utils/client_helpers";
 import toDisplayDate from "date-fns/format";
+import { use_on_scores_updated } from "../utils/use_auto_update_scores";
 
 export default function GroupPicks({
    group_season_week,
@@ -11,10 +12,16 @@ export default function GroupPicks({
    set_warning_message,
    clear_message,
    user,
+   scores_updated_at,
 }) {
    const [teams, set_teams] = useState([]);
    const [match_ups, set_match_ups] = useState([]);
    const [is_loading, set_is_loading] = useState(true);
+
+   const get_group_picks = () =>
+      axios.get(
+         `/api/group-week-picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
+      );
 
    useEffect(() => {
       if (user?.id) {
@@ -25,10 +32,7 @@ export default function GroupPicks({
          set_warning_message(
             "Getting data from the server... If this takes awhile the server might be waking up."
          );
-         axios
-            .get(
-               `/api/group-week-picks?group_id=${group_season_week.group_id}&season=${group_season_week.season}&week=${group_season_week.week}`
-            )
+         get_group_picks()
             .then((res) => {
                set_match_ups(res.data.match_ups);
                set_teams(res.data.teams);
@@ -43,6 +47,18 @@ export default function GroupPicks({
             });
       }
    }, [group_season_week, user]);
+
+   // show the results of new scores
+   use_on_scores_updated(scores_updated_at, () => {
+      get_group_picks()
+         .then((res) => {
+            set_match_ups(res.data.match_ups);
+            set_teams(res.data.teams);
+         })
+         .catch((err) => {
+            console.log("err", err);
+         });
+   });
 
    return (
       <>
